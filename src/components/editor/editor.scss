@@ -1,0 +1,54 @@
+@import '../../styles/render.scss';
+
+.CodeMirror,
+#simplemde-editor-1-wrapper {
+    height: 100% !important;
+}
+
+.CodeMirror {
+    border: none;
+}
+
+.editor-toolbar {
+    border-right: none;
+    background: $black;
+    opacity: 0.75;
+    border-radius: 0;
+    border: none;
+    padding: 3px 0;
+
+    &:hover {
+        opacity: 0.75;
+    }
+
+    button {
+        background: transparent;
+        color: $medium-lite-gray;
+        border: none;
+        -webkit-appearance: none;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 8px;
+        &:focus {
+            outline: 0;
+        }
+    }
+
+    i.separator {
+        background: transparent;
+        color: transparent;
+        font-size: 20px;
+        border-right: 1px solid $medium-lite-gray;
+    }
+}
+
+.editor-container {
+    display: flex;
+    height: calc(100% - 71px);
+}
+
+.left-pane,
+.right-pane {
+    width: 50%;
+    height: 100%;
+}
