@@ -7,6 +7,7 @@ import { render } from 'react-dom';
 export interface IPreviewProps {
     content: string;
     scrollPercentage: number;
+    onScroll: (scrollPercentage: number) => void;
 }
 
 showdown.setOption('tables', true);
@@ -38,6 +39,7 @@ export class Preview extends Component<IPreviewProps> {
                 <div
                     ref={this.previewRef}
                     className="preview-pane markdown-body"
+                    onScroll={this.handleScroll}
                     dangerouslySetInnerHTML={this.injectPreviewMarkup(
                         previewContent
                     )}
@@ -45,6 +47,16 @@ export class Preview extends Component<IPreviewProps> {
             </div>
         );
     }
+
+    private handleScroll = () => {
+        if (this.previewRef.current) {
+            const scrollPercentage =
+                this.previewRef.current.scrollTop /
+                this.previewRef.current.scrollHeight;
+
+            this.props.onScroll(scrollPercentage);
+        }
+    };
 
     private injectPreviewMarkup = (markup: string) => {
         return { __html: markup };

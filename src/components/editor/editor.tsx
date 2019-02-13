@@ -1,28 +1,34 @@
 import React, { Component } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import Preview from '../preview';
-import CodeMirror from 'react-simplemde-editor/typings';
 
-import 'simplemde/dist/simplemde.min.css';
+import 'easymde/dist/easymde.min.css';
 import './editor.scss';
+import SimpleMDEEditor from 'react-simplemde-editor';
 
 export interface IEditorState {
     content: string;
-    scrollPercentage: number;
+    editorScrollPercentage: number;
 }
 
 export class Editor extends Component<{}, IEditorState> {
+    private mdeInstance?: any;
+    private previewScrolling: boolean;
     constructor(props: IEditorState) {
         super(props);
 
         this.state = {
             content: 'hello world',
-            scrollPercentage: 0
+            editorScrollPercentage: 0
         };
+        this.previewScrolling = false;
     }
 
     public render() {
-        const { content, scrollPercentage } = this.state;
+        const {
+            content,
+            editorScrollPercentage: scrollPercentage
+        } = this.state;
 
         return (
             <div className="editor-container">
@@ -30,6 +36,7 @@ export class Editor extends Component<{}, IEditorState> {
                     <SimpleMDE
                         value={content}
                         onChange={this.handleChange}
+                        getMdeInstance={this.getInstance}
                         events={{
                             change: () => {},
                             changes: () => {},
@@ -72,6 +79,7 @@ export class Editor extends Component<{}, IEditorState> {
                     <Preview
                         scrollPercentage={scrollPercentage}
                         content={content}
+                        onScroll={this.handlePreviewScroll}
                     />
                 </div>
             </div>
@@ -84,6 +92,21 @@ export class Editor extends Component<{}, IEditorState> {
 
     private handleScroll = (e: any) => {
         const scrollPercentage = e.doc.scrollTop / e.doc.height;
-        this.setState({ scrollPercentage });
+        this.setState({ editorScrollPercentage: scrollPercentage });
+    };
+
+    private getInstance = (instance: any) => {
+        // You can now store and manipulate the simplemde instance.
+        this.mdeInstance = instance;
+    };
+
+    private handlePreviewScroll = (previewScrollPercentage: number) => {
+        if (this.mdeInstance) {
+            const offsetTop =
+                this.mdeInstance.codemirror.doc.height *
+                previewScrollPercentage;
+
+            this.mdeInstance.codemirror.scrollTo(offsetTop);
+        }
     };
 }
