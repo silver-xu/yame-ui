@@ -13,7 +13,7 @@ export interface IEditorState {
 
 export class Editor extends Component<{}, IEditorState> {
     private mdeInstance?: any;
-    private previewScrolling: boolean;
+    private editorInFocus: boolean;
     constructor(props: IEditorState) {
         super(props);
 
@@ -21,7 +21,7 @@ export class Editor extends Component<{}, IEditorState> {
             content: 'hello world',
             editorScrollPercentage: 0
         };
-        this.previewScrolling = false;
+        this.editorInFocus = false;
     }
 
     public render() {
@@ -45,8 +45,12 @@ export class Editor extends Component<{}, IEditorState> {
                             beforeSelectionChange: () => {},
                             viewportChange: () => {},
                             gutterClick: () => {},
-                            focus: () => {},
-                            blur: () => {},
+                            focus: () => {
+                                this.handleFocus;
+                            },
+                            blur: () => {
+                                this.handleBlur;
+                            },
                             scroll: (e: any) => this.handleScroll(e),
                             update: () => {},
                             renderLine: () => {},
@@ -86,13 +90,21 @@ export class Editor extends Component<{}, IEditorState> {
         );
     }
 
+    private handleFocus = () => {
+        this.editorInFocus = true;
+    };
+    private handleBlur = () => {
+        this.editorInFocus = false;
+    };
     private handleChange = (value: string) => {
         this.setState({ content: value });
     };
 
     private handleScroll = (e: any) => {
-        const scrollPercentage = e.doc.scrollTop / e.doc.height;
-        this.setState({ editorScrollPercentage: scrollPercentage });
+        if (this.editorInFocus) {
+            const scrollPercentage = e.doc.scrollTop / e.doc.height;
+            this.setState({ editorScrollPercentage: scrollPercentage });
+        }
     };
 
     private getInstance = (instance: any) => {
@@ -105,8 +117,7 @@ export class Editor extends Component<{}, IEditorState> {
             const offsetTop =
                 this.mdeInstance.codemirror.doc.height *
                 previewScrollPercentage;
-
-            this.mdeInstance.codemirror.scrollTo(offsetTop);
+            this.mdeInstance.codemirror.scrollTo(0, offsetTop);
         }
     };
 }
