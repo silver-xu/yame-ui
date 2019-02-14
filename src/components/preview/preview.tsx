@@ -8,6 +8,8 @@ export interface IPreviewProps {
     content: string;
     scrollPercentage: number;
     onScroll: (scrollPercentage: number) => void;
+    onFocus: () => void;
+    onBlur: () => void;
 }
 
 showdown.setOption('tables', true);
@@ -30,7 +32,7 @@ export class Preview extends Component<IPreviewProps> {
     }
 
     public render() {
-        const { content } = this.props;
+        const { content, onFocus, onBlur } = this.props;
         const previewContent = converter.makeHtml(content);
 
         return (
@@ -40,6 +42,8 @@ export class Preview extends Component<IPreviewProps> {
                     ref={this.previewRef}
                     className="preview-pane markdown-body"
                     onScroll={this.handleScroll}
+                    onMouseEnter={onFocus}
+                    onMouseLeave={onBlur}
                     dangerouslySetInnerHTML={this.injectPreviewMarkup(
                         previewContent
                     )}

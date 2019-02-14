@@ -14,6 +14,7 @@ export interface IEditorState {
 export class Editor extends Component<{}, IEditorState> {
     private mdeInstance?: any;
     private editorInFocus: boolean;
+    private previewInFocus: boolean;
     constructor(props: IEditorState) {
         super(props);
 
@@ -22,6 +23,7 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage: 0
         };
         this.editorInFocus = false;
+        this.previewInFocus = false;
     }
 
     public render() {
@@ -35,7 +37,7 @@ export class Editor extends Component<{}, IEditorState> {
                 <div className="left-pane">
                     <SimpleMDE
                         value={content}
-                        onChange={this.handleChange}
+                        onChange={this.handleEditorChange}
                         getMdeInstance={this.getInstance}
                         events={{
                             change: () => {},
@@ -45,13 +47,9 @@ export class Editor extends Component<{}, IEditorState> {
                             beforeSelectionChange: () => {},
                             viewportChange: () => {},
                             gutterClick: () => {},
-                            focus: () => {
-                                this.handleFocus;
-                            },
-                            blur: () => {
-                                this.handleBlur;
-                            },
-                            scroll: (e: any) => this.handleScroll(e),
+                            focus: () => this.handleEditorFocus(),
+                            blur: () => this.handleEditorBlur(),
+                            scroll: (e: any) => this.handleEditorScroll(e),
                             update: () => {},
                             renderLine: () => {},
                             mousedown: () => {},
@@ -84,23 +82,33 @@ export class Editor extends Component<{}, IEditorState> {
                         scrollPercentage={scrollPercentage}
                         content={content}
                         onScroll={this.handlePreviewScroll}
+                        onFocus={this.handlePreviewFocus}
+                        onBlur={this.handlePreviewBlur}
                     />
                 </div>
             </div>
         );
     }
 
-    private handleFocus = () => {
+    private handleEditorFocus = () => {
         this.editorInFocus = true;
     };
-    private handleBlur = () => {
+    private handleEditorBlur = () => {
         this.editorInFocus = false;
     };
-    private handleChange = (value: string) => {
+    private handlePreviewFocus = () => {
+        this.previewInFocus = true;
+        this.handleEditorBlur();
+    };
+    private handlePreviewBlur = () => {
+        this.previewInFocus = false;
+        this.handleEditorFocus();
+    };
+    private handleEditorChange = (value: string) => {
         this.setState({ content: value });
     };
 
-    private handleScroll = (e: any) => {
+    private handleEditorScroll = (e: any) => {
         if (this.editorInFocus) {
             const scrollPercentage = e.doc.scrollTop / e.doc.height;
             this.setState({ editorScrollPercentage: scrollPercentage });
@@ -113,7 +121,7 @@ export class Editor extends Component<{}, IEditorState> {
     };
 
     private handlePreviewScroll = (previewScrollPercentage: number) => {
-        if (this.mdeInstance) {
+        if (this.mdeInstance && this.previewInFocus) {
             const offsetTop =
                 this.mdeInstance.codemirror.doc.height *
                 previewScrollPercentage;
