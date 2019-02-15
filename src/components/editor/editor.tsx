@@ -32,10 +32,10 @@ export class Editor extends Component<{}, IEditorState> {
         return (
             <div className="editor-container">
                 <div className="left-pane">
-                    <div className="menu">
-                        <ul>
+                    <div className="bubble-pane">
+                        <ul className="menu">
                             <li>New Document</li>
-                            <li />
+                            <li className="separator" />
                             <li>File 1</li>
                             <li>File 2</li>
                             <li>File 3</li>

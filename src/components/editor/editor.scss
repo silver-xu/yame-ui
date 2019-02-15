@@ -75,3 +75,29 @@
     width: calc(50% - 3px);
     height: 100%;
 }
+
+.bubble-pane {
+    position: fixed;
+    top: 54px;
+    z-index: 998;
+    opacity: 0.75;
+
+    .menu {
+        background: $black;
+        margin: 0;
+        padding: 0 0 15px 0;
+
+        li {
+            list-style: none;
+            margin: 0px;
+            padding: 15px 20px;
+            color: $lite-gray;
+        }
+
+        .separator {
+            border-bottom: 1px solid $lite-gray;
+            padding: 0px;
+            margin: 5px 0px;
+        }
+    }
+}
