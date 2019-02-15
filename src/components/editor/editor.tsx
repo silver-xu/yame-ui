@@ -32,6 +32,15 @@ export class Editor extends Component<{}, IEditorState> {
         return (
             <div className="editor-container">
                 <div className="left-pane">
+                    <div className="menu">
+                        <ul>
+                            <li>New Document</li>
+                            <li />
+                            <li>File 1</li>
+                            <li>File 2</li>
+                            <li>File 3</li>
+                        </ul>
+                    </div>
                     <SimpleMDE
                         value={content}
                         onChange={this.handleEditorChange}
@@ -72,6 +81,15 @@ export class Editor extends Component<{}, IEditorState> {
                                 uniqueId: 'hackable'
                             },
                             toolbar: [
+                                {
+                                    name: 'redText',
+                                    action: () => {
+                                        alert('abc');
+                                    },
+                                    className: 'fa fa-bars', // Look for a suitable icon
+                                    title: 'Red text (Ctrl/Cmd-Alt-R)'
+                                },
+                                '|',
                                 'bold',
                                 'italic',
                                 'strikethrough',
@@ -86,11 +104,21 @@ export class Editor extends Component<{}, IEditorState> {
                                 'code',
                                 'link',
                                 'image',
-                                'table'
+                                'table',
+                                '|',
+                                {
+                                    name: 'redText',
+                                    action: () => {
+                                        alert('abc');
+                                    },
+                                    className: 'fa fa-share', // Look for a suitable icon
+                                    title: 'Red text (Ctrl/Cmd-Alt-R)'
+                                }
                             ]
                         }}
                     />
                 </div>
+                <div className="splitter" />
                 <div className="right-pane">
                     <Preview
                         scrollPercentage={scrollPercentage}
@@ -103,6 +131,10 @@ export class Editor extends Component<{}, IEditorState> {
             </div>
         );
     }
+
+    private drawRedText = () => {
+        alert('abc');
+    };
 
     private handlePreviewFocus = () => {
         this.previewInFocus = true;

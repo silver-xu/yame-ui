@@ -12,6 +12,10 @@
     top: 53px;
     left: 0px;
     width: 50%;
+
+    pre {
+        padding: 5px 4px;
+    }
 }
 
 .editor-toolbar {
@@ -57,8 +61,17 @@
     height: calc(100% - 55px);
 }
 
+.splitter {
+    position: fixed;
+    top: 54px;
+    left: calc(50% - 3px);
+    height: 100%;
+    width: 6px;
+    background: #dddddd;
+}
+
 .left-pane,
 .right-pane {
-    width: 50%;
+    width: calc(50% - 3px);
     height: 100%;
 }
