@@ -14,9 +14,6 @@ export interface IPreviewProps {
     onBlur: () => void;
 }
 
-showdown.setOption('tables', true);
-showdown.setOption('smoothLivePreview', true);
-showdown.setOption('requireSpaceBeforeHeadingText', true);
 const converter = new showdown.Converter({
     tables: true,
     smoothLivePreview: true,
