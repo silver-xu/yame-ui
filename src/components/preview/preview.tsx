@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import * as showdown from 'showdown';
+const showdownHighlight = require('showdown-highlight');
 
 import './preview.scss';
+import 'highlight.js/styles/vs.css';
 import { render } from 'react-dom';
 
 export interface IPreviewProps {
@@ -13,7 +15,14 @@ export interface IPreviewProps {
 }
 
 showdown.setOption('tables', true);
-const converter = new showdown.Converter();
+showdown.setOption('smoothLivePreview', true);
+showdown.setOption('requireSpaceBeforeHeadingText', true);
+const converter = new showdown.Converter({
+    tables: true,
+    smoothLivePreview: true,
+    requireSpaceBeforeHeadingText: true,
+    extensions: [showdownHighlight]
+});
 
 export class Preview extends Component<IPreviewProps> {
     previewRef: React.RefObject<HTMLDivElement>;

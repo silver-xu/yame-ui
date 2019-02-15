@@ -1,4 +1,5 @@
 @import '../../styles/render.scss';
+@import '../../styles/colors.scss';
 
 .CodeMirror,
 #simplemde-editor-1-wrapper {
@@ -7,6 +8,10 @@
 
 .CodeMirror {
     border: none;
+    position: fixed;
+    top: 53px;
+    left: 0px;
+    width: 50%;
 }
 
 .editor-toolbar {
@@ -16,6 +21,11 @@
     border-radius: 0;
     border: none;
     padding: 3px 0;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 999;
 
     &:hover {
         opacity: 0.75;

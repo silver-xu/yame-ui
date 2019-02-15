@@ -1,4 +1,5 @@
 @import '../../styles/render.scss';
+@import '../../styles/colors.scss';
 
 .preview-wrapper {
     height: 100%;
@@ -6,8 +7,6 @@
     .preview-header {
         box-sizing: border-box;
         height: 54px;
-        opacity: 0.75;
-        background: $black;
     }
 
     .preview-pane {

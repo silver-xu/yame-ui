@@ -4,7 +4,6 @@ import Preview from '../preview';
 
 import 'easymde/dist/easymde.min.css';
 import './editor.scss';
-import SimpleMDEEditor from 'react-simplemde-editor';
 
 export interface IEditorState {
     content: string;
@@ -13,7 +12,6 @@ export interface IEditorState {
 
 export class Editor extends Component<{}, IEditorState> {
     private mdeInstance?: any;
-    private editorInFocus: boolean;
     private previewInFocus: boolean;
     constructor(props: IEditorState) {
         super(props);
@@ -22,7 +20,6 @@ export class Editor extends Component<{}, IEditorState> {
             content: 'hello world',
             editorScrollPercentage: 0
         };
-        this.editorInFocus = false;
         this.previewInFocus = false;
     }
 
@@ -47,8 +44,8 @@ export class Editor extends Component<{}, IEditorState> {
                             beforeSelectionChange: () => {},
                             viewportChange: () => {},
                             gutterClick: () => {},
-                            focus: () => this.handleEditorFocus(),
-                            blur: () => this.handleEditorBlur(),
+                            focus: () => {},
+                            blur: () => {},
                             scroll: (e: any) => this.handleEditorScroll(e),
                             update: () => {},
                             renderLine: () => {},
@@ -73,7 +70,24 @@ export class Editor extends Component<{}, IEditorState> {
                             autosave: {
                                 enabled: false,
                                 uniqueId: 'hackable'
-                            }
+                            },
+                            toolbar: [
+                                'bold',
+                                'italic',
+                                'strikethrough',
+                                '|',
+                                'heading-1',
+                                'heading-2',
+                                'heading-3',
+                                '|',
+                                'unordered-list',
+                                'ordered-list',
+                                '|',
+                                'code',
+                                'link',
+                                'image',
+                                'table'
+                            ]
                         }}
                     />
                 </div>
@@ -90,33 +104,24 @@ export class Editor extends Component<{}, IEditorState> {
         );
     }
 
-    private handleEditorFocus = () => {
-        this.editorInFocus = true;
-    };
-    private handleEditorBlur = () => {
-        this.editorInFocus = false;
-    };
     private handlePreviewFocus = () => {
         this.previewInFocus = true;
-        this.handleEditorBlur();
     };
     private handlePreviewBlur = () => {
         this.previewInFocus = false;
-        this.handleEditorFocus();
     };
     private handleEditorChange = (value: string) => {
         this.setState({ content: value });
     };
 
     private handleEditorScroll = (e: any) => {
-        if (this.editorInFocus) {
+        if (!this.previewInFocus) {
             const scrollPercentage = e.doc.scrollTop / e.doc.height;
             this.setState({ editorScrollPercentage: scrollPercentage });
         }
     };
 
     private getInstance = (instance: any) => {
-        // You can now store and manipulate the simplemde instance.
         this.mdeInstance = instance;
     };
 
