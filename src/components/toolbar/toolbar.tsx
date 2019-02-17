@@ -5,6 +5,7 @@ import './toolbar.scss';
 
 export interface IToolbarProps {
     lostFocus: boolean;
+    docname: string;
 }
 
 export interface IToolbarState {
@@ -32,9 +33,12 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
     public render() {
         const { extraMenuOpen } = this.state;
+        const { docname } = this.props;
         return (
             <div className="toolbar-extra">
-                <div className="filename">Unnamed Doc 1</div>
+                <div className="filename">
+                    <input type="text" value={docname} />
+                </div>
                 <ul>
                     <li>
                         <i

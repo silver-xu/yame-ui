@@ -63,7 +63,7 @@
 .left-pane,
 .right-pane {
     width: calc(50% - 3px);
-    bottom: 0;
+    bottom: 30px;
     position: absolute;
     top: 55px;
     z-index: 100;
@@ -75,4 +75,16 @@
 
 .right-pane {
     right: 0;
+}
+
+.status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1001;
+    background: $lite-gray;
+    text-align: right;
+    padding: 5px 0px;
+    color: $dark-gray;
 }

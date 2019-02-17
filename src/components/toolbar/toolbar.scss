@@ -1,7 +1,7 @@
 @import '../../styles/colors.scss';
 
 .toolbar-extra {
-    padding: 12px;
+    padding: 7.5px;
     box-sizing: border-box;
     position: fixed;
     top: 0;
@@ -12,16 +12,32 @@
     color: $medium-lite-gray;
     display: flex;
     justify-content: space-between;
+    z-index: 1000;
 
     .filename {
         width: 200px;
-        padding: 3px 0;
-        color: $white;
+
+        input {
+            border: 0;
+            background: $dark-gray;
+            color: $white;
+            padding: 8px 0;
+            margin: 0;
+            font-size: 20px;
+            text-align: center;
+            width: 200px;
+
+            &:focus {
+                outline: none;
+                background: $medium-gray;
+                color: $dark-gray;
+            }
+        }
     }
 
     > ul {
         margin: 0;
-        padding: 0;
+        padding: 5px 0;
         display: flex;
 
         > li {

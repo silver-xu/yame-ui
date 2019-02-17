@@ -4,42 +4,61 @@ import Preview from '../preview';
 import Menu from '../menu';
 import classnames from 'classnames';
 import Toolbar from '../toolbar';
+import { IDocRepo, IDoc } from '../../types';
+import {
+    getRepoFromCache,
+    getDocFromRepo,
+    updateDocInRepo
+} from '../../services/repo-service';
 import 'easymde/dist/easymde.min.css';
 import './editor.scss';
 
 export interface IEditorState {
-    content: string;
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
+    docRepo: IDocRepo;
+    currentDoc: IDoc;
 }
 
 export class Editor extends Component<{}, IEditorState> {
     private mdeInstance?: any;
     private previewInFocus: boolean;
+
     constructor(props: IEditorState) {
         super(props);
-
+        const docRepo = getRepoFromCache();
         this.state = {
-            content: 'hello world',
             editorScrollPercentage: 0,
-            toolbarOutOfFocus: true
+            toolbarOutOfFocus: true,
+            docRepo,
+            currentDoc: getDocFromRepo(docRepo.lastOpenedDocId, docRepo)
         };
         this.previewInFocus = false;
     }
 
     public render() {
         const {
-            content,
             editorScrollPercentage,
-            toolbarOutOfFocus
+            toolbarOutOfFocus,
+            currentDoc
         } = this.state;
+
+        const statusText = (
+            <React.Fragment>
+                Markdown Editor |<b>1236</b> bytes | <b>2379</b> words |{' '}
+                <b>120</b> lines
+            </React.Fragment>
+        );
 
         return (
             <div className="editor-container">
-                <Toolbar lostFocus={toolbarOutOfFocus} />
+                <Toolbar
+                    lostFocus={toolbarOutOfFocus}
+                    docname={currentDoc.docname}
+                />
                 <div className="left-pane">
                     <SimpleMDE
-                        value={content}
+                        value={currentDoc.content}
                         onChange={this.handleEditorChange}
                         getMdeInstance={this.getInstance}
                         events={{
@@ -103,13 +122,14 @@ export class Editor extends Component<{}, IEditorState> {
                 <div className="right-pane">
                     <Preview
                         scrollPercentage={editorScrollPercentage}
-                        content={content}
+                        content={currentDoc.content}
                         onScroll={this.handlePreviewScroll}
                         onFocus={this.handlePreviewFocus}
                         onBlur={this.handlePreviewBlur}
                         onMouseDown={this.handleEditorAndPreviewClick}
                     />
                 </div>
+                <div className="status-bar">{statusText}</div>
             </div>
         );
     }
@@ -127,7 +147,13 @@ export class Editor extends Component<{}, IEditorState> {
         this.previewInFocus = false;
     };
     private handleEditorChange = (value: string) => {
-        this.setState({ content: value });
+        const { docRepo, currentDoc } = this.state;
+        currentDoc.content = value;
+        updateDocInRepo(currentDoc, docRepo);
+        this.setState({
+            currentDoc,
+            docRepo
+        });
     };
 
     private handleEditorScroll = (e: any) => {
