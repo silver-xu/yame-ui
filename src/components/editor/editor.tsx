@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import Preview from '../preview';
-
+import Menu from '../menu';
+import classnames from 'classnames';
+import Toolbar from '../toolbar';
 import 'easymde/dist/easymde.min.css';
 import './editor.scss';
 
 export interface IEditorState {
     content: string;
     editorScrollPercentage: number;
+    toolbarOutOfFocus: boolean;
 }
 
 export class Editor extends Component<{}, IEditorState> {
@@ -18,7 +21,8 @@ export class Editor extends Component<{}, IEditorState> {
 
         this.state = {
             content: 'hello world',
-            editorScrollPercentage: 0
+            editorScrollPercentage: 0,
+            toolbarOutOfFocus: true
         };
         this.previewInFocus = false;
     }
@@ -26,21 +30,14 @@ export class Editor extends Component<{}, IEditorState> {
     public render() {
         const {
             content,
-            editorScrollPercentage: scrollPercentage
+            editorScrollPercentage,
+            toolbarOutOfFocus
         } = this.state;
 
         return (
             <div className="editor-container">
+                <Toolbar lostFocus={toolbarOutOfFocus} />
                 <div className="left-pane">
-                    <div className="bubble-pane">
-                        <ul className="menu">
-                            <li>New Document</li>
-                            <li className="separator" />
-                            <li>File 1</li>
-                            <li>File 2</li>
-                            <li>File 3</li>
-                        </ul>
-                    </div>
                     <SimpleMDE
                         value={content}
                         onChange={this.handleEditorChange}
@@ -58,7 +55,9 @@ export class Editor extends Component<{}, IEditorState> {
                             scroll: (e: any) => this.handleEditorScroll(e),
                             update: () => {},
                             renderLine: () => {},
-                            mousedown: () => {},
+                            mousedown: () => {
+                                this.handleEditorAndPreviewClick();
+                            },
                             dblclick: () => {},
                             touchstart: () => {},
                             contextmenu: () => {},
@@ -81,15 +80,6 @@ export class Editor extends Component<{}, IEditorState> {
                                 uniqueId: 'hackable'
                             },
                             toolbar: [
-                                {
-                                    name: 'redText',
-                                    action: () => {
-                                        alert('abc');
-                                    },
-                                    className: 'fa fa-bars', // Look for a suitable icon
-                                    title: 'Red text (Ctrl/Cmd-Alt-R)'
-                                },
-                                '|',
                                 'bold',
                                 'italic',
                                 'strikethrough',
@@ -104,16 +94,7 @@ export class Editor extends Component<{}, IEditorState> {
                                 'code',
                                 'link',
                                 'image',
-                                'table',
-                                '|',
-                                {
-                                    name: 'redText',
-                                    action: () => {
-                                        alert('abc');
-                                    },
-                                    className: 'fa fa-share', // Look for a suitable icon
-                                    title: 'Red text (Ctrl/Cmd-Alt-R)'
-                                }
+                                'table'
                             ]
                         }}
                     />
@@ -121,19 +102,22 @@ export class Editor extends Component<{}, IEditorState> {
                 <div className="splitter" />
                 <div className="right-pane">
                     <Preview
-                        scrollPercentage={scrollPercentage}
+                        scrollPercentage={editorScrollPercentage}
                         content={content}
                         onScroll={this.handlePreviewScroll}
                         onFocus={this.handlePreviewFocus}
                         onBlur={this.handlePreviewBlur}
+                        onMouseDown={this.handleEditorAndPreviewClick}
                     />
                 </div>
             </div>
         );
     }
 
-    private drawRedText = () => {
-        alert('abc');
+    private handleEditorAndPreviewClick = () => {
+        this.setState({
+            toolbarOutOfFocus: true
+        });
     };
 
     private handlePreviewFocus = () => {

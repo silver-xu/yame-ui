@@ -1,0 +1,44 @@
+@import '../../styles/colors.scss';
+
+.toolbar-extra {
+    padding: 12px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: $dark-gray;
+    width: 300px;
+    font-size: 20px;
+    color: $medium-lite-gray;
+    display: flex;
+    justify-content: space-between;
+
+    .filename {
+        width: 200px;
+        padding: 3px 0;
+        color: $white;
+    }
+
+    > ul {
+        margin: 0;
+        padding: 0;
+        display: flex;
+
+        > li {
+            margin: 0 5px;
+
+            list-style: none;
+            position: relative;
+
+            > i {
+                padding: 3px 8px;
+                display: block;
+                border-radius: 3px;
+
+                &.active {
+                    background: $white;
+                }
+            }
+        }
+    }
+}

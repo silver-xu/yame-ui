@@ -12,6 +12,7 @@ export interface IPreviewProps {
     onScroll: (scrollPercentage: number) => void;
     onFocus: () => void;
     onBlur: () => void;
+    onMouseDown: () => void;
 }
 
 const converter = new showdown.Converter({
@@ -38,18 +39,18 @@ export class Preview extends Component<IPreviewProps> {
     }
 
     public render() {
-        const { content, onFocus, onBlur } = this.props;
+        const { content, onFocus, onBlur, onMouseDown } = this.props;
         const previewContent = converter.makeHtml(content);
 
         return (
             <div className="preview-wrapper">
-                <div className="preview-header" />
                 <div
                     ref={this.previewRef}
                     className="preview-pane markdown-body"
                     onScroll={this.handleScroll}
                     onMouseEnter={onFocus}
                     onMouseLeave={onBlur}
+                    onMouseDown={onMouseDown}
                     dangerouslySetInnerHTML={this.injectPreviewMarkup(
                         previewContent
                     )}

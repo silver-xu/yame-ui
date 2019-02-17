@@ -8,10 +8,8 @@
 
 .CodeMirror {
     border: none;
-    position: fixed;
-    top: 53px;
-    left: 0px;
-    width: 50%;
+
+    width: 100%;
 
     pre {
         padding: 5px 4px;
@@ -20,20 +18,17 @@
 
 .editor-toolbar {
     border-right: none;
-    background: $black;
-    opacity: 0.75;
+    background: $dark-gray;
+    opacity: 1;
     border-radius: 0;
+    box-sizing: border-box;
     border: none;
     padding: 3px 0;
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 100%;
+    width: calc(100% - 300px);
     z-index: 999;
-
-    &:hover {
-        opacity: 0.75;
-    }
 
     button {
         background: transparent;
@@ -56,16 +51,11 @@
     }
 }
 
-.editor-container {
-    display: flex;
-    height: calc(100% - 55px);
-}
-
 .splitter {
-    position: fixed;
+    position: absolute;
     top: 54px;
     left: calc(50% - 3px);
-    height: 100%;
+    height: calc(100% - 55px);
     width: 6px;
     background: #dddddd;
 }
@@ -73,31 +63,16 @@
 .left-pane,
 .right-pane {
     width: calc(50% - 3px);
-    height: 100%;
+    bottom: 0;
+    position: absolute;
+    top: 55px;
+    z-index: 100;
 }
 
-.bubble-pane {
-    position: fixed;
-    top: 54px;
-    z-index: 998;
-    opacity: 0.75;
+.left-pane {
+    left: 0;
+}
 
-    .menu {
-        background: $black;
-        margin: 0;
-        padding: 0 0 15px 0;
-
-        li {
-            list-style: none;
-            margin: 0px;
-            padding: 15px 20px;
-            color: $lite-gray;
-        }
-
-        .separator {
-            border-bottom: 1px solid $lite-gray;
-            padding: 0px;
-            margin: 5px 0px;
-        }
-    }
+.right-pane {
+    right: 0;
 }
