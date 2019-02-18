@@ -1,0 +1,10 @@
+@import '../../styles/colors.scss';
+
+.side-bar {
+    position: absolute;
+    height: calc(100% - 54px);
+    right: 0;
+    top: 54px;
+    width: calc(24% - 6px);
+    background: $medium-gray;
+}

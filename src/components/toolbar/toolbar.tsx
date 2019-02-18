@@ -1,39 +1,29 @@
 import React from 'react';
-import Menu from '../menu';
 import classnames from 'classnames';
 import './toolbar.scss';
 
 export interface IToolbarProps {
     lostFocus: boolean;
     docname: string;
+    fileMenuOpen: boolean;
+    onFileMenuToggle: (fileMenuOpen: boolean) => void;
 }
 
-export interface IToolbarState {
-    extraMenuOpen: boolean;
-    shareMenuOpen: boolean;
-}
-
-export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
+export class Toolbar extends React.Component<IToolbarProps> {
     constructor(props: IToolbarProps) {
         super(props);
-
-        this.state = {
-            extraMenuOpen: false,
-            shareMenuOpen: false
-        };
     }
 
     public componentWillReceiveProps() {
         const { lostFocus } = this.props;
         this.setState({
-            extraMenuOpen: !lostFocus,
+            fileMenuOpen: !lostFocus,
             shareMenuOpen: !lostFocus
         });
     }
 
     public render() {
-        const { extraMenuOpen } = this.state;
-        const { docname } = this.props;
+        const { docname, fileMenuOpen } = this.props;
         return (
             <div className="toolbar-extra">
                 <div className="filename">
@@ -44,40 +34,10 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                         <i
                             className={classnames({
                                 fa: true,
-                                'fa-bars': true,
-                                active: extraMenuOpen
+                                'fa-folder': true,
+                                active: fileMenuOpen
                             })}
-                            onClick={this.toggleExtraMenu}
-                        />
-                        <Menu
-                            isMenuOpen={extraMenuOpen}
-                            menuItems={[
-                                {
-                                    text: 'New Document',
-                                    action: () => {},
-                                    iconClassNames: 'fa fa-file-text'
-                                },
-                                {
-                                    text: 'From Computer',
-                                    action: () => {},
-                                    iconClassNames: 'fa fa-folder-open'
-                                },
-                                {
-                                    text: '-'
-                                },
-                                {
-                                    text: 'Document 1',
-                                    action: () => {}
-                                },
-                                {
-                                    text: 'Document 2',
-                                    action: () => {}
-                                },
-                                {
-                                    text: 'Document 3',
-                                    action: () => {}
-                                }
-                            ]}
+                            onClick={this.toggleFileMenu}
                         />
                     </li>
                     <li>
@@ -88,8 +48,8 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
         );
     }
 
-    private toggleExtraMenu = () => {
-        const { extraMenuOpen } = this.state;
-        this.setState({ extraMenuOpen: !extraMenuOpen });
+    private toggleFileMenu = () => {
+        const { onFileMenuToggle, fileMenuOpen } = this.props;
+        onFileMenuToggle(!fileMenuOpen);
     };
 }

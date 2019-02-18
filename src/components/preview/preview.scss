@@ -12,7 +12,7 @@
     .preview-pane {
         padding: 10px 20px;
         height: calc(100% - 20px);
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 }
 

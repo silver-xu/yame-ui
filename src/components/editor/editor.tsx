@@ -10,10 +10,13 @@ import {
 } from '../../services/repo-service';
 import 'easymde/dist/easymde.min.css';
 import './editor.scss';
+import { SideBar } from '../side-bar';
+import classnames from 'classnames';
 
 export interface IEditorState {
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
+    fileMenuOpen: boolean;
     docRepo: DocRepo;
     currentDoc: Doc;
 }
@@ -29,7 +32,8 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage: 0,
             toolbarOutOfFocus: true,
             docRepo,
-            currentDoc: getDocFromRepo(docRepo.lastOpenedDocId, docRepo)
+            currentDoc: getDocFromRepo(docRepo.lastOpenedDocId, docRepo),
+            fileMenuOpen: false
         };
         this.previewInFocus = false;
     }
@@ -38,7 +42,8 @@ export class Editor extends Component<{}, IEditorState> {
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
-            currentDoc
+            currentDoc,
+            fileMenuOpen
         } = this.state;
 
         const { renderedContent, statistics } = currentDoc;
@@ -51,10 +56,17 @@ export class Editor extends Component<{}, IEditorState> {
         );
 
         return (
-            <div className="editor-container">
+            <div
+                className={classnames({
+                    'editor-container': true,
+                    'side-bar-open': fileMenuOpen
+                })}
+            >
                 <Toolbar
                     lostFocus={toolbarOutOfFocus}
                     docname={currentDoc.docname}
+                    onFileMenuToggle={this.handleFileMenuToggle}
+                    fileMenuOpen={fileMenuOpen}
                 />
                 <div className="left-pane">
                     <SimpleMDE
@@ -129,6 +141,7 @@ export class Editor extends Component<{}, IEditorState> {
                         onMouseDown={this.handleEditorAndPreviewClick}
                     />
                 </div>
+                <SideBar isOpen={fileMenuOpen} />
                 <div className="status-bar">{statusText}</div>
             </div>
         );
@@ -175,5 +188,9 @@ export class Editor extends Component<{}, IEditorState> {
                 previewScrollPercentage;
             this.mdeInstance.codemirror.scrollTo(0, offsetTop);
         }
+    };
+
+    private handleFileMenuToggle = (fileMenuOpen: boolean) => {
+        this.setState({ fileMenuOpen });
     };
 }

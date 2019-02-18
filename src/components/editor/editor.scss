@@ -74,7 +74,21 @@
 }
 
 .right-pane {
-    right: 0;
+    left: calc(50% + 3px);
+}
+
+.side-bar-open {
+    height: 100%;
+    .left-pane {
+        width: calc(38% - 3px);
+    }
+    .right-pane {
+        left: calc(38% + 6px);
+        width: calc(38% - 3px);
+    }
+    .splitter {
+        left: calc(38% - 3px);
+    }
 }
 
 .status-bar {
