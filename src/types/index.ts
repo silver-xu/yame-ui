@@ -1,25 +1,39 @@
-import { string } from 'prop-types';
+import { Doc } from './doc';
 
-export interface IDoc {
-    id: string;
-    docname: string;
-    content: string;
-    lastModified: Date;
+export class DocRepo {
+    docs: { [id: string]: Doc };
+    lastOpenedDocId: string;
+    constructor(docs: { [id: string]: Doc }, lastOpenedDocId: string) {
+        this.docs = docs;
+        this.lastOpenedDocId = lastOpenedDocId;
+    }
+
+    static parseFromJson(jsonString: string) {
+        const plainDocRepo = JSON.parse(jsonString) as DocRepo;
+        const newDocs: { [id: string]: Doc } = {};
+        for (const id in plainDocRepo.docs) {
+            newDocs[id] = new Doc(
+                plainDocRepo.docs[id].id,
+                plainDocRepo.docs[id].docname,
+                plainDocRepo.docs[id].content,
+                plainDocRepo.docs[id].lastModified
+            );
+        }
+
+        return new DocRepo(newDocs, plainDocRepo.lastOpenedDocId);
+    }
 }
 
 export interface IDocStatistics {
-    byteCount: number;
+    charCount: number;
     wordCount: number;
     lineCount: number;
-}
-
-export interface IDocRepo {
-    docs: { [id: string]: IDoc };
-    lastOpenedDocId: string;
 }
 
 export interface IUser {
     id: string;
     email: string;
-    repo: IDocRepo;
+    repo: DocRepo;
 }
+
+export { Doc };

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import Preview from '../preview';
-import Menu from '../menu';
-import classnames from 'classnames';
 import Toolbar from '../toolbar';
-import { IDocRepo, IDoc } from '../../types';
+import { DocRepo, Doc } from '../../types';
 import {
     getRepoFromCache,
     getDocFromRepo,
@@ -16,8 +14,8 @@ import './editor.scss';
 export interface IEditorState {
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
-    docRepo: IDocRepo;
-    currentDoc: IDoc;
+    docRepo: DocRepo;
+    currentDoc: Doc;
 }
 
 export class Editor extends Component<{}, IEditorState> {
@@ -43,10 +41,12 @@ export class Editor extends Component<{}, IEditorState> {
             currentDoc
         } = this.state;
 
+        const { renderedContent, statistics } = currentDoc;
         const statusText = (
             <React.Fragment>
-                Markdown Editor |<b>1236</b> bytes | <b>2379</b> words |{' '}
-                <b>120</b> lines
+                Markdown | <b>{statistics.charCount}</b> chars |{' '}
+                <b>{statistics.wordCount}</b> words |{' '}
+                <b>{statistics.lineCount}</b> lines
             </React.Fragment>
         );
 
@@ -122,7 +122,7 @@ export class Editor extends Component<{}, IEditorState> {
                 <div className="right-pane">
                     <Preview
                         scrollPercentage={editorScrollPercentage}
-                        content={currentDoc.content}
+                        previewContent={renderedContent}
                         onScroll={this.handlePreviewScroll}
                         onFocus={this.handlePreviewFocus}
                         onBlur={this.handlePreviewBlur}
@@ -154,6 +154,7 @@ export class Editor extends Component<{}, IEditorState> {
             currentDoc,
             docRepo
         });
+        debugger;
     };
 
     private handleEditorScroll = (e: any) => {

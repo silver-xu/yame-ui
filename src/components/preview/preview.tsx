@@ -1,26 +1,16 @@
 import React, { Component } from 'react';
-import * as showdown from 'showdown';
-const showdownHighlight = require('showdown-highlight');
 
 import './preview.scss';
 import 'highlight.js/styles/vs.css';
-import { render } from 'react-dom';
 
 export interface IPreviewProps {
-    content: string;
+    previewContent: string;
     scrollPercentage: number;
     onScroll: (scrollPercentage: number) => void;
     onFocus: () => void;
     onBlur: () => void;
     onMouseDown: () => void;
 }
-
-const converter = new showdown.Converter({
-    tables: true,
-    smoothLivePreview: true,
-    requireSpaceBeforeHeadingText: true,
-    extensions: [showdownHighlight]
-});
 
 export class Preview extends Component<IPreviewProps> {
     previewRef: React.RefObject<HTMLDivElement>;
@@ -39,8 +29,12 @@ export class Preview extends Component<IPreviewProps> {
     }
 
     public render() {
-        const { content, onFocus, onBlur, onMouseDown } = this.props;
-        const previewContent = converter.makeHtml(content);
+        const {
+            previewContent: content,
+            onFocus,
+            onBlur,
+            onMouseDown
+        } = this.props;
 
         return (
             <div className="preview-wrapper">
@@ -51,9 +45,7 @@ export class Preview extends Component<IPreviewProps> {
                     onMouseEnter={onFocus}
                     onMouseLeave={onBlur}
                     onMouseDown={onMouseDown}
-                    dangerouslySetInnerHTML={this.injectPreviewMarkup(
-                        previewContent
-                    )}
+                    dangerouslySetInnerHTML={this.injectPreviewMarkup(content)}
                 />
             </div>
         );

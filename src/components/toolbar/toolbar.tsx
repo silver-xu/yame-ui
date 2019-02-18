@@ -58,6 +58,11 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                                     iconClassNames: 'fa fa-file-text'
                                 },
                                 {
+                                    text: 'From Computer',
+                                    action: () => {},
+                                    iconClassNames: 'fa fa-folder-open'
+                                },
+                                {
                                     text: '-'
                                 },
                                 {
