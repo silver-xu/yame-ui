@@ -12,6 +12,7 @@ import 'easymde/dist/easymde.min.css';
 import './editor.scss';
 import { SideBar } from '../side-bar';
 import classnames from 'classnames';
+import { FileMenu } from '../file-menu/file-menu';
 
 export interface IEditorState {
     editorScrollPercentage: number;
@@ -43,7 +44,8 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage,
             toolbarOutOfFocus,
             currentDoc,
-            fileMenuOpen
+            fileMenuOpen,
+            docRepo
         } = this.state;
 
         const { renderedContent, statistics } = currentDoc;
@@ -141,7 +143,13 @@ export class Editor extends Component<{}, IEditorState> {
                         onMouseDown={this.handleEditorAndPreviewClick}
                     />
                 </div>
-                <SideBar isOpen={fileMenuOpen} />
+                <SideBar isOpen={fileMenuOpen}>
+                    <FileMenu
+                        onNewFileClicked={this.handleNewFileClicked}
+                        docs={docRepo.docs}
+                        currentDocId={currentDoc.id}
+                    />
+                </SideBar>
                 <div className="status-bar">{statusText}</div>
             </div>
         );
@@ -192,5 +200,15 @@ export class Editor extends Component<{}, IEditorState> {
 
     private handleFileMenuToggle = (fileMenuOpen: boolean) => {
         this.setState({ fileMenuOpen });
+    };
+
+    private handleNewFileClicked = () => {
+        const { docRepo, currentDoc } = this.state;
+
+        const newDoc = docRepo.newDoc();
+        this.setState({
+            docRepo,
+            currentDoc: newDoc
+        });
     };
 }

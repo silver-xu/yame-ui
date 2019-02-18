@@ -1,4 +1,6 @@
 import { Doc } from './doc';
+import { addDocToRepo } from '../services/repo-service';
+import uuidv4 from 'uuid/v4';
 
 export class DocRepo {
     docs: { [id: string]: Doc };
@@ -22,6 +24,18 @@ export class DocRepo {
 
         return new DocRepo(newDocs, plainDocRepo.lastOpenedDocId);
     }
+
+    public newDoc = (): Doc => {
+        const newDoc = new Doc(
+            uuidv4(),
+            'My document 2',
+            'hello world',
+            new Date()
+        );
+
+        addDocToRepo(newDoc, this);
+        return newDoc;
+    };
 }
 
 export interface IDocStatistics {

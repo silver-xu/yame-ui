@@ -22,6 +22,7 @@ export const getRepoFromCache = (): DocRepo => {
 
 export const addDocToRepo = (doc: Doc, docRepo: DocRepo) => {
     docRepo.docs[doc.id] = doc;
+    docRepo.lastOpenedDocId = doc.id;
     cacheRepo(docRepo);
 };
 

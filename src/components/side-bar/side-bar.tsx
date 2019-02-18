@@ -1,9 +1,9 @@
-import React, { ReactChildren } from 'react';
+import React, { ReactNode } from 'react';
 import './side-bar.scss';
 
 export interface ISideBarProps {
     isOpen: boolean;
-    children?: ReactChildren;
+    children?: ReactNode;
 }
 export const SideBar = (props: ISideBarProps) => {
     const { isOpen, children } = props;
