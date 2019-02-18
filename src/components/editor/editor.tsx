@@ -19,7 +19,6 @@ export interface IEditorState {
     toolbarOutOfFocus: boolean;
     fileMenuOpen: boolean;
     docRepo: DocRepo;
-    currentDoc: Doc;
 }
 
 export class Editor extends Component<{}, IEditorState> {
@@ -33,7 +32,6 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage: 0,
             toolbarOutOfFocus: true,
             docRepo,
-            currentDoc: getDocFromRepo(docRepo.lastOpenedDocId, docRepo),
             fileMenuOpen: false
         };
         this.previewInFocus = false;
@@ -43,12 +41,11 @@ export class Editor extends Component<{}, IEditorState> {
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
-            currentDoc,
             fileMenuOpen,
             docRepo
         } = this.state;
-
-        const { renderedContent, statistics } = currentDoc;
+        debugger;
+        const { renderedContent, statistics } = docRepo.currentDoc;
         const statusText = (
             <React.Fragment>
                 Markdown | <b>{statistics.charCount}</b> chars |{' '}
@@ -66,13 +63,13 @@ export class Editor extends Component<{}, IEditorState> {
             >
                 <Toolbar
                     lostFocus={toolbarOutOfFocus}
-                    docname={currentDoc.docname}
+                    docname={docRepo.currentDoc.docname}
                     onFileMenuToggle={this.handleFileMenuToggle}
                     fileMenuOpen={fileMenuOpen}
                 />
                 <div className="left-pane">
                     <SimpleMDE
-                        value={currentDoc.content}
+                        value={docRepo.currentDoc.content}
                         onChange={this.handleEditorChange}
                         getMdeInstance={this.getInstance}
                         events={{
@@ -146,8 +143,9 @@ export class Editor extends Component<{}, IEditorState> {
                 <SideBar isOpen={fileMenuOpen}>
                     <FileMenu
                         onNewFileClicked={this.handleNewFileClicked}
-                        docs={docRepo.docs}
-                        currentDocId={currentDoc.id}
+                        onFileOpenClicked={this.handleFileOpenClicked}
+                        onFileRemoveClicked={this.handleFileRemoveClicked}
+                        docRepo={docRepo}
                     />
                 </SideBar>
                 <div className="status-bar">{statusText}</div>
@@ -168,11 +166,10 @@ export class Editor extends Component<{}, IEditorState> {
         this.previewInFocus = false;
     };
     private handleEditorChange = (value: string) => {
-        const { docRepo, currentDoc } = this.state;
-        currentDoc.content = value;
-        updateDocInRepo(currentDoc, docRepo);
+        const { docRepo } = this.state;
+        docRepo.currentDoc.content = value;
+        docRepo.updateDoc(docRepo.currentDoc);
         this.setState({
-            currentDoc,
             docRepo
         });
         debugger;
@@ -203,12 +200,27 @@ export class Editor extends Component<{}, IEditorState> {
     };
 
     private handleNewFileClicked = () => {
-        const { docRepo, currentDoc } = this.state;
+        const { docRepo } = this.state;
 
         const newDoc = docRepo.newDoc();
         this.setState({
-            docRepo,
-            currentDoc: newDoc
+            docRepo
+        });
+    };
+
+    private handleFileOpenClicked = (id: string) => {
+        const { docRepo } = this.state;
+        docRepo.openDoc(id);
+        this.setState({
+            docRepo
+        });
+    };
+
+    private handleFileRemoveClicked = () => {
+        const { docRepo } = this.state;
+        docRepo.removeDoc(docRepo.currentDoc.id);
+        this.setState({
+            docRepo
         });
     };
 }

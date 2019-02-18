@@ -1,38 +1,22 @@
 import React from 'react';
-import { Doc } from '../../types';
+import { Doc, DocRepo } from '../../types';
 import './file-menu.scss';
 import classnames from 'classnames';
 
 export interface IFileMenuProps {
-    docs: { [id: string]: Doc };
-    currentDocId: string;
+    docRepo: DocRepo;
     onNewFileClicked: () => void;
+    onFileOpenClicked: (id: string) => void;
+    onFileRemoveClicked: () => void;
 }
 
-const orderDocsByDateDesc = (docs: { [id: string]: Doc }): Doc[] => {
-    const docsArray = Object.keys(docs).map(id => {
-        return docs[id];
-    });
-
-    return docsArray.sort(
-        (a: Doc, b: Doc): number => {
-            debugger;
-            return (
-                new Date(b.lastModified).getTime() -
-                new Date(a.lastModified).getTime()
-            );
-        }
-    );
-};
-
 export const FileMenu = (props: IFileMenuProps) => {
-    const { docs, currentDocId } = props;
-    const orderedDocs = orderDocsByDateDesc(docs);
+    const { docRepo, onFileOpenClicked } = props;
     return (
         <div className="file-menu">
             <ul className="menu-header">
                 <li onClick={props.onNewFileClicked}>
-                    <i className="fa fa-file" />
+                    <i className="fa fa-plus" />
                 </li>
                 <li>
                     <i className="fa fa-trash-o" />
@@ -40,15 +24,26 @@ export const FileMenu = (props: IFileMenuProps) => {
                 <li>
                     <i className="fa fa-cloud-upload" />
                 </li>
+                <li>
+                    <i className="fa fa-download" />
+                </li>
+                <li>
+                    <i className="fa fa-file-pdf-o" />
+                </li>
+                <li>
+                    <i className="fa fa-file-word-o" />
+                </li>
             </ul>
             <ul className="file-list">
-                {orderedDocs.map(doc => (
+                {docRepo.sortedDocs.map(doc => (
                     <li
+                        key={doc.id}
                         className={classnames({
-                            active: currentDocId === doc.id
+                            active: docRepo.currentDocId === doc.id
                         })}
+                        onClick={() => onFileOpenClicked(doc.id)}
                     >
-                        {currentDocId === doc.id ? (
+                        {docRepo.currentDocId === doc.id ? (
                             <i className="fa fa-check" />
                         ) : (
                             <i className="placeholder" />

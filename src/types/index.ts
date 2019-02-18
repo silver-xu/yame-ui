@@ -1,13 +1,35 @@
 import { Doc } from './doc';
-import { addDocToRepo } from '../services/repo-service';
+import {
+    addDocToRepo,
+    openDocInRepo,
+    removeDocFromRepo,
+    updateDocInRepo
+} from '../services/repo-service';
 import uuidv4 from 'uuid/v4';
 
 export class DocRepo {
     docs: { [id: string]: Doc };
-    lastOpenedDocId: string;
-    constructor(docs: { [id: string]: Doc }, lastOpenedDocId: string) {
+    currentDocId: string;
+    constructor(docs: { [id: string]: Doc }) {
         this.docs = docs;
-        this.lastOpenedDocId = lastOpenedDocId;
+        this.currentDocId = this.sortedDocs[0].id;
+    }
+
+    get sortedDocs(): Doc[] {
+        return Object.keys(this.docs)
+            .map(id => {
+                return this.docs[id];
+            })
+            .sort((a: Doc, b: Doc) => {
+                return (
+                    new Date(b.lastModified).getTime() -
+                    new Date(a.lastModified).getTime()
+                );
+            });
+    }
+
+    get currentDoc(): Doc {
+        return this.docs[this.currentDocId];
     }
 
     static parseFromJson(jsonString: string) {
@@ -22,7 +44,7 @@ export class DocRepo {
             );
         }
 
-        return new DocRepo(newDocs, plainDocRepo.lastOpenedDocId);
+        return new DocRepo(newDocs);
     }
 
     public newDoc = (): Doc => {
@@ -35,6 +57,18 @@ export class DocRepo {
 
         addDocToRepo(newDoc, this);
         return newDoc;
+    };
+
+    public openDoc = (id: string) => {
+        openDocInRepo(this.docs[id], this);
+    };
+
+    public removeDoc = (id: string) => {
+        removeDocFromRepo(this.docs[id], this);
+    };
+
+    public updateDoc = (doc: Doc) => {
+        updateDocInRepo(doc, this);
     };
 }
 
