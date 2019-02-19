@@ -1,5 +1,5 @@
-import { Doc, DocRepo } from '../types';
 import uuidv4 from 'uuid/v4';
+import { Doc, DocRepo } from '../types';
 
 export const cacheRepo = (docRepo: DocRepo) => {
     const encodedDocRepo = JSON.stringify(docRepo);

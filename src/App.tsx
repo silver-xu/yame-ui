@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import Editor from "./components/editor";
-import "./App.css";
+import React, { Component } from 'react';
+import './App.css';
+import Editor from './components/editor';
 
 class App extends Component {
   public render() {

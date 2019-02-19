@@ -1,7 +1,30 @@
-import React from 'react';
-import { Doc, DocRepo } from '../../types';
-import './file-menu.scss';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import {
+    faCheck,
+    faCloudUploadAlt,
+    faDownload,
+    faFilePdf,
+    faFileWord,
+    faIgloo,
+    faPlus,
+    faTrash
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import React from 'react';
+import { DocRepo } from '../../types';
+import './file-menu.scss';
+
+library.add(
+    faIgloo,
+    faPlus,
+    faTrash,
+    faCloudUploadAlt,
+    faDownload,
+    faFilePdf,
+    faFileWord,
+    faCheck
+);
 
 export interface IFileMenuProps {
     docRepo: DocRepo;
@@ -16,22 +39,34 @@ export const FileMenu = (props: IFileMenuProps) => {
         <div className="file-menu">
             <ul className="menu-header">
                 <li onClick={props.onNewFileClicked}>
-                    <i className="fa fa-plus" />
+                    <i>
+                        <FontAwesomeIcon icon="plus" />
+                    </i>
+                </li>
+                <li onClick={props.onFileRemoveClicked}>
+                    <i>
+                        <FontAwesomeIcon icon="trash" />
+                    </i>
                 </li>
                 <li>
-                    <i className="fa fa-trash-o" />
+                    <i>
+                        <FontAwesomeIcon icon="cloud-upload-alt" />
+                    </i>
                 </li>
                 <li>
-                    <i className="fa fa-cloud-upload" />
+                    <i>
+                        <FontAwesomeIcon icon="download" />
+                    </i>
                 </li>
                 <li>
-                    <i className="fa fa-download" />
+                    <i>
+                        <FontAwesomeIcon icon="file-pdf" />
+                    </i>
                 </li>
                 <li>
-                    <i className="fa fa-file-pdf-o" />
-                </li>
-                <li>
-                    <i className="fa fa-file-word-o" />
+                    <i>
+                        <FontAwesomeIcon icon="file-word" />
+                    </i>
                 </li>
             </ul>
             <ul className="file-list">
@@ -41,14 +76,20 @@ export const FileMenu = (props: IFileMenuProps) => {
                         className={classnames({
                             active: docRepo.currentDocId === doc.id
                         })}
+                        // tslint:disable-next-line:jsx-no-lambda
                         onClick={() => onFileOpenClicked(doc.id)}
                     >
                         {docRepo.currentDocId === doc.id ? (
-                            <i className="fa fa-check" />
+                            <i>
+                                <FontAwesomeIcon icon="check" />
+                            </i>
                         ) : (
                             <i className="placeholder" />
                         )}
-                        {doc.docname}
+                        {doc.docname}{' '}
+                        <span>
+                            modified {doc.friendlyLastModifiedTimespan} ago
+                        </span>
                     </li>
                 ))}
             </ul>

@@ -1,14 +1,9 @@
 @import '../../styles/render.scss';
 @import '../../styles/colors.scss';
 
-.CodeMirror,
-#simplemde-editor-1-wrapper {
-    height: 100% !important;
-}
-
 .CodeMirror {
     border: none;
-
+    height: 100%;
     width: 100%;
 
     pre {
@@ -71,6 +66,10 @@
 
 .left-pane {
     left: 0;
+
+    > div {
+        height: 100% !important;
+    }
 }
 
 .right-pane {

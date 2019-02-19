@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import './preview.scss';
 import 'highlight.js/styles/vs.css';
+import './preview.scss';
 
 export interface IPreviewProps {
     previewContent: string;
@@ -13,7 +13,7 @@ export interface IPreviewProps {
 }
 
 export class Preview extends Component<IPreviewProps> {
-    previewRef: React.RefObject<HTMLDivElement>;
+    public previewRef: React.RefObject<HTMLDivElement>;
     constructor(props: IPreviewProps) {
         super(props);
         this.previewRef = React.createRef();

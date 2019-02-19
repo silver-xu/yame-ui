@@ -1,7 +1,10 @@
-import React from 'react';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faFolder, faShare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import React from 'react';
 import './toolbar.scss';
-
+library.add(faFolder, faShare);
 export interface IToolbarProps {
     lostFocus: boolean;
     docname: string;
@@ -30,18 +33,19 @@ export class Toolbar extends React.Component<IToolbarProps> {
                     <input type="text" value={docname} />
                 </div>
                 <ul>
-                    <li>
+                    <li onClick={this.toggleFileMenu}>
                         <i
                             className={classnames({
-                                fa: true,
-                                'fa-folder': true,
                                 active: fileMenuOpen
                             })}
-                            onClick={this.toggleFileMenu}
-                        />
+                        >
+                            <FontAwesomeIcon icon="folder" />
+                        </i>
                     </li>
                     <li>
-                        <i className="fa fa-share" />
+                        <i>
+                            <FontAwesomeIcon icon="share" />
+                        </i>
                     </li>
                 </ul>
             </div>

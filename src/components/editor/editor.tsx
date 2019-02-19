@@ -1,24 +1,22 @@
+import classnames from 'classnames';
+import 'easymde/dist/easymde.min.css';
 import React, { Component } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
-import Preview from '../preview';
-import Toolbar from '../toolbar';
-import { DocRepo, Doc } from '../../types';
-import {
-    getRepoFromCache,
-    getDocFromRepo,
-    updateDocInRepo
-} from '../../services/repo-service';
-import 'easymde/dist/easymde.min.css';
-import './editor.scss';
-import { SideBar } from '../side-bar';
-import classnames from 'classnames';
+import uuidv4 from 'uuid/v4';
+import { getRepoFromCache } from '../../services/repo-service';
+import { DocRepo } from '../../types';
 import { FileMenu } from '../file-menu/file-menu';
+import Preview from '../preview';
+import { SideBar } from '../side-bar';
+import Toolbar from '../toolbar';
+import './editor.scss';
 
 export interface IEditorState {
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
     fileMenuOpen: boolean;
     docRepo: DocRepo;
+    editorKey: string;
 }
 
 export class Editor extends Component<{}, IEditorState> {
@@ -32,7 +30,8 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage: 0,
             toolbarOutOfFocus: true,
             docRepo,
-            fileMenuOpen: false
+            fileMenuOpen: false,
+            editorKey: uuidv4()
         };
         this.previewInFocus = false;
     }
@@ -42,9 +41,10 @@ export class Editor extends Component<{}, IEditorState> {
             editorScrollPercentage,
             toolbarOutOfFocus,
             fileMenuOpen,
-            docRepo
+            docRepo,
+            editorKey
         } = this.state;
-        debugger;
+
         const { renderedContent, statistics } = docRepo.currentDoc;
         const statusText = (
             <React.Fragment>
@@ -69,9 +69,10 @@ export class Editor extends Component<{}, IEditorState> {
                 />
                 <div className="left-pane">
                     <SimpleMDE
-                        value={docRepo.currentDoc.content}
+                        key={editorKey}
                         onChange={this.handleEditorChange}
                         getMdeInstance={this.getInstance}
+                        value={docRepo.currentDoc.content}
                         events={{
                             change: () => {},
                             changes: () => {},
@@ -172,7 +173,6 @@ export class Editor extends Component<{}, IEditorState> {
         this.setState({
             docRepo
         });
-        debugger;
     };
 
     private handleEditorScroll = (e: any) => {
@@ -212,7 +212,8 @@ export class Editor extends Component<{}, IEditorState> {
         const { docRepo } = this.state;
         docRepo.openDoc(id);
         this.setState({
-            docRepo
+            docRepo,
+            editorKey: uuidv4()
         });
     };
 
