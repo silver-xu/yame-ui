@@ -204,7 +204,8 @@ export class Editor extends Component<{}, IEditorState> {
 
         const newDoc = docRepo.newDoc();
         this.setState({
-            docRepo
+            docRepo,
+            editorKey: uuidv4()
         });
     };
 
@@ -221,7 +222,8 @@ export class Editor extends Component<{}, IEditorState> {
         const { docRepo } = this.state;
         docRepo.removeDoc(docRepo.currentDoc.id);
         this.setState({
-            docRepo
+            docRepo,
+            editorKey: uuidv4()
         });
     };
 }
