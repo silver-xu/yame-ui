@@ -36,7 +36,7 @@ export class DocRepo {
         Object.entries(plainDocRepo.docs).forEach(([id, doc]) => {
             newDocs[id] = new Doc(
                 doc.id,
-                doc.docname,
+                doc.docName,
                 doc.content,
                 doc.lastModified
             );
@@ -44,8 +44,10 @@ export class DocRepo {
 
         return new DocRepo(newDocs);
     }
+
     public docs: { [id: string]: Doc };
     public currentDocId: string;
+
     constructor(docs: { [id: string]: Doc }) {
         this.docs = docs;
         this.currentDocId = this.sortedDocs[0].id;
@@ -71,6 +73,11 @@ export class DocRepo {
         removeDocFromRepo(this.docs[id], this);
     };
 
+    public updateDocName = (doc: Doc, newDocName: string) => {
+        doc.docName = newDocName;
+        this.updateDoc(doc);
+    };
+
     public updateDoc = (doc: Doc) => {
         updateDocInRepo(doc, this);
     };
@@ -80,7 +87,7 @@ export class DocRepo {
 
         while (
             this.enumerableDocs.find(
-                doc => doc.docname === `${newDocNamePrefix} ${i}`
+                doc => doc.docName === `${newDocNamePrefix} ${i}`
             )
         ) {
             i++;

@@ -2,6 +2,7 @@ import * as showdown from 'showdown';
 import { IDocStatistics } from '.';
 import { getDocStatistics } from '../services/doc-service';
 import { getShortFriendlyDateDifference } from '../utils/time';
+// tslint:disable-next-line:no-var-requires
 const showdownHighlight = require('showdown-highlight');
 
 const converter = new showdown.Converter({
@@ -13,18 +14,18 @@ const converter = new showdown.Converter({
 
 export class Doc {
     public id: string;
-    public docname: string;
+    public docName: string;
     public content: string;
     public lastModified: Date;
 
     constructor(
         id: string,
-        docname: string,
+        docName: string,
         content: string,
         lastModified: Date
     ) {
         this.id = id;
-        this.docname = docname;
+        this.docName = docName;
         this.content = content;
         this.lastModified = new Date(lastModified);
     }

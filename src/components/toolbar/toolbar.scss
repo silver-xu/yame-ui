@@ -1,31 +1,31 @@
 @import '../../styles/colors.scss';
 
 .toolbar-extra {
-    padding: 7px;
+    padding: 7.5px;
     box-sizing: border-box;
     position: fixed;
     top: 0;
     right: 0;
     background: $dark-gray;
-    width: 300px;
     font-size: 20px;
     color: $medium-lite-gray;
     display: flex;
     justify-content: space-between;
     z-index: 1000;
-
     .filename {
-        width: 200px;
-
         input {
             border: 0;
             background: $dark-gray;
             color: $white;
-            padding: 8px 0;
+            padding: 8px 10px;
             margin: 0;
             font-size: 20px;
             text-align: center;
-            width: 200px;
+            border-radius: 5px;
+            width: 100px;
+            &.error {
+                background: $error-bg;
+            }
 
             &:focus {
                 outline: none;
@@ -42,7 +42,6 @@
 
         > li {
             margin: 0 5px;
-
             list-style: none;
             position: relative;
 

@@ -12,7 +12,6 @@ export const getRepoFromCache = (): DocRepo => {
         ? DocRepo.parseFromJson(encodedDocRepo)
         : null;
 
-    // cachedDocRepo && Object.setPrototypeOf(cachedDocRepo, DocRepo.prototype);
     if (cachedDocRepo && Object.keys(cachedDocRepo.docs).length > 0) {
         return cachedDocRepo;
     } else {
@@ -50,13 +49,11 @@ export const updateDocInRepo = (doc: Doc, docRepo: DocRepo) => {
 };
 
 const initNewRepo = () => {
-    const doc = new Doc('My document 1', 'hello world', uuidv4(), new Date());
-    const docs: { [id: string]: Doc } = {};
-    docs[doc.id] = doc;
+    const doc = new Doc(uuidv4(), 'My document 1', 'hello world', new Date());
+    const docs: { [id: string]: Doc } = {
+        [doc.id]: doc
+    };
     const docRepo = new DocRepo(docs);
-
-    addDocToRepo(doc, docRepo);
-    docRepo.currentDocId = doc.id;
     cacheRepo(docRepo);
 
     return docRepo;

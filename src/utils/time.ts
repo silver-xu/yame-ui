@@ -15,7 +15,9 @@ const getDifferenceInMs = (date1: Date, date2: Date): number => {
 };
 
 const pluralize = (num: number, word: string): string => {
-    if (num > 1) { return word + 's'; }
+    if (num > 1) {
+        return word + 's';
+    }
     return word;
 };
 
@@ -57,29 +59,25 @@ export const getShortFriendlyDateDifference = (
             dateDifference.weeks,
             'week'
         )}`;
-    }
-    else if (dateDifference.days) {
+    } else if (dateDifference.days) {
         return `${dateDifference.days} ${pluralize(
             dateDifference.days,
             'day'
         )}`;
-         }
-    else if (dateDifference.hours) {
+    } else if (dateDifference.hours) {
         return `${dateDifference.hours} ${pluralize(
             dateDifference.hours,
             'hour'
         )}`;
-         }
-    else if (dateDifference.minutes) {
+    } else if (dateDifference.minutes) {
         return `${dateDifference.minutes} ${pluralize(
             dateDifference.minutes,
-            'minute'
+            'min'
         )}`;
-         }
-    else {
+    } else {
         return `${dateDifference.seconds} ${pluralize(
             dateDifference.seconds,
-            'second'
+            'sec'
         )}`;
-         }
+    }
 };

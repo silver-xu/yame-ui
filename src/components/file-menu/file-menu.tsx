@@ -5,9 +5,8 @@ import {
     faDownload,
     faFilePdf,
     faFileWord,
-    faIgloo,
     faPlus,
-    faTrash
+    faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
@@ -16,9 +15,8 @@ import { DocRepo } from '../../types';
 import './file-menu.scss';
 
 library.add(
-    faIgloo,
     faPlus,
-    faTrash,
+    faTrashAlt,
     faCloudUploadAlt,
     faDownload,
     faFilePdf,
@@ -35,6 +33,7 @@ export interface IFileMenuProps {
 
 export const FileMenu = (props: IFileMenuProps) => {
     const { docRepo, onFileOpenClicked } = props;
+
     return (
         <div className="file-menu">
             <ul className="menu-header">
@@ -45,7 +44,7 @@ export const FileMenu = (props: IFileMenuProps) => {
                 </li>
                 <li onClick={props.onFileRemoveClicked}>
                     <i>
-                        <FontAwesomeIcon icon="trash" />
+                        <FontAwesomeIcon icon="trash-alt" />
                     </i>
                 </li>
                 <li>
@@ -86,9 +85,11 @@ export const FileMenu = (props: IFileMenuProps) => {
                         ) : (
                             <i className="placeholder" />
                         )}
-                        {doc.docname}{' '}
-                        <span>
-                            modified {doc.friendlyLastModifiedTimespan} ago
+                        <span className="doc-name">
+                            {doc.docName.length > 0 ? doc.docName : 'Unamed'}
+                        </span>
+                        <span className="time-span">
+                            {doc.friendlyLastModifiedTimespan} ago
                         </span>
                     </li>
                 ))}

@@ -63,7 +63,8 @@ export class Editor extends Component<{}, IEditorState> {
             >
                 <Toolbar
                     lostFocus={toolbarOutOfFocus}
-                    docname={docRepo.currentDoc.docname}
+                    docName={docRepo.currentDoc.docName}
+                    onDocNameChange={this.handleDocNameChange}
                     onFileMenuToggle={this.handleFileMenuToggle}
                     fileMenuOpen={fileMenuOpen}
                 />
@@ -225,5 +226,11 @@ export class Editor extends Component<{}, IEditorState> {
             docRepo,
             editorKey: uuidv4()
         });
+    };
+
+    private handleDocNameChange = (newDocName: string) => {
+        const { docRepo } = this.state;
+        docRepo.updateDocName(docRepo.currentDoc, newDocName);
+        this.setState({ docRepo });
     };
 }
