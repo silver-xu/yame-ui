@@ -1,4 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 import {
     faFolder,
     faShare,
@@ -7,9 +8,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import './toolbar.scss';
-library.add(faFolder, faShare, faUser, faSync);
+library.add(faFolder, faShare, faUser, faSync, fab);
 export interface IToolbarProps {
     lostFocus: boolean;
     docName: string;
@@ -61,18 +62,14 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                         className={classnames({ error: docName.length === 0 })}
                         onKeyUp={this.handleDocNameKeyup}
                         onChange={this.handleDocNameChange}
-                        placeholder="Enter name"
+                        placeholder="Enter title"
+                        maxLength={15}
                     />
                 </div>
                 <ul>
                     <li>
                         <i>
-                            <FontAwesomeIcon icon="user" />
-                        </i>
-                    </li>
-                    <li>
-                        <i>
-                            <FontAwesomeIcon icon="sync" />
+                            <FontAwesomeIcon icon={['fab', 'firefox']} />
                         </i>
                     </li>
                     <li onClick={this.toggleFileMenu}>
@@ -87,6 +84,11 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                     <li>
                         <i>
                             <FontAwesomeIcon icon="share" />
+                        </i>
+                    </li>
+                    <li>
+                        <i>
+                            <FontAwesomeIcon icon="user" />
                         </i>
                     </li>
                 </ul>

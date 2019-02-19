@@ -7,25 +7,27 @@
         background: $medium-gray;
         display: flex;
         padding: 5px;
+        box-sizing: border-box;
         margin: 0;
 
         li {
             list-style: none;
-            padding: 10px 0;
-            margin: 5px 0;
             font-size: 20px;
             color: $dark-gray;
-            width: 16.66%;
+            width: 14.28%;
+            height: 35px;
             text-align: center;
             cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            border-radius: 5px;
 
+            &:hover {
+                background: $lite-gray;
+            }
             i {
-                display: blocck;
-                padding: 10px 15px;
-                border-radius: 5px;
-                &:hover {
-                    background: $lite-gray;
-                }
+                display: block;
             }
 
             &.active {

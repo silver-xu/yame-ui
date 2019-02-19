@@ -8,6 +8,7 @@ import {
     faPlus,
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import React from 'react';
@@ -86,7 +87,9 @@ export const FileMenu = (props: IFileMenuProps) => {
                             <i className="placeholder" />
                         )}
                         <span className="doc-name">
-                            {doc.docName.length > 0 ? doc.docName : 'Unamed'}
+                            {doc.docName.length > 0
+                                ? doc.docName
+                                : 'Untitled file'}
                         </span>
                         <span className="time-span">
                             {doc.friendlyLastModifiedTimespan} ago
