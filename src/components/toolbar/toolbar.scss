@@ -1,7 +1,7 @@
 @import '../../styles/colors.scss';
 
 .toolbar-extra {
-    padding: 7.5px;
+    height: 54px;
     box-sizing: border-box;
     position: fixed;
     top: 0;
@@ -11,6 +11,7 @@
     color: $medium-lite-gray;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     z-index: 1000;
     .filename {
         input {
