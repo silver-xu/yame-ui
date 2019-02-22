@@ -9,8 +9,14 @@ export interface IDocStatistics {
 
 export interface IUser {
     id: string;
-    email: string;
-    repo: DocRepo;
+    email?: string;
+    isAnonymous: boolean;
+}
+
+export interface IDocRepoMutation {
+    newDocs: Doc[];
+    updatedDocs: Doc[];
+    deletedDocIds: string[];
 }
 
 export { Doc, DocRepo };

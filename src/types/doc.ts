@@ -44,4 +44,13 @@ export class Doc {
             this.lastModified
         )}`;
     }
+
+    public equals = (comparisonDoc: Doc): boolean => {
+        return (
+            this.content === comparisonDoc.content &&
+            this.docName === comparisonDoc.docName &&
+            this.lastModified.toISOString() ===
+                comparisonDoc.lastModified.toISOString()
+        );
+    };
 }

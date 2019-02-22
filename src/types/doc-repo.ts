@@ -29,8 +29,38 @@ export class DocRepo {
         return this.docs[this.currentDocId];
     }
 
-    public static parseFromJson(jsonString: string) {
+    public static parseFromJson(jsonString: string): DocRepo {
         const plainDocRepo = JSON.parse(jsonString) as DocRepo;
+        const newDocs: { [id: string]: Doc } = {};
+
+        Object.entries(plainDocRepo.docs).forEach(([id, doc]) => {
+            newDocs[id] = new Doc(
+                doc.id,
+                doc.docName,
+                doc.content,
+                doc.lastModified
+            );
+        });
+
+        return new DocRepo(newDocs);
+    }
+
+    public static parseFromResponse(docRepoResponse: any): DocRepo {
+        const newDocs: { [id: string]: Doc } = {};
+        docRepoResponse.docs.forEach((doc: any) => {
+            newDocs[doc.id] = new Doc(
+                doc.id,
+                doc.docName,
+                doc.content,
+                doc.lastModified
+            );
+        });
+
+        return new DocRepo(newDocs);
+    }
+
+    public clone(): DocRepo {
+        const plainDocRepo = { ...this } as DocRepo;
         const newDocs: { [id: string]: Doc } = {};
 
         Object.entries(plainDocRepo.docs).forEach(([id, doc]) => {

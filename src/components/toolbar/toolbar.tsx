@@ -35,9 +35,9 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
     public componentWillReceiveProps(nextProps: IToolbarState) {
         const { docName } = nextProps;
-        this.state = {
+        this.setState({
             docName
-        };
+        });
     }
 
     public render() {
@@ -114,6 +114,6 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
     private calculateDocNameWidth = (): number => {
         const { docName } = this.state;
-        return docName.length * 10 + 10;
+        return docName.length * 12 + 10;
     };
 }
