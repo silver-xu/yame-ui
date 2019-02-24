@@ -8,9 +8,16 @@ export interface IDocStatistics {
 }
 
 export interface IUser {
-    id: string;
-    email?: string;
-    isAnonymous: boolean;
+    authToken: string;
+    userId: string;
+    isValid: boolean;
+    username: string;
+    userType: UserType;
+}
+
+export enum UserType {
+    Anonymous = 'Anonymous',
+    Facebook = 'FB'
 }
 
 export interface IDocRepoMutation {

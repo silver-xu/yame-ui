@@ -59,6 +59,14 @@ export class DocRepo {
         return new DocRepo(newDocs);
     }
 
+    public docs: { [id: string]: Doc };
+    public currentDocId: string;
+
+    constructor(docs: { [id: string]: Doc }) {
+        this.docs = docs;
+        this.currentDocId = this.sortedDocs[0].id;
+    }
+
     public clone(): DocRepo {
         const plainDocRepo = { ...this } as DocRepo;
         const newDocs: { [id: string]: Doc } = {};
@@ -73,14 +81,6 @@ export class DocRepo {
         });
 
         return new DocRepo(newDocs);
-    }
-
-    public docs: { [id: string]: Doc };
-    public currentDocId: string;
-
-    constructor(docs: { [id: string]: Doc }) {
-        this.docs = docs;
-        this.currentDocId = this.sortedDocs[0].id;
     }
 
     public newDoc = (): Doc => {

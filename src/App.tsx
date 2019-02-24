@@ -4,9 +4,25 @@ import React, { Component } from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
 import './App.css';
 import Editor from './components/editor';
-import { DocRepo } from './types';
+import {
+    saveAnonymousAuthToken,
+    saveFacebookAuthToken
+} from './services/auth-service';
+import { DocRepo, IUser, UserType } from './types';
 
 const API_URL = 'http://localhost:3001/graphql';
+
+const refreshAuthToken = (currentUser: IUser) => {
+    if (currentUser) {
+        currentUser.userType === UserType.Facebook
+            ? saveFacebookAuthToken(currentUser.authToken)
+            : saveAnonymousAuthToken(currentUser.authToken);
+    }
+};
+
+const getAuthToken = () => {
+    return localStorage.getItem('authToken') || '';
+};
 
 class App extends Component {
     private client: ApolloClient<{}>;
@@ -23,6 +39,8 @@ class App extends Component {
             currentUser {
                 userId
                 userType
+                authToken
+                userName
             }
             defaultDoc {
                 namePrefix
@@ -35,7 +53,9 @@ class App extends Component {
         super(props);
 
         this.client = new ApolloClient({
-            uri: API_URL
+            headers: {
+                Authorization: getAuthToken()
+            }
         });
     }
 
@@ -44,9 +64,14 @@ class App extends Component {
             <ApolloProvider client={this.client}>
                 <Query query={this.DOC_REPO_QUERY}>
                     {({ loading, error, data }) => {
-                        const docRepo = data.docRepo
-                            ? DocRepo.parseFromResponse(data.docRepo)
-                            : undefined;
+                        const docRepo =
+                            data && data.docRepo
+                                ? DocRepo.parseFromResponse(data.docRepo)
+                                : undefined;
+
+                        if (data && data.currentUser) {
+                            refreshAuthToken(data.currentUser);
+                        }
 
                         return docRepo ? (
                             <div className="App">
