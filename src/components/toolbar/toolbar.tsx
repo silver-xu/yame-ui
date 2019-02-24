@@ -11,12 +11,19 @@ import classnames from 'classnames';
 import React from 'react';
 import './toolbar.scss';
 library.add(faFolder, faShare, faUser, faSync, fab);
+
+export enum Menu {
+    File = 'File',
+    Share = 'Share',
+    UserProfile = 'UserProfile'
+}
+
 export interface IToolbarProps {
     lostFocus: boolean;
     docName: string;
-    fileMenuOpen: boolean;
+    activeMenu?: Menu;
     onDocNameChange: (newName: string) => void;
-    onFileMenuToggle: (fileMenuOpen: boolean) => void;
+    onMenuToggle: (menu: Menu) => void;
 }
 
 export interface IToolbarState {
@@ -24,6 +31,8 @@ export interface IToolbarState {
 }
 
 export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
+    private menus: Menu[];
+
     constructor(props: IToolbarProps) {
         super(props);
 
@@ -31,6 +40,7 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
         this.state = {
             docName
         };
+        this.menus = [Menu.File, Menu.Share, Menu.UserProfile];
     }
 
     public componentWillReceiveProps(nextProps: IToolbarState) {
@@ -41,7 +51,7 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
     }
 
     public render() {
-        const { fileMenuOpen } = this.props;
+        const { activeMenu } = this.props;
         const { docName } = this.state;
         const docNameWidth = this.calculateDocNameWidth();
 
@@ -72,22 +82,43 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                             <FontAwesomeIcon icon={['fab', 'firefox']} />
                         </i>
                     </li>
-                    <li onClick={this.toggleFileMenu}>
+
+                    <li
+                        onClick={() => {
+                            return this.toggleMenu(Menu.File);
+                        }}
+                    >
                         <i
                             className={classnames({
-                                active: fileMenuOpen
+                                active: activeMenu === Menu.File
                             })}
                         >
                             <FontAwesomeIcon icon="folder" />
                         </i>
                     </li>
-                    <li>
-                        <i>
+                    <li
+                        onClick={() => {
+                            return this.toggleMenu(Menu.Share);
+                        }}
+                    >
+                        <i
+                            className={classnames({
+                                active: activeMenu === Menu.Share
+                            })}
+                        >
                             <FontAwesomeIcon icon="share" />
                         </i>
                     </li>
-                    <li>
-                        <i>
+                    <li
+                        onClick={() => {
+                            return this.toggleMenu(Menu.UserProfile);
+                        }}
+                    >
+                        <i
+                            className={classnames({
+                                active: activeMenu === Menu.UserProfile
+                            })}
+                        >
                             <FontAwesomeIcon icon="user" />
                         </i>
                     </li>
@@ -107,9 +138,9 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
         onDocNameChange(e.target.value);
     };
 
-    private toggleFileMenu = () => {
-        const { onFileMenuToggle, fileMenuOpen } = this.props;
-        onFileMenuToggle(!fileMenuOpen);
+    private toggleMenu = (menu: Menu) => {
+        const { onMenuToggle } = this.props;
+        onMenuToggle(menu);
     };
 
     private calculateDocNameWidth = (): number => {

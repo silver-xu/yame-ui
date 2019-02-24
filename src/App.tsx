@@ -22,6 +22,7 @@ class App extends Component {
             }
             currentUser {
                 userId
+                userType
             }
             defaultDoc {
                 namePrefix

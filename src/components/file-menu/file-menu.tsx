@@ -76,7 +76,6 @@ export const FileMenu = (props: IFileMenuProps) => {
                         className={classnames({
                             active: docRepo.currentDocId === doc.id
                         })}
-                        // tslint:disable-next-line:jsx-no-lambda
                         onClick={() => onFileOpenClicked(doc.id)}
                     >
                         {docRepo.currentDocId === doc.id ? (

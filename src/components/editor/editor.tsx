@@ -1,20 +1,19 @@
 import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
+import gql from 'graphql-tag';
 import React, { Component } from 'react';
+import { Mutation } from 'react-apollo';
 import SimpleMDE from 'react-simplemde-editor';
 import uuidv4 from 'uuid/v4';
+import { deriveDocRepoMutation } from '../../services/repo-service';
 import { DocRepo, IUser } from '../../types';
 import { FileMenu } from '../file-menu/file-menu';
 import Preview from '../preview';
 import { SideBar } from '../side-bar';
-import Toolbar from '../toolbar';
-
-import gql from 'graphql-tag';
-import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
-import { deriveDocRepoMutation } from '../../services/repo-service';
 import { StatusBar } from '../status-bar';
 import { Ticker } from '../ticker';
-
+import { Menu, Toolbar } from '../toolbar';
+import { UserProfileMenu } from '../user-profile-menu';
 import './editor.scss';
 
 export interface IEditorProps {
@@ -25,7 +24,7 @@ export interface IEditorProps {
 export interface IEditorState {
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
-    fileMenuOpen: boolean;
+    activeMenu?: Menu;
     docRepo: DocRepo;
     editorKey: string;
     isSaving: boolean;
@@ -47,7 +46,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         this.state = {
             editorScrollPercentage: 0,
             toolbarOutOfFocus: true,
-            fileMenuOpen: false,
             editorKey: uuidv4(),
             docRepo: this.props.docRepo,
             isSaving: false
@@ -60,10 +58,10 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
-            fileMenuOpen,
             docRepo,
             editorKey,
-            isSaving
+            isSaving,
+            activeMenu
         } = this.state;
 
         const { renderedContent, statistics } = docRepo.currentDoc;
@@ -73,17 +71,15 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                     <div
                         className={classnames({
                             'editor-container': true,
-                            'side-bar-open': fileMenuOpen
+                            'side-bar-open': activeMenu
                         })}
                     >
                         <Ticker
                             interval={5 * 1000}
                             enabled={true}
-                            // tslint:disable-next-line:jsx-no-lambda
                             beforeAction={() => {
                                 this.setState({ isSaving: true });
                             }}
-                            // tslint:disable-next-line:jsx-no-lambda
                             action={() => {
                                 const docRepoMutation = deriveDocRepoMutation(
                                     docRepo,
@@ -103,7 +99,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                     this.unchangedDocRepo = docRepo.clone();
                                 }
                             }}
-                            // tslint:disable-next-line:jsx-no-lambda
                             afterAction={() => {
                                 setTimeout(() => {
                                     this.setState({ isSaving: false });
@@ -114,8 +109,8 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                             lostFocus={toolbarOutOfFocus}
                             docName={docRepo.currentDoc.docName}
                             onDocNameChange={this.handleDocNameChange}
-                            onFileMenuToggle={this.handleFileMenuToggle}
-                            fileMenuOpen={fileMenuOpen}
+                            onMenuToggle={this.handleMenuToggle}
+                            activeMenu={activeMenu}
                         />
                         <div className="left-pane">
                             <SimpleMDE
@@ -192,15 +187,22 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 onMouseDown={this.handleEditorAndPreviewClick}
                             />
                         </div>
-                        <SideBar isOpen={fileMenuOpen}>
-                            <FileMenu
-                                onNewFileClicked={this.handleNewFileClicked}
-                                onFileOpenClicked={this.handleFileOpenClicked}
-                                onFileRemoveClicked={
-                                    this.handleFileRemoveClicked
-                                }
-                                docRepo={docRepo}
-                            />
+                        <SideBar isOpen={activeMenu !== undefined}>
+                            {activeMenu === Menu.File && (
+                                <FileMenu
+                                    onNewFileClicked={this.handleNewFileClicked}
+                                    onFileOpenClicked={
+                                        this.handleFileOpenClicked
+                                    }
+                                    onFileRemoveClicked={
+                                        this.handleFileRemoveClicked
+                                    }
+                                    docRepo={docRepo}
+                                />
+                            )}
+                            {activeMenu === Menu.UserProfile && (
+                                <UserProfileMenu />
+                            )}
                         </SideBar>
                         <StatusBar
                             charCount={statistics.charCount}
@@ -213,10 +215,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             </Mutation>
         );
     }
-
-    private handleDocRepoMutation = (
-        fn: MutationFn<any, OperationVariables>
-    ) => {};
 
     private handleEditorAndPreviewClick = () => {
         this.setState({
@@ -259,8 +257,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         }
     };
 
-    private handleFileMenuToggle = (fileMenuOpen: boolean) => {
-        this.setState({ fileMenuOpen });
+    private handleMenuToggle = (menu: Menu) => {
+        const { activeMenu } = this.state;
+        this.setState({ activeMenu: activeMenu === menu ? undefined : menu });
     };
 
     private handleNewFileClicked = () => {

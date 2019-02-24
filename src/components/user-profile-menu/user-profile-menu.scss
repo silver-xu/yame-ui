@@ -1,0 +1,21 @@
+@import '../../styles/colors.scss';
+
+.user-profile {
+    margin: 10px 15px;
+    background: $medium-ultra-lite-gray;
+    padding: 10px 15px;
+
+    .facebook {
+        display: block;
+        margin: 30px auto 10px auto;
+        background: #4267b2;
+        color: #ffffff;
+        padding: 10px;
+        width: 100%;
+        border: 0px;
+
+        &:hover {
+            outline: 0;
+        }
+    }
+}
