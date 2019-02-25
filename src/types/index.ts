@@ -9,7 +9,7 @@ export interface IDocStatistics {
 
 export interface IUser {
     authToken: string;
-    userId: string;
+    id: string;
     isValid: boolean;
     username: string;
     userType: UserType;

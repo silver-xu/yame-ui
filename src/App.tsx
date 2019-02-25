@@ -3,26 +3,19 @@ import ApolloClient from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
-import { createHttpLink, HttpLink } from 'apollo-link-http';
+import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
 import './App.css';
+import { AuthProvider } from './components/auth-provider';
 import Editor from './components/editor';
-import {
-    saveAnonymousAuthToken,
-    saveFacebookAuthToken
-} from './services/auth-service';
 import { DocRepo, IUser, UserType } from './types';
 
 const API_URL = 'http://localhost:3001/graphql';
 
-const refreshAuthToken = (currentUser: IUser) => {
-    if (currentUser) {
-        currentUser.userType === UserType.Facebook
-            ? saveFacebookAuthToken(currentUser.authToken)
-            : saveAnonymousAuthToken(currentUser.authToken);
-    }
+const setAuthToken = (authToken: string) => {
+    return localStorage.setItem('authToken', authToken);
 };
 
 const getAuthToken = () => {
@@ -42,7 +35,7 @@ class App extends Component {
                 }
             }
             currentUser {
-                userId
+                id
                 userType
                 authToken
                 userName
@@ -83,8 +76,7 @@ class App extends Component {
                 }),
                 authLink.concat(
                     new HttpLink({
-                        uri: API_URL,
-                        credentials: 'cors'
+                        uri: API_URL
                     })
                 )
             ]),
@@ -94,33 +86,35 @@ class App extends Component {
 
     public render() {
         return (
-            <ApolloProvider client={this.client}>
-                <Query query={this.DOC_REPO_QUERY}>
-                    {({ loading, error, data }) => {
-                        const docRepo =
-                            data && data.docRepo
-                                ? DocRepo.parseFromResponse(data.docRepo)
-                                : undefined;
+            <AuthProvider updateAuthToken={this.handleUpdateAuthToken}>
+                <ApolloProvider client={this.client}>
+                    <Query query={this.DOC_REPO_QUERY}>
+                        {({ loading, error, data }) => {
+                            const docRepo =
+                                data && data.docRepo
+                                    ? DocRepo.parseFromResponse(data.docRepo)
+                                    : undefined;
 
-                        if (data && data.currentUser) {
-                            refreshAuthToken(data.currentUser);
-                        }
-
-                        return docRepo ? (
-                            <div className="App">
-                                <Editor
-                                    docRepo={docRepo}
-                                    currentUser={data.currentUser}
-                                />
-                            </div>
-                        ) : (
-                            <div>Initializing...</div>
-                        );
-                    }}
-                </Query>
-            </ApolloProvider>
+                            return docRepo ? (
+                                <div className="App">
+                                    <Editor
+                                        docRepo={docRepo}
+                                        currentUser={data.currentUser}
+                                    />
+                                </div>
+                            ) : (
+                                <div>Initializing...</div>
+                            );
+                        }}
+                    </Query>
+                </ApolloProvider>
+            </AuthProvider>
         );
     }
+
+    private handleUpdateAuthToken = (authToken: string) => {
+        setAuthToken(authToken);
+    };
 }
 
 export default App;

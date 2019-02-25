@@ -75,7 +75,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                         })}
                     >
                         <Ticker
-                            interval={5 * 1000}
+                            interval={60 * 1000}
                             enabled={true}
                             beforeAction={() => {
                                 this.setState({ isSaving: true });
