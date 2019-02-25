@@ -1,4 +1,9 @@
-import ApolloClient from 'apollo-boost';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import ApolloClient from 'apollo-client';
+import { ApolloLink } from 'apollo-link';
+import { setContext } from 'apollo-link-context';
+import { onError } from 'apollo-link-error';
+import { createHttpLink, HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
@@ -52,10 +57,38 @@ class App extends Component {
     constructor(props: any) {
         super(props);
 
+        const authLink = setContext((_, { headers }) => {
+            const token = getAuthToken();
+            return {
+                headers: {
+                    ...headers,
+                    authorization: token
+                }
+            };
+        });
+
         this.client = new ApolloClient({
-            headers: {
-                Authorization: getAuthToken()
-            }
+            link: ApolloLink.from([
+                onError(({ graphQLErrors, networkError }) => {
+                    if (graphQLErrors) {
+                        graphQLErrors.map(({ message, locations, path }) =>
+                            console.log(
+                                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+                            )
+                        );
+                    }
+                    if (networkError) {
+                        console.log(`[Network error]: ${networkError}`);
+                    }
+                }),
+                authLink.concat(
+                    new HttpLink({
+                        uri: API_URL,
+                        credentials: 'cors'
+                    })
+                )
+            ]),
+            cache: new InMemoryCache()
         });
     }
 
