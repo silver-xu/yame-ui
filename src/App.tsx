@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
+import uuidv4 from 'uuid/v4';
 import './App.css';
 import { AuthProvider } from './components/auth-provider';
 import Editor from './components/editor';
@@ -22,7 +23,11 @@ const getAuthToken = () => {
     return localStorage.getItem('authToken') || '';
 };
 
-class App extends Component {
+export interface IAppState {
+    queryKey: string;
+}
+
+class App extends Component<any, IAppState> {
     private client: ApolloClient<{}>;
     private DOC_REPO_QUERY = gql`
         {
@@ -49,8 +54,11 @@ class App extends Component {
 
     constructor(props: any) {
         super(props);
+        this.state = {
+            queryKey: uuidv4()
+        };
 
-        const authLink = setContext((_, { headers }) => {
+        const authLink = setContext((_, { headers }: { headers: any }) => {
             const token = getAuthToken();
             return {
                 headers: {
@@ -85,10 +93,16 @@ class App extends Component {
     }
 
     public render() {
+        console.log('refreshed');
+        const { queryKey } = this.state;
         return (
             <AuthProvider updateAuthToken={this.handleUpdateAuthToken}>
                 <ApolloProvider client={this.client}>
-                    <Query query={this.DOC_REPO_QUERY}>
+                    <Query
+                        query={this.DOC_REPO_QUERY}
+                        variables={{ queryKey }}
+                        fetchPolicy="network-only"
+                    >
                         {({ loading, error, data }) => {
                             const docRepo =
                                 data && data.docRepo
@@ -114,6 +128,11 @@ class App extends Component {
 
     private handleUpdateAuthToken = (authToken: string) => {
         setAuthToken(authToken);
+
+        // a hacky way to force query refresh
+        this.setState({
+            queryKey: uuidv4()
+        });
     };
 }
 

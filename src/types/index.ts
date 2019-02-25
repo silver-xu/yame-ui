@@ -11,13 +11,13 @@ export interface IUser {
     authToken: string;
     id: string;
     isValid: boolean;
-    username: string;
+    userName: string;
     userType: UserType;
 }
 
 export enum UserType {
     Anonymous = 'Anonymous',
-    Facebook = 'FB'
+    Facebook = 'Facebook'
 }
 
 export interface IDocRepoMutation {

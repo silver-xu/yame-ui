@@ -64,6 +64,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             activeMenu
         } = this.state;
 
+        const { currentUser } = this.props;
         const { renderedContent, statistics } = docRepo.currentDoc;
         return (
             <Mutation mutation={this.UPDATE_DOC_REPO}>
@@ -201,7 +202,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 />
                             )}
                             {activeMenu === Menu.UserProfile && (
-                                <UserProfileMenu />
+                                <UserProfileMenu currentUser={currentUser} />
                             )}
                         </SideBar>
                         <StatusBar
