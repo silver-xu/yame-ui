@@ -93,7 +93,6 @@ class App extends Component<any, IAppState> {
     }
 
     public render() {
-        console.log('refreshed');
         const { queryKey } = this.state;
         return (
             <AuthProvider updateAuthToken={this.handleUpdateAuthToken}>

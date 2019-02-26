@@ -50,11 +50,24 @@ export const UserProfileMenu = (props: IUserProfileMenuProps) => {
                             cssClass="facebook"
                             autoLoad={true}
                             fields="name,email,picture"
-                            callback={(response: any) => {
-                                context.updateAuthToken(response.accessToken);
+                            onLoginSuccess={(response: any) => {
+                                context.updateAuthToken(
+                                    `fb-${response.accessToken}`
+                                );
                             }}
-                            loginJSX={<div>Logout</div>}
-                            logoutJSX={<div>Login</div>}
+                            onLogoutSuccess={() => {
+                                context.updateAuthToken('');
+                            }}
+                            loginJSX={
+                                <div className="facebook">
+                                    Login with Facebook
+                                </div>
+                            }
+                            logoutJSX={
+                                <div className="facebook">
+                                    Logout from Facebook
+                                </div>
+                            }
                         />
                     </div>
                 );
