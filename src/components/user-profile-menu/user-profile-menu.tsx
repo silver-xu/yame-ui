@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import React from 'react';
-import FacebookLogin from 'react-facebook-login';
+// tslint:disable-next-line:no-var-requires
+const { FacebookAuth } = require('react-facebook-authenticate');
 import { IUser, UserType } from '../../types';
 import { AuthContext, IAuthContextValue } from '../auth-provider';
 import './user-profile-menu.scss';
@@ -31,17 +32,6 @@ export const UserProfileMenu = (props: IUserProfileMenuProps) => {
                                     Don't worry, we don't have your password.
                                 </p>
                             </div>
-                            <FacebookLogin
-                                appId="330164834292470"
-                                cssClass="facebook"
-                                autoLoad={true}
-                                fields="name,email,picture"
-                                callback={response => {
-                                    context.updateAuthToken(
-                                        response.accessToken
-                                    );
-                                }}
-                            />
                         </div>
                         <div
                             className={classnames({
@@ -54,13 +44,18 @@ export const UserProfileMenu = (props: IUserProfileMenuProps) => {
                                 <b>{currentUser.userName}</b> using Facebook.
                             </p>
                             <p>Process the logout button below to logout</p>
-                            <button
-                                className="facebook"
-                                onClick={() => logout(currentUser)}
-                            >
-                                Logout from facebook
-                            </button>
                         </div>
+                        <FacebookAuth
+                            appId="330164834292470"
+                            cssClass="facebook"
+                            autoLoad={true}
+                            fields="name,email,picture"
+                            callback={(response: any) => {
+                                context.updateAuthToken(response.accessToken);
+                            }}
+                            loginJSX={<div>Logout</div>}
+                            logoutJSX={<div>Login</div>}
+                        />
                     </div>
                 );
             }}
