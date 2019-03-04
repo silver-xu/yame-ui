@@ -1,4 +1,5 @@
-import React, { Component, ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
+import { useFacebookLogin } from '../../hooks/react-use-fb-login';
 
 export interface IAuthProviderProps {
     children?: ReactNode;
@@ -19,24 +20,22 @@ export const AuthContext = React.createContext<IAuthContextValue>({
     updateAuthToken: (_: string) => {}
 });
 
-export class AuthProvider extends Component<
-    IAuthProviderProps,
-    IAuthProviderState
-> {
-    constructor(props: IAuthProviderProps) {
-        super(props);
+export const AuthProvider = (props: IAuthProviderProps) => {
+    const { children, updateAuthToken } = props;
 
-        this.state = {};
-    }
+    const [{ currentUser, isLoggedIn }, login, logout] = useFacebookLogin({
+        appId: '330164834292470',
+        language: 'EN',
+        version: '3.1',
+        fields: ['id', 'name', 'email']
+    });
 
-    public render() {
-        const { authToken } = this.state;
-        const { children, updateAuthToken } = this.props;
+    const authToken =
+        currentUser && currentUser.id ? currentUser.id : undefined;
 
-        return (
-            <AuthContext.Provider value={{ authToken, updateAuthToken }}>
-                {children}
-            </AuthContext.Provider>
-        );
-    }
-}
+    return (
+        <AuthContext.Provider value={{ authToken, updateAuthToken }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};

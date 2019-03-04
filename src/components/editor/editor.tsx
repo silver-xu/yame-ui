@@ -201,9 +201,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                     docRepo={docRepo}
                                 />
                             )}
-                            {activeMenu === Menu.UserProfile && (
+                            {/* {activeMenu === Menu.UserProfile && (
                                 <UserProfileMenu currentUser={currentUser} />
-                            )}
+                            )} */}
                         </SideBar>
                         <StatusBar
                             charCount={statistics.charCount}
