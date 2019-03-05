@@ -95,7 +95,7 @@ class App extends Component<any, IAppState> {
     public render() {
         const { queryKey } = this.state;
         return (
-            <AuthProvider updateAuthToken={this.handleUpdateAuthToken}>
+            <AuthProvider>
                 <ApolloProvider client={this.client}>
                     <Query
                         query={this.DOC_REPO_QUERY}

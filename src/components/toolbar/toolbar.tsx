@@ -4,13 +4,15 @@ import {
     faFolder,
     faShare,
     faSync,
-    faUser
+    faUserSecret
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import React from 'react';
+import { UserType } from '../../types';
+import { AuthContext, IAuthContextValue } from '../auth-provider';
 import './toolbar.scss';
-library.add(faFolder, faShare, faUser, faSync, fab);
+library.add(faFolder, faShare, faUserSecret, faSync, fab);
 
 export enum Menu {
     File = 'File',
@@ -63,67 +65,82 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                 : {};
 
         return (
-            <div className="toolbar-extra">
-                <div className="filename">
-                    <input
-                        style={inputStyle}
-                        type="text"
-                        value={docName}
-                        className={classnames({ error: docName.length === 0 })}
-                        onKeyUp={this.handleDocNameKeyup}
-                        onChange={this.handleDocNameChange}
-                        placeholder="Enter title"
-                        maxLength={15}
-                    />
-                </div>
-                <ul>
-                    <li>
-                        <i>
-                            <FontAwesomeIcon icon={['fab', 'firefox']} />
-                        </i>
-                    </li>
+            <AuthContext.Consumer>
+                {(context: IAuthContextValue) => (
+                    <div className="toolbar-extra">
+                        <div className="filename">
+                            <input
+                                style={inputStyle}
+                                type="text"
+                                value={docName}
+                                className={classnames({
+                                    error: docName.length === 0
+                                })}
+                                onKeyUp={this.handleDocNameKeyup}
+                                onChange={this.handleDocNameChange}
+                                placeholder="Enter title"
+                                maxLength={15}
+                            />
+                        </div>
+                        <ul>
+                            <li>
+                                <i>
+                                    <FontAwesomeIcon
+                                        icon={['fab', 'firefox']}
+                                    />
+                                </i>
+                            </li>
 
-                    <li
-                        onClick={() => {
-                            return this.toggleMenu(Menu.File);
-                        }}
-                    >
-                        <i
-                            className={classnames({
-                                active: activeMenu === Menu.File
-                            })}
-                        >
-                            <FontAwesomeIcon icon="folder" />
-                        </i>
-                    </li>
-                    <li
-                        onClick={() => {
-                            return this.toggleMenu(Menu.Share);
-                        }}
-                    >
-                        <i
-                            className={classnames({
-                                active: activeMenu === Menu.Share
-                            })}
-                        >
-                            <FontAwesomeIcon icon="share" />
-                        </i>
-                    </li>
-                    <li
-                        onClick={() => {
-                            return this.toggleMenu(Menu.UserProfile);
-                        }}
-                    >
-                        <i
-                            className={classnames({
-                                active: activeMenu === Menu.UserProfile
-                            })}
-                        >
-                            <FontAwesomeIcon icon="user" />
-                        </i>
-                    </li>
-                </ul>
-            </div>
+                            <li
+                                onClick={() => {
+                                    return this.toggleMenu(Menu.File);
+                                }}
+                            >
+                                <i
+                                    className={classnames({
+                                        active: activeMenu === Menu.File
+                                    })}
+                                >
+                                    <FontAwesomeIcon icon="folder" />
+                                </i>
+                            </li>
+                            <li
+                                onClick={() => {
+                                    return this.toggleMenu(Menu.Share);
+                                }}
+                            >
+                                <i
+                                    className={classnames({
+                                        active: activeMenu === Menu.Share
+                                    })}
+                                >
+                                    <FontAwesomeIcon icon="share" />
+                                </i>
+                            </li>
+                            <li
+                                onClick={() => {
+                                    return this.toggleMenu(Menu.UserProfile);
+                                }}
+                            >
+                                <i
+                                    className={classnames({
+                                        active: activeMenu === Menu.UserProfile
+                                    })}
+                                >
+                                    {context.currentUser.userType ===
+                                    UserType.Anonymous ? (
+                                        <FontAwesomeIcon icon="user-secret" />
+                                    ) : (
+                                        <FontAwesomeIcon
+                                            icon={['fab', 'facebook-square']}
+                                        />
+                                    )}
+                                </i>
+                            </li>
+                        </ul>
+                    </div>
+                )}
+            </AuthContext.Consumer>
         );
     }
 
