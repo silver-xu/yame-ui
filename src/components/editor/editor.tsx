@@ -202,7 +202,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 />
                             )}
                             {activeMenu === Menu.UserProfile && (
-                                <UserProfileMenu currentUser={currentUser} />
+                                <UserProfileMenu />
                             )}
                         </SideBar>
                         <StatusBar

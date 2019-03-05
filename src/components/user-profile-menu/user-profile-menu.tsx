@@ -4,18 +4,16 @@ import { IUser, UserType } from '../../types';
 import { AuthContext, IAuthContextValue } from '../auth-provider';
 import './user-profile-menu.scss';
 
-export interface IUserProfileMenuProps {
-    currentUser: IUser;
-}
-
-export const UserProfileMenu = (props: IUserProfileMenuProps) => {
+export const UserProfileMenu = () => {
     const { currentUser, login, logout } = useContext(AuthContext);
 
     return (
         <div className="user-profile">
             <div
                 className={classnames({
-                    hide: currentUser.userType !== UserType.Anonymous
+                    hide:
+                        currentUser &&
+                        currentUser.userType !== UserType.Anonymous
                 })}
             >
                 <div>
@@ -32,12 +30,14 @@ export const UserProfileMenu = (props: IUserProfileMenuProps) => {
             </div>
             <div
                 className={classnames({
-                    hide: currentUser.userType === UserType.Anonymous
+                    hide:
+                        currentUser &&
+                        currentUser.userType === UserType.Anonymous
                 })}
             >
                 <p>
-                    You are currently logged in as <b>{currentUser.userName}</b>{' '}
-                    using Facebook.
+                    You are currently logged in as{' '}
+                    <b>{currentUser && currentUser.userName}</b> using Facebook.
                 </p>
                 <p>Process the logout button below to logout</p>
                 <button onClick={logout} className="facebook">

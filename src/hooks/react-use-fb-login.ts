@@ -68,6 +68,9 @@ const checkLoginCallback = (
             isLoggedIn: false,
             facebookUser: undefined
         });
+        if (props.onFailure) {
+            props.onFailure(response);
+        }
     }
 };
 
@@ -159,14 +162,7 @@ export const useFacebookLogin = (
         loaded: false
     });
 
-    const {
-        appId,
-        fields,
-        language,
-        version,
-        onLoginSuccess,
-        onLogoutSuccess
-    } = props;
+    const { appId, fields, language, version } = props;
 
     const login = (): void => {
         getWindow().FB.login((response: any) =>

@@ -33,8 +33,6 @@ export interface IToolbarState {
 }
 
 export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
-    private menus: Menu[];
-
     constructor(props: IToolbarProps) {
         super(props);
 
@@ -42,7 +40,6 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
         this.state = {
             docName
         };
-        this.menus = [Menu.File, Menu.Share, Menu.UserProfile];
     }
 
     public componentWillReceiveProps(nextProps: IToolbarState) {
@@ -66,7 +63,7 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
         return (
             <AuthContext.Consumer>
-                {(context: IAuthContextValue) => (
+                {({ currentUser }) => (
                     <div className="toolbar-extra">
                         <div className="filename">
                             <input
@@ -127,13 +124,14 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                                         active: activeMenu === Menu.UserProfile
                                     })}
                                 >
-                                    {context.currentUser.userType ===
-                                    UserType.Anonymous ? (
-                                        <FontAwesomeIcon icon="user-secret" />
-                                    ) : (
+                                    {currentUser &&
+                                    currentUser.userType ===
+                                        UserType.Facebook ? (
                                         <FontAwesomeIcon
                                             icon={['fab', 'facebook-square']}
                                         />
+                                    ) : (
+                                        <FontAwesomeIcon icon="user-secret" />
                                     )}
                                 </i>
                             </li>
