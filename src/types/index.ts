@@ -9,9 +9,9 @@ export interface IDocStatistics {
 
 export interface IUser {
     authToken: string;
-    id: string;
+    id?: string;
     isValid: boolean;
-    userName: string;
+    userName?: string;
     userType: UserType;
 }
 
@@ -24,6 +24,11 @@ export interface IDocRepoMutation {
     newDocs: Doc[];
     updatedDocs: Doc[];
     deletedDocIds: string[];
+}
+
+export interface IDefaultDoc {
+    namePrefix: string;
+    defaultContent: string;
 }
 
 export { Doc, DocRepo };

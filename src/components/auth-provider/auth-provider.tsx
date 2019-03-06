@@ -4,7 +4,7 @@ import { useFacebookLogin } from '../../hooks/react-use-fb-login';
 import { IUser, UserType } from '../../types';
 
 const AUTH_TOKEN_KEY = 'anonymousAuthToken';
-const APP_ID = '330164834292470';
+const APP_ID = '566204683881459';
 
 const getAnonymousUser = () => {
     const anonymousAuthToken = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -27,7 +27,7 @@ const getAnonymousUser = () => {
 
 export interface IAuthProviderProps {
     children?: ReactNode;
-    onLoginSuccess?: () => {};
+    onLoginSuccess?: (loggedInUser: IUser) => {};
     onLogoutSuccess?: () => {};
 }
 
@@ -35,7 +35,6 @@ export interface IAuthContextValue {
     currentUser?: IUser;
     login: () => void;
     logout: () => void;
-    signInToken?: string;
 }
 
 export const AuthContext = React.createContext<IAuthContextValue>({
@@ -43,60 +42,51 @@ export const AuthContext = React.createContext<IAuthContextValue>({
     logout: () => {}
 });
 
-export const AuthProvider = (props: IAuthProviderProps) => {
+export const AuthProvider = React.memo((props: IAuthProviderProps) => {
     const { children, onLoginSuccess, onLogoutSuccess } = props;
 
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(
         undefined
     );
-    const [signInToken, setSignInToken] = useState<string>(uuidv4());
 
     const [_, login, logout] = useFacebookLogin({
         appId: APP_ID,
         language: 'EN',
         version: '3.1',
         fields: ['id', 'name', 'email'],
-        onLoginSuccess: response => {
-            setCurrentUser({
-                authToken: response.id,
-                id: response.id,
+        onLoginSuccess: loggedInFBUser => {
+            const user = {
+                authToken: `fb-${loggedInFBUser.accessToken}`,
+                id: loggedInFBUser.id,
                 isValid: true,
-                userName: response.name,
+                userName: loggedInFBUser.name,
                 userType: UserType.Facebook
-            });
-
-            handleLoginSuccess(response, onLoginSuccess);
-
-            setSignInToken(uuidv4());
+            };
+            setCurrentUser(user);
+            handleLoginSuccess(user, onLoginSuccess);
         },
         onLogoutSuccess: () => {
             setCurrentUser(getAnonymousUser());
             handleLogoutSuccess(onLogoutSuccess);
-
-            setSignInToken(uuidv4());
         },
         onFailure: () => {
             setCurrentUser(getAnonymousUser());
-            setSignInToken(uuidv4());
         }
     });
 
     return (
-        <AuthContext.Provider
-            value={{ currentUser, login, logout, signInToken }}
-        >
+        <AuthContext.Provider value={{ currentUser, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
-};
+});
 
 const handleLoginSuccess = (
-    response: any,
+    loggedInFBUser: IUser,
     onLoginSuccess?: (response: any) => {}
 ) => {
-    console.log(response);
     if (onLoginSuccess) {
-        onLoginSuccess(response);
+        onLoginSuccess(loggedInFBUser);
     }
 };
 const handleLogoutSuccess = (onLogoutSuccess?: () => {}) => {

@@ -4,6 +4,7 @@ export interface IFacebookUser {
     id?: string;
     name?: string;
     email?: string;
+    accessToken: string;
 }
 
 export interface IFaceBookLoginState {
@@ -20,7 +21,7 @@ export interface IFaceBookLoginProps {
     version: string;
     fields: FacebookFields[];
     onFailure?: (response: any) => void;
-    onLoginSuccess?: (response: any) => void;
+    onLoginSuccess?: (user: IFacebookUser) => void;
     onLogoutSuccess?: () => void;
 }
 
@@ -31,13 +32,14 @@ const getWindow = (): any => {
 const getUserInfo = (
     props: IFaceBookLoginProps,
     state: IFaceBookLoginState,
-    setState: (state: IFaceBookLoginState) => void
+    setState: (state: IFaceBookLoginState) => void,
+    accessToken: string
 ): void => {
     getWindow().FB.api(
         '/me',
         { locale: props.language, fields: props.fields.join(',') },
         (response: any) => {
-            const currentUser: IFacebookUser = response;
+            const currentUser: IFacebookUser = { ...response, accessToken };
             setState({
                 ...state,
                 isLoggedIn: true,
@@ -48,30 +50,10 @@ const getUserInfo = (
             const { onLoginSuccess } = props;
 
             if (onLoginSuccess) {
-                onLoginSuccess(response);
+                onLoginSuccess(currentUser);
             }
         }
     );
-};
-
-const checkLoginCallback = (
-    response: any,
-    props: IFaceBookLoginProps,
-    state: IFaceBookLoginState,
-    setState: (state: IFaceBookLoginState) => void
-): void => {
-    if (response.status === 'connected') {
-        getUserInfo(props, state, setState);
-    } else {
-        setState({
-            ...state,
-            isLoggedIn: false,
-            facebookUser: undefined
-        });
-        if (props.onFailure) {
-            props.onFailure(response);
-        }
-    }
 };
 
 const setFacekbookAsyncInit = (
@@ -88,7 +70,7 @@ const setFacekbookAsyncInit = (
         });
 
         getWindow().FB.getLoginStatus((response: any) =>
-            checkLoginCallback(response, props, state, setState)
+            loginCallback(response, props, state, setState)
         );
     };
 };
@@ -122,7 +104,7 @@ const loginCallback = (
     setState: (state: IFaceBookLoginState) => void
 ): void => {
     if (response.authResponse) {
-        getUserInfo(props, state, setState);
+        getUserInfo(props, state, setState, response.authResponse.accessToken);
     } else {
         if (props.onFailure) {
             props.onFailure(response);

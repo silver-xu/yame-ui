@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { useContext } from 'react';
-import { IUser, UserType } from '../../types';
-import { AuthContext, IAuthContextValue } from '../auth-provider';
+import { UserType } from '../../types';
+import { AuthContext } from '../auth-provider';
 import './user-profile-menu.scss';
 
 export const UserProfileMenu = () => {

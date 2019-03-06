@@ -1,4 +1,5 @@
 import uuidv4 from 'uuid/v4';
+import { IDefaultDoc } from '.';
 import {
     addDocToRepo,
     openDocInRepo,
@@ -6,8 +7,6 @@ import {
     updateDocInRepo
 } from '../services/repo-service';
 import { Doc } from './doc';
-
-const newDocNamePrefix = 'My document';
 
 export class DocRepo {
     get sortedDocs(): Doc[] {
@@ -83,11 +82,11 @@ export class DocRepo {
         return new DocRepo(newDocs);
     }
 
-    public newDoc = (): Doc => {
+    public newDoc = (defaultDoc: IDefaultDoc): Doc => {
         const newDoc = new Doc(
             uuidv4(),
-            this.getUniqueDocName(),
-            'hello world',
+            this.getUniqueDocName(defaultDoc.namePrefix),
+            defaultDoc.defaultContent,
             new Date()
         );
 
@@ -112,17 +111,17 @@ export class DocRepo {
         updateDocInRepo(doc, this);
     };
 
-    private getUniqueDocName = () => {
+    private getUniqueDocName = (defaultPrefix: string) => {
         let i = 1;
 
         while (
             this.enumerableDocs.find(
-                doc => doc.docName === `${newDocNamePrefix} ${i}`
+                doc => doc.docName === `${defaultPrefix} ${i}`
             )
         ) {
             i++;
         }
 
-        return `${newDocNamePrefix} ${i}`;
+        return `${defaultPrefix} ${i}`;
     };
 }

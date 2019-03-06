@@ -7,12 +7,7 @@ const App = () => {
     return (
         <AuthProvider>
             <AuthContext.Consumer>
-                {({ currentUser, signInToken }) => (
-                    <EditorQuery
-                        currentUser={currentUser}
-                        signInToken={signInToken}
-                    />
-                )}
+                {({ currentUser }) => <EditorQuery currentUser={currentUser} />}
             </AuthContext.Consumer>
         </AuthProvider>
     );

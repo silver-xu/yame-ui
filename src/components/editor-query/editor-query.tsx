@@ -5,9 +5,8 @@ import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
-import uuidv4 from 'uuid/v4';
 import { DocRepo, IUser } from '../../types';
 import Editor from '../editor';
 
@@ -23,12 +22,6 @@ const DOC_REPO_QUERY = gql`
                 lastModified
             }
         }
-        currentUser {
-            id
-            userType
-            authToken
-            userName
-        }
         defaultDoc {
             namePrefix
             defaultContent
@@ -38,11 +31,10 @@ const DOC_REPO_QUERY = gql`
 
 export interface IEditorQueryProps {
     currentUser?: IUser;
-    signInToken?: string;
 }
 
-export const EditorQuery = (props: IEditorQueryProps) => {
-    const { currentUser, signInToken } = props;
+export const EditorQuery = React.memo((props: IEditorQueryProps) => {
+    const { currentUser } = props;
 
     const authLink = setContext((_, { headers }: { headers: any }) => {
         return {
@@ -76,11 +68,11 @@ export const EditorQuery = (props: IEditorQueryProps) => {
         cache: new InMemoryCache()
     });
 
-    return (
+    return currentUser ? (
         <ApolloProvider client={client}>
             <Query
                 query={DOC_REPO_QUERY}
-                variables={{ queryKey: signInToken }}
+                variables={{ authToken: currentUser.authToken }}
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
@@ -89,11 +81,12 @@ export const EditorQuery = (props: IEditorQueryProps) => {
                             ? DocRepo.parseFromResponse(data.docRepo)
                             : undefined;
 
-                    return docRepo && currentUser ? (
+                    return docRepo ? (
                         <div className="App">
                             <Editor
                                 docRepo={docRepo}
                                 currentUser={currentUser}
+                                defaultDoc={data.defaultDoc}
                             />
                         </div>
                     ) : (
@@ -102,5 +95,7 @@ export const EditorQuery = (props: IEditorQueryProps) => {
                 }}
             </Query>
         </ApolloProvider>
+    ) : (
+        <div>Retrieving User...</div>
     );
-};
+});

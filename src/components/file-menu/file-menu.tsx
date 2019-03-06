@@ -4,6 +4,7 @@ import {
     faCloudUploadAlt,
     faDownload,
     faFilePdf,
+    faFileUpload,
     faFileWord,
     faPlus,
     faTrashAlt
@@ -18,7 +19,7 @@ import './file-menu.scss';
 library.add(
     faPlus,
     faTrashAlt,
-    faCloudUploadAlt,
+    faFileUpload,
     faDownload,
     faFilePdf,
     faFileWord,
@@ -50,8 +51,9 @@ export const FileMenu = (props: IFileMenuProps) => {
                 </li>
                 <li>
                     <i>
-                        <FontAwesomeIcon icon="cloud-upload-alt" />
+                        <FontAwesomeIcon icon="file-upload" />
                     </i>
+                    <input type="file" accept=".md,.markdown" />
                 </li>
                 <li>
                     <i>

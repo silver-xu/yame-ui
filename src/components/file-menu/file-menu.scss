@@ -22,12 +22,24 @@
             justify-content: center;
             display: flex;
             border-radius: 5px;
+            position: relative;
+            overflow: hidden;
 
             &:hover {
                 background: $lite-gray;
             }
+
             i {
                 display: block;
+            }
+
+            input[type='file'] {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                opacity: 0;
             }
 
             &.active {
