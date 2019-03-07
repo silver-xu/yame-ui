@@ -4,12 +4,14 @@ import { getDocStatistics } from '../services/doc-service';
 import { getShortFriendlyDateDifference } from '../utils/time';
 // tslint:disable-next-line:no-var-requires
 const showdownHighlight = require('showdown-highlight');
+// tslint:disable-next-line:no-var-requires
+const xssFilter = require('showdown-xss-filter');
 
 const converter = new showdown.Converter({
     tables: true,
     smoothLivePreview: true,
     requireSpaceBeforeHeadingText: true,
-    extensions: [showdownHighlight]
+    extensions: [showdownHighlight, xssFilter]
 });
 
 export class Doc {
