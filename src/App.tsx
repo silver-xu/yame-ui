@@ -1,15 +1,20 @@
 import React from 'react';
-import './App.css';
-import { AuthContext, AuthProvider } from './components/auth-provider';
-import { EditorQuery } from './components/editor-query';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { EditorApp } from './components/editor-app';
+import { ViewerApp } from './components/viewer-app';
 
 const App = () => {
     return (
-        <AuthProvider>
-            <AuthContext.Consumer>
-                {({ currentUser }) => <EditorQuery currentUser={currentUser} />}
-            </AuthContext.Consumer>
-        </AuthProvider>
+        <BrowserRouter>
+            <React.Fragment>
+                <Route exact={true} path="/editor" component={EditorApp} />
+                <Route
+                    exact={true}
+                    path="/:username/:permalink"
+                    component={ViewerApp}
+                />
+            </React.Fragment>
+        </BrowserRouter>
     );
 };
 
