@@ -1,7 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
     faCheck,
-    faCloudUploadAlt,
     faDownload,
     faFilePdf,
     faFileUpload,

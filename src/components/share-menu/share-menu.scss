@@ -1,0 +1,74 @@
+@import '../../styles/colors.scss';
+
+.share-menu {
+    padding: 10px 15px;
+    box-sizing: border-box;
+
+    h3 {
+        font-weight: 400;
+        font-size: 14px;
+        margin: 10px 0px;
+        padding: 0;
+        color: $dark-gray;
+    }
+
+    h4 {
+        font-weight: 100;
+        color: $medium-gray;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .container {
+        padding: 10px 15px;
+        border-bottom: 1px solid $medium-ultra-lite-gray;
+
+        &:last-child {
+            border: 0;
+        }
+    }
+
+    .command {
+        cursor: pointer;
+        &:hover {
+            background: $medium-ultra-lite-gray;
+        }
+    }
+
+    .publish {
+        margin: 15px 0 10px 0;
+
+        border: 0;
+        &:focus {
+            outline: 0;
+        }
+    }
+
+    svg {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .link {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        background: $transparent;
+        color: $medium-gray;
+        border: 0;
+    }
+
+    .field {
+        margin: 15px 0;
+        color: $dark-gray;
+
+        svg {
+            font-size: 20px;
+        }
+
+        label {
+            display: inline-block;
+            width: 160px;
+        }
+    }
+}

@@ -5,17 +5,14 @@ import React, { Component } from 'react';
 import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
 import SimpleMDE from 'react-simplemde-editor';
 import uuidv4 from 'uuid/v4';
-import {
-    deriveDocRepoMutation,
-    updateDocInRepo
-} from '../../services/repo-service';
-import { DocRepo, IUser, IDefaultDoc } from '../../types';
+import { deriveDocRepoMutation } from '../../services/repo-service';
+import { DocRepo, IDefaultDoc, IUser } from '../../types';
 import { debounce } from '../../utils/deboune';
 import { FileMenu } from '../file-menu/file-menu';
 import Preview from '../preview';
+import { ShareMenu } from '../share-menu';
 import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
-import { Ticker } from '../ticker';
 import { Menu, Toolbar } from '../toolbar';
 import { UserProfileMenu } from '../user-profile-menu';
 import './editor.scss';
@@ -177,6 +174,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                     }
                                     docRepo={docRepo}
                                 />
+                            )}
+                            {activeMenu === Menu.Share && (
+                                <ShareMenu shareLink="http://yame.io/silver-xu/resume" />
                             )}
                             {activeMenu === Menu.UserProfile && (
                                 <UserProfileMenu />
