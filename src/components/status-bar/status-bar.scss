@@ -1,0 +1,30 @@
+@import '../../styles/colors.scss';
+.status-bar {
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1001;
+    text-align: right;
+    background: $statusbar-blue;
+    padding: 2px;
+    font-size: 13px;
+    color: $white;
+
+    span {
+        display: inline-block;
+        margin: 0 6px;
+        padding: 3px;
+        border-radius: 1px;
+
+        &.command {
+            cursor: pointer;
+            &:hover,
+            &.active {
+                background: $white;
+                color: $statusbar-blue;
+            }
+        }
+    }
+}

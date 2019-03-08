@@ -17,10 +17,15 @@ import { Menu, Toolbar } from '../toolbar';
 import { UserProfileMenu } from '../user-profile-menu';
 import './editor.scss';
 
-export interface IEditorProps {
+export interface IEditorProps extends IEditorDefaultProps {
     docRepo: DocRepo;
     currentUser: IUser;
     defaultDoc: IDefaultDoc;
+}
+
+export interface IEditorDefaultProps {
+    splitScreen: boolean;
+    hideToolbars: boolean;
 }
 
 export interface IEditorState {
@@ -30,9 +35,15 @@ export interface IEditorState {
     docRepo: DocRepo;
     editorKey: string;
     isSaving: boolean;
+    splitScreen: boolean;
+    hideToolbars: boolean;
 }
 
 export class Editor extends Component<IEditorProps, IEditorState> {
+    public static defaultProps: IEditorDefaultProps = {
+        splitScreen: true,
+        hideToolbars: false
+    };
     private mdeInstance?: any;
     private previewInFocus: boolean;
     private unchangedDocRepo: DocRepo;
@@ -50,7 +61,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             toolbarOutOfFocus: true,
             editorKey: uuidv4(),
             docRepo: this.props.docRepo,
-            isSaving: false
+            isSaving: false,
+            splitScreen: this.props.splitScreen,
+            hideToolbars: this.props.hideToolbars
         };
         this.previewInFocus = false;
         this.unchangedDocRepo = this.props.docRepo.clone();
@@ -63,7 +76,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             docRepo,
             editorKey,
             isSaving,
-            activeMenu
+            activeMenu,
+            hideToolbars,
+            splitScreen
         } = this.state;
 
         const { renderedContent, statistics } = docRepo.currentDoc;
@@ -73,7 +88,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                     <div
                         className={classnames({
                             'editor-container': true,
-                            'side-bar-open': activeMenu
+                            'side-bar-open': activeMenu,
+                            'no-toolbar': hideToolbars,
+                            'editor-only': !splitScreen
                         })}
                     >
                         <Toolbar
@@ -89,7 +106,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 onChange={(value: string) =>
                                     this.handleEditorChange(value, updateDoc)
                                 }
-                                getMdeInstance={this.getInstance}
+                                getMdeInstance={this.setInstance}
                                 value={docRepo.currentDoc.content}
                                 events={{
                                     change: () => {},
@@ -183,10 +200,14 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                             )}
                         </SideBar>
                         <StatusBar
+                            onToolbarToggle={this.handleToolbarToggle}
+                            onSplitScreenToggle={this.handleSplitScreenToggle}
                             charCount={statistics.charCount}
                             lineCount={statistics.lineCount}
                             wordCount={statistics.wordCount}
                             isSaving={isSaving}
+                            hideToolbar={hideToolbars}
+                            splitScreen={splitScreen}
                         />
                     </div>
                 )}
@@ -228,8 +249,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         }
     };
 
-    private getInstance = (instance: any) => {
+    private setInstance = (instance: any) => {
         this.mdeInstance = instance;
+        this.mdeInstance.codemirror.setOption('lineNumbers', true);
     };
 
     private handlePreviewScroll = (previewScrollPercentage: number) => {
@@ -310,5 +332,17 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                 }, 500);
             });
         }
+    };
+
+    private handleSplitScreenToggle = () => {
+        this.setState({
+            splitScreen: !this.state.splitScreen
+        });
+    };
+
+    private handleToolbarToggle = () => {
+        this.setState({
+            hideToolbars: !this.state.hideToolbars
+        });
     };
 }

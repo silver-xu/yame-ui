@@ -7,7 +7,7 @@
     h3 {
         font-weight: 400;
         font-size: 14px;
-        margin: 10px 0px;
+        margin: 10px 0 10px 0;
         padding: 0;
         color: $dark-gray;
     }
@@ -16,26 +16,52 @@
         font-weight: 100;
         color: $medium-gray;
         font-size: 13px;
-        margin: 0;
+        margin: 20px 0 10px 0;
     }
 
     .container {
         padding: 10px 15px;
         border-bottom: 1px solid $medium-ultra-lite-gray;
+        position: relative;
 
         &:last-child {
             border: 0;
+        }
+
+        &.buttons {
+            text-align: right;
+            button {
+                display: inline-block;
+                margin: 10px 0 10px 10px;
+            }
+        }
+
+        &.expandable {
+            cursor: pointer;
+        }
+
+        .chev {
+            position: absolute;
+            right: 0px;
+            top: calc(50% - 10px);
+            transition-property: transform;
+            transition-duration: 0.1s;
+
+            &.down {
+                transform: rotate(90deg);
+            }
         }
     }
 
     .command {
         cursor: pointer;
+        border-radius: 5px;
         &:hover {
             background: $medium-ultra-lite-gray;
         }
     }
 
-    .publish {
+    .primary {
         margin: 15px 0 10px 0;
 
         border: 0;
@@ -47,11 +73,13 @@
     svg {
         display: inline-block;
         margin-right: 10px;
+        color: $dark-gray;
+        cursor: pointer;
     }
 
     .link {
         padding: 10px;
-        width: 100%;
+        width: calc(100% - 50px);
         box-sizing: border-box;
         background: $transparent;
         color: $medium-gray;
@@ -64,11 +92,38 @@
 
         svg {
             font-size: 20px;
+
+            &.narrow {
+                font-size: 14px;
+            }
         }
 
         label {
             display: inline-block;
-            width: 160px;
+            width: 250px;
+            font-size: 14px;
+        }
+    }
+
+    .secret {
+        width: 100%;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: none;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .content {
+        max-height: 1000px;
+        transition: max-height 0.2s linear;
+        overflow: hidden;
+
+        &.hide {
+            max-height: 0;
+
+            transition: max-height 0.2s linear;
         }
     }
 }
