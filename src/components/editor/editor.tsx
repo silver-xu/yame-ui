@@ -24,7 +24,7 @@ export interface IEditorProps extends IEditorDefaultProps {
 }
 
 export interface IEditorDefaultProps {
-    inSplitMode: boolean;
+    splitScreen: boolean;
     hideToolbars: boolean;
 }
 
@@ -35,11 +35,13 @@ export interface IEditorState {
     docRepo: DocRepo;
     editorKey: string;
     isSaving: boolean;
+    splitScreen?: boolean;
+    hideToolbars?: boolean;
 }
 
 export class Editor extends Component<IEditorProps, IEditorState> {
     public static defaultProps: IEditorDefaultProps = {
-        inSplitMode: true,
+        splitScreen: true,
         hideToolbars: false
     };
     private mdeInstance?: any;
@@ -65,15 +67,33 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         this.unchangedDocRepo = this.props.docRepo.clone();
     }
 
+    public getDerivedStateFromProps(
+        nextProps: IEditorProps,
+        prevState: IEditorState
+    ) {
+        if (prevState.splitScreen !== nextProps.splitScreen) {
+            this.setState({
+                splitScreen: nextProps.splitScreen
+            });
+        }
+
+        if (prevState.hideToolbars !== nextProps.hideToolbars) {
+            this.setState({
+                hideToolbars: nextProps.hideToolbars
+            });
+        }
+    }
+
     public render() {
-        const { hideToolbars } = this.props;
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
             docRepo,
             editorKey,
             isSaving,
-            activeMenu
+            activeMenu,
+            hideToolbars,
+            splitScreen: inSplitMode
         } = this.state;
 
         const { renderedContent, statistics } = docRepo.currentDoc;
@@ -191,10 +211,14 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                             )}
                         </SideBar>
                         <StatusBar
+                            onToolbarToggle={this.handleToolbarToggle}
+                            onSplitScreenToggle={this.handleSplitScreenToggle}
                             charCount={statistics.charCount}
                             lineCount={statistics.lineCount}
                             wordCount={statistics.wordCount}
                             isSaving={isSaving}
+                            hideToolbar={!!hideToolbars}
+                            splitScreen={!!inSplitMode}
                         />
                     </div>
                 )}
@@ -318,5 +342,17 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                 }, 500);
             });
         }
+    };
+
+    private handleSplitScreenToggle = () => {
+        this.setState({
+            splitScreen: !this.state.splitScreen
+        });
+    };
+
+    private handleToolbarToggle = () => {
+        this.setState({
+            hideToolbars: !this.state.hideToolbars
+        });
     };
 }
