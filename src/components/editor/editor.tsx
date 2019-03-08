@@ -5,25 +5,27 @@ import React, { Component } from 'react';
 import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
 import SimpleMDE from 'react-simplemde-editor';
 import uuidv4 from 'uuid/v4';
-import {
-    deriveDocRepoMutation,
-    updateDocInRepo
-} from '../../services/repo-service';
-import { DocRepo, IUser, IDefaultDoc } from '../../types';
+import { deriveDocRepoMutation } from '../../services/repo-service';
+import { DocRepo, IDefaultDoc, IUser } from '../../types';
 import { debounce } from '../../utils/deboune';
 import { FileMenu } from '../file-menu/file-menu';
 import Preview from '../preview';
 import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
-import { Ticker } from '../ticker';
+
 import { Menu, Toolbar } from '../toolbar';
 import { UserProfileMenu } from '../user-profile-menu';
 import './editor.scss';
 
-export interface IEditorProps {
+export interface IEditorProps extends IEditorDefaultProps {
     docRepo: DocRepo;
     currentUser: IUser;
     defaultDoc: IDefaultDoc;
+}
+
+export interface IEditorDefaultProps {
+    inSplitMode: boolean;
+    hideToolbars: boolean;
 }
 
 export interface IEditorState {
@@ -36,6 +38,10 @@ export interface IEditorState {
 }
 
 export class Editor extends Component<IEditorProps, IEditorState> {
+    public static defaultProps: IEditorDefaultProps = {
+        inSplitMode: true,
+        hideToolbars: false
+    };
     private mdeInstance?: any;
     private previewInFocus: boolean;
     private unchangedDocRepo: DocRepo;
@@ -60,6 +66,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
     }
 
     public render() {
+        const { hideToolbars } = this.props;
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
@@ -76,7 +83,8 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                     <div
                         className={classnames({
                             'editor-container': true,
-                            'side-bar-open': activeMenu
+                            'side-bar-open': activeMenu,
+                            'no-toolbar': hideToolbars
                         })}
                     >
                         <Toolbar

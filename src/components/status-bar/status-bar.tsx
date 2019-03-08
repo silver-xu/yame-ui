@@ -1,10 +1,15 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import {
+    faColumns,
+    faSave,
+    faToolbox
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-library.add(faSave);
+library.add(faSave, faColumns, faToolbox);
+import './status-bar.scss';
 
-interface IStatusBarProps {
+export interface IStatusBarProps {
     charCount: number;
     wordCount: number;
     lineCount: number;
@@ -17,8 +22,23 @@ export const StatusBar = (props: IStatusBarProps) => {
     const savingIcon = isSaving && <FontAwesomeIcon icon="save" />;
     return (
         <div className="status-bar">
-            {savingIcon} | Markdown | <b>{charCount}</b> chars |{' '}
-            <b>{wordCount}</b> words | <b>{lineCount}</b> lines
+            <span>{savingIcon} </span>
+            <span className="command">
+                <FontAwesomeIcon icon="columns" />
+            </span>
+            <span className="command">
+                <FontAwesomeIcon icon="toolbox" />
+            </span>
+            <span>Markdown</span>
+            <span>
+                <b>{charCount}</b> chars
+            </span>
+            <span>
+                <b>{wordCount}</b> words
+            </span>
+            <span>
+                <b>{lineCount}</b> lines
+            </span>
         </div>
     );
 };
