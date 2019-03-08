@@ -1,5 +1,11 @@
 @import '../../styles/colors.scss';
 
+.no-toolbar {
+    .toolbar-extra {
+        display: none;
+    }
+}
+
 .toolbar-extra {
     height: 54px;
     box-sizing: border-box;

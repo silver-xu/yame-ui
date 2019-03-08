@@ -5,9 +5,13 @@
     border: none;
     height: 100%;
     width: 100%;
-
+    padding: 0;
     pre {
         padding: 5px 4px;
+    }
+
+    .CodeMirror-gutter-wrapper {
+        top: calc(50% - 10px);
     }
 }
 
@@ -51,7 +55,7 @@
     position: absolute;
     top: 54px;
     left: calc(50% - 3px);
-    height: calc(100% - 55px);
+    bottom: 25px;
     width: 6px;
     background: #dddddd;
 }
@@ -59,7 +63,7 @@
 .left-pane,
 .right-pane {
     width: calc(50% - 3px);
-    bottom: 30px;
+    bottom: 25px;
     position: absolute;
     top: 55px;
     z-index: 100;
@@ -91,15 +95,23 @@
     }
 }
 
-.status-bar {
-    box-sizing: border-box;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1001;
-    background: $lite-gray;
-    text-align: right;
-    padding: 5px 10px 5px 0;
-    color: $dark-gray;
+.no-toolbar {
+    .editor-toolbar {
+        display: none;
+    }
+
+    .left-pane,
+    .right-pane,
+    .splitter {
+        top: 0;
+    }
+}
+
+.editor-only {
+    .left-pane {
+        width: calc(100% - 6px);
+    }
+    .right-pane {
+        display: none;
+    }
 }
