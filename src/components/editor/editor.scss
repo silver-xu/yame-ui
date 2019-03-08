@@ -47,18 +47,6 @@
     }
 }
 
-.no-toolbar {
-    .editor-toolbar {
-        display: none;
-    }
-
-    .left-pane,
-    .right-pane,
-    .splitter {
-        top: 0;
-    }
-}
-
 .splitter {
     position: absolute;
     top: 54px;
@@ -100,5 +88,26 @@
     }
     .splitter {
         left: calc(40% - 3px);
+    }
+}
+
+.no-toolbar {
+    .editor-toolbar {
+        display: none;
+    }
+
+    .left-pane,
+    .right-pane,
+    .splitter {
+        top: 0;
+    }
+}
+
+.editor-only {
+    .left-pane {
+        width: calc(100% - 6px);
+    }
+    .right-pane {
+        display: none;
     }
 }

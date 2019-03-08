@@ -10,6 +10,7 @@ const xssFilter = require('showdown-xss-filter');
 const converter = new showdown.Converter({
     tables: true,
     smoothLivePreview: true,
+    strikethrough: true,
     requireSpaceBeforeHeadingText: true,
     extensions: [showdownHighlight, xssFilter]
 });

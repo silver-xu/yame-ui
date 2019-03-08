@@ -93,7 +93,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             isSaving,
             activeMenu,
             hideToolbars,
-            splitScreen: inSplitMode
+            splitScreen
         } = this.state;
 
         const { renderedContent, statistics } = docRepo.currentDoc;
@@ -104,7 +104,8 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                         className={classnames({
                             'editor-container': true,
                             'side-bar-open': activeMenu,
-                            'no-toolbar': hideToolbars
+                            'no-toolbar': hideToolbars,
+                            'editor-only': !splitScreen
                         })}
                     >
                         <Toolbar
@@ -218,7 +219,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                             wordCount={statistics.wordCount}
                             isSaving={isSaving}
                             hideToolbar={!!hideToolbars}
-                            splitScreen={!!inSplitMode}
+                            splitScreen={!!splitScreen}
                         />
                     </div>
                 )}
