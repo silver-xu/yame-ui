@@ -121,7 +121,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 onChange={(value: string) =>
                                     this.handleEditorChange(value, updateDoc)
                                 }
-                                getMdeInstance={this.getInstance}
+                                getMdeInstance={this.setInstance}
                                 value={docRepo.currentDoc.content}
                                 events={{
                                     change: () => {},
@@ -261,8 +261,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         }
     };
 
-    private getInstance = (instance: any) => {
+    private setInstance = (instance: any) => {
         this.mdeInstance = instance;
+        this.mdeInstance.codemirror.setOption('lineNumbers', true);
     };
 
     private handlePreviewScroll = (previewScrollPercentage: number) => {
