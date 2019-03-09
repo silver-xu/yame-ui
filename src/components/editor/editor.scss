@@ -27,7 +27,7 @@
     top: 0px;
     left: 0px;
     width: calc(100%);
-    z-index: 999;
+    z-index: 1001;
     height: 54px;
 
     button {
@@ -79,20 +79,6 @@
 
 .right-pane {
     left: calc(50% + 3px);
-}
-
-.side-bar-open {
-    height: 100%;
-    .left-pane {
-        width: calc(40% - 3px);
-    }
-    .right-pane {
-        left: calc(40% + 6px);
-        width: calc(40% - 3px);
-    }
-    .splitter {
-        left: calc(40% - 3px);
-    }
 }
 
 .no-toolbar {

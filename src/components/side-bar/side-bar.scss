@@ -2,9 +2,50 @@
 
 .side-bar {
     position: absolute;
-    height: calc(100% - 54px);
+    height: calc(100% - 78px);
     right: 0;
     top: 54px;
     width: calc(20% - 6px);
     background: $lite-gray;
+    z-index: 1002;
+}
+
+.side-bar-overlay {
+    background: $black;
+    z-index: 1001;
+    position: absolute;
+    top: 54px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.5;
+}
+
+.no-toolbar {
+    .side-bar {
+        top: 0;
+    }
+}
+
+.generic-menu {
+    padding: 10px 15px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    h3 {
+        font-weight: 400;
+        font-size: 14px;
+        margin: 10px 0 10px 0;
+        padding: 0;
+        color: $dark-gray;
+    }
+
+    h4 {
+        font-weight: 100;
+        color: $medium-gray;
+        font-size: 13px;
+        margin: 20px 0 10px 0;
+    }
 }

@@ -1,6 +1,6 @@
 @import '../../styles/colors.scss';
 
-.share-menu {
+.generic-menu {
     padding: 10px 15px;
     box-sizing: border-box;
 
@@ -17,48 +17,6 @@
         color: $medium-gray;
         font-size: 13px;
         margin: 20px 0 10px 0;
-    }
-
-    .container {
-        padding: 10px 15px;
-        border-bottom: 1px solid $medium-ultra-lite-gray;
-        position: relative;
-
-        &:last-child {
-            border: 0;
-        }
-
-        &.buttons {
-            text-align: right;
-            button {
-                display: inline-block;
-                margin: 10px 0 10px 10px;
-            }
-        }
-
-        &.expandable {
-            cursor: pointer;
-        }
-
-        .chev {
-            position: absolute;
-            right: 0px;
-            top: calc(50% - 10px);
-            transition-property: transform;
-            transition-duration: 0.1s;
-
-            &.down {
-                transform: rotate(90deg);
-            }
-        }
-    }
-
-    .command {
-        cursor: pointer;
-        border-radius: 5px;
-        &:hover {
-            background: $medium-ultra-lite-gray;
-        }
     }
 
     .primary {
@@ -113,17 +71,5 @@
         border: none;
         display: inline-block;
         margin-bottom: 15px;
-    }
-
-    .content {
-        max-height: 1000px;
-        transition: max-height 0.2s linear;
-        overflow: hidden;
-
-        &.hide {
-            max-height: 0;
-
-            transition: max-height 0.2s linear;
-        }
     }
 }

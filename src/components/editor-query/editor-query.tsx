@@ -9,6 +9,8 @@ import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
 import { DocRepo, IUser } from '../../types';
 import Editor from '../editor';
+import { EditorProvider } from '../editor-provider/editor-provider';
+import { DialogProvider } from '../dialog-provider/dialog-provider';
 
 const API_URL = 'http://localhost:3001/graphql';
 
@@ -83,11 +85,14 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
 
                     return docRepo ? (
                         <div className="App">
-                            <Editor
+                            <EditorProvider
                                 docRepo={docRepo}
-                                currentUser={currentUser}
                                 defaultDoc={data.defaultDoc}
-                            />
+                            >
+                                <DialogProvider>
+                                    <Editor />
+                                </DialogProvider>
+                            </EditorProvider>
                         </div>
                     ) : (
                         <div>Initializing...</div>

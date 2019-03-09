@@ -11,7 +11,10 @@ import classnames from 'classnames';
 import React from 'react';
 import { UserType } from '../../types';
 import { AuthContext, IAuthContextValue } from '../auth-provider';
+import { EditorContext } from '../editor-provider/editor-provider';
 import './toolbar.scss';
+import { CSSProperties } from 'jss/css';
+import { DialogContext } from '../dialog-provider/dialog-provider';
 library.add(faFolder, faShare, faUserSecret, faSync, fab);
 
 export enum Menu {
@@ -22,121 +25,118 @@ export enum Menu {
 
 export interface IToolbarProps {
     lostFocus: boolean;
-    docName: string;
     activeMenu?: Menu;
-    onDocNameChange: (newName: string) => void;
     onMenuToggle: (menu: Menu) => void;
 }
 
-export interface IToolbarState {
-    docName: string;
-}
-
-export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
+export class Toolbar extends React.Component<IToolbarProps> {
     constructor(props: IToolbarProps) {
         super(props);
-
-        const { docName } = this.props;
-        this.state = {
-            docName
-        };
-    }
-
-    public componentWillReceiveProps(nextProps: IToolbarState) {
-        const { docName } = nextProps;
-        this.setState({
-            docName
-        });
     }
 
     public render() {
         const { activeMenu } = this.props;
-        const { docName } = this.state;
-        const docNameWidth = this.calculateDocNameWidth();
-
-        const inputStyle =
-            docNameWidth > 100
-                ? {
-                      width: this.calculateDocNameWidth() + 'px'
-                  }
-                : {};
 
         return (
             <AuthContext.Consumer>
                 {({ currentUser }) => (
-                    <div className="toolbar-extra">
-                        <div className="filename">
-                            <input
-                                style={inputStyle}
-                                type="text"
-                                value={docName}
-                                className={classnames({
-                                    error: docName.length === 0
-                                })}
-                                onKeyUp={this.handleDocNameKeyup}
-                                onChange={this.handleDocNameChange}
-                                placeholder="Enter title"
-                                maxLength={15}
-                            />
-                        </div>
-                        <ul>
-                            <li>
-                                <i>
-                                    <FontAwesomeIcon
-                                        icon={['fab', 'firefox']}
+                    <EditorContext.Consumer>
+                        {({ updateCurrentDocName, docRepo }) => (
+                            <div className="toolbar-extra">
+                                <div className="filename">
+                                    <input
+                                        style={this.getInputStyle(
+                                            docRepo.currentDoc.docName
+                                        )}
+                                        type="text"
+                                        value={docRepo.currentDoc.docName}
+                                        className={classnames({
+                                            error:
+                                                docRepo.currentDoc.docName
+                                                    .length === 0
+                                        })}
+                                        onKeyUp={this.handleDocNameKeyup}
+                                        onChange={(
+                                            e: React.ChangeEvent<
+                                                HTMLInputElement
+                                            >
+                                        ) => {
+                                            updateCurrentDocName(
+                                                e.target.value
+                                            );
+                                        }}
+                                        placeholder="Enter title"
+                                        maxLength={15}
                                     />
-                                </i>
-                            </li>
+                                </div>
+                                <ul>
+                                    <li>
+                                        <i>
+                                            <FontAwesomeIcon
+                                                icon={['fab', 'firefox']}
+                                            />
+                                        </i>
+                                    </li>
 
-                            <li
-                                onClick={() => {
-                                    return this.toggleMenu(Menu.File);
-                                }}
-                            >
-                                <i
-                                    className={classnames({
-                                        active: activeMenu === Menu.File
-                                    })}
-                                >
-                                    <FontAwesomeIcon icon="folder" />
-                                </i>
-                            </li>
-                            <li
-                                onClick={() => {
-                                    return this.toggleMenu(Menu.Share);
-                                }}
-                            >
-                                <i
-                                    className={classnames({
-                                        active: activeMenu === Menu.Share
-                                    })}
-                                >
-                                    <FontAwesomeIcon icon="share" />
-                                </i>
-                            </li>
-                            <li
-                                onClick={() => {
-                                    return this.toggleMenu(Menu.UserProfile);
-                                }}
-                            >
-                                <i
-                                    className={classnames({
-                                        active: activeMenu === Menu.UserProfile
-                                    })}
-                                >
-                                    {currentUser &&
-                                    currentUser.userType ===
-                                        UserType.Facebook ? (
-                                        <FontAwesomeIcon
-                                            icon={['fab', 'facebook-square']}
-                                        />
-                                    ) : (
-                                        <FontAwesomeIcon icon="user-secret" />
-                                    )}
-                                </i>
-                            </li>
-                        </ul>
-                    </div>
+                                    <li
+                                        onClick={() =>
+                                            this.toggleMenu(Menu.File)
+                                        }
+                                    >
+                                        <i
+                                            className={classnames({
+                                                active: activeMenu === Menu.File
+                                            })}
+                                        >
+                                            <FontAwesomeIcon icon="folder" />
+                                        </i>
+                                    </li>
+                                    <li
+                                        onClick={() =>
+                                            this.toggleMenu(Menu.Share)
+                                        }
+                                    >
+                                        <i
+                                            className={classnames({
+                                                active:
+                                                    activeMenu === Menu.Share
+                                            })}
+                                        >
+                                            <FontAwesomeIcon icon="share" />
+                                        </i>
+                                    </li>
+                                    <li
+                                        onClick={() => {
+                                            return this.toggleMenu(
+                                                Menu.UserProfile
+                                            );
+                                        }}
+                                    >
+                                        <i
+                                            className={classnames({
+                                                active:
+                                                    activeMenu ===
+                                                    Menu.UserProfile
+                                            })}
+                                        >
+                                            {currentUser &&
+                                            currentUser.userType ===
+                                                UserType.Facebook ? (
+                                                <FontAwesomeIcon
+                                                    icon={[
+                                                        'fab',
+                                                        'facebook-square'
+                                                    ]}
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon icon="user-secret" />
+                                            )}
+                                        </i>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
+                    </EditorContext.Consumer>
                 )}
             </AuthContext.Consumer>
         );
@@ -148,18 +148,22 @@ export class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
         });
     };
 
-    private handleDocNameChange = (e: any) => {
-        const { onDocNameChange } = this.props;
-        onDocNameChange(e.target.value);
-    };
-
     private toggleMenu = (menu: Menu) => {
         const { onMenuToggle } = this.props;
         onMenuToggle(menu);
     };
 
-    private calculateDocNameWidth = (): number => {
-        const { docName } = this.state;
+    private calculateDocNameWidth = (docName: string): number => {
         return docName.length * 12 + 10;
+    };
+
+    private getInputStyle = (docName: string): React.CSSProperties => {
+        const docNameWidth = this.calculateDocNameWidth(docName);
+
+        return docNameWidth > 100
+            ? {
+                  width: this.calculateDocNameWidth(docName) + 'px'
+              }
+            : {};
     };
 }

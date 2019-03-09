@@ -15,6 +15,8 @@ import {
     faUnlockAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CommandButton, ExpandableContainer } from '../../side-bar-items';
+import { ShareLinks } from '../../side-bar-items/share-links';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -28,8 +30,6 @@ library.add(
     faCogs
 );
 
-import { ExpandableContainer } from './expandable-container';
-
 export interface IShareMenuProps {
     shareLink: string;
 }
@@ -37,26 +37,24 @@ export interface IShareMenuProps {
 export const ShareMenu = (props: IShareMenuProps) => {
     const { shareLink } = props;
     return (
-        <div className="share-menu">
-            <div className="command container">
-                <h3>Please publish first to obtain sharing links</h3>
-                <div className="primary">
-                    <FontAwesomeIcon icon="external-link-square-alt" />
-                    Publish Now
-                </div>
-            </div>
-            <div className="container">
-                <h3>Please copy the following link to share amongst:</h3>
-                <input
-                    type="input"
-                    className="link"
-                    value={shareLink}
-                    onFocus={handleLinkFocus}
-                />
-                <FontAwesomeIcon icon="copy" />
-                <FontAwesomeIcon icon="pen-alt" />
-            </div>
+        <div className="share-menu generic-menu">
+            <CommandButton
+                description="Export the document as Microsoft Word"
+                heading="Download as Word"
+                icon="file-word"
+            />
+            <CommandButton
+                description="Export the document as Adobe Pdf"
+                heading="Download as Pdf"
+                icon="file-pdf"
+            />
+            <CommandButton
+                description="Please publish first to obtain sharing links"
+                heading="Publish Now"
+                icon="external-link-square-alt"
+            />
 
+            <ShareLinks shareLink={shareLink} />
             <ExpandableContainer
                 description="Options about sharing"
                 heading="Options"
@@ -116,8 +114,4 @@ export const ShareMenu = (props: IShareMenuProps) => {
             </ExpandableContainer>
         </div>
     );
-};
-
-const handleLinkFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.setSelectionRange(0, e.target.value.length);
 };

@@ -7,5 +7,10 @@ export interface ISideBarProps {
 }
 export const SideBar = (props: ISideBarProps) => {
     const { isOpen, children } = props;
-    return isOpen ? <div className="side-bar">{children}</div> : null;
+    return isOpen ? (
+        <React.Fragment>
+            <div className="side-bar-overlay" />
+            <div className="side-bar">{children}</div>;
+        </React.Fragment>
+    ) : null;
 };

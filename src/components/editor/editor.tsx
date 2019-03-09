@@ -1,13 +1,8 @@
 import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
-import gql from 'graphql-tag';
 import React, { Component } from 'react';
-import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
 import SimpleMDE from 'react-simplemde-editor';
-import uuidv4 from 'uuid/v4';
-import { deriveDocRepoMutation } from '../../services/repo-service';
-import { DocRepo, IDefaultDoc, IUser } from '../../types';
-import { debounce } from '../../utils/deboune';
+import { EditorContext } from '../editor-provider/editor-provider';
 import { FileMenu } from '../file-menu/file-menu';
 import Preview from '../preview';
 import { ShareMenu } from '../share-menu';
@@ -17,11 +12,7 @@ import { Menu, Toolbar } from '../toolbar';
 import { UserProfileMenu } from '../user-profile-menu';
 import './editor.scss';
 
-export interface IEditorProps extends IEditorDefaultProps {
-    docRepo: DocRepo;
-    currentUser: IUser;
-    defaultDoc: IDefaultDoc;
-}
+export interface IEditorProps extends IEditorDefaultProps {}
 
 export interface IEditorDefaultProps {
     splitScreen: boolean;
@@ -32,9 +23,6 @@ export interface IEditorState {
     editorScrollPercentage: number;
     toolbarOutOfFocus: boolean;
     activeMenu?: Menu;
-    docRepo: DocRepo;
-    editorKey: string;
-    isSaving: boolean;
     splitScreen: boolean;
     hideToolbars: boolean;
 }
@@ -46,12 +34,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
     };
     private mdeInstance?: any;
     private previewInFocus: boolean;
-    private unchangedDocRepo: DocRepo;
-    private UPDATE_DOC_REPO = gql`
-        mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
-            updateDocRepo(docRepoMutation: $docRepoMutation)
-        }
-    `;
 
     constructor(props: IEditorProps) {
         super(props);
@@ -59,32 +41,33 @@ export class Editor extends Component<IEditorProps, IEditorState> {
         this.state = {
             editorScrollPercentage: 0,
             toolbarOutOfFocus: true,
-            editorKey: uuidv4(),
-            docRepo: this.props.docRepo,
-            isSaving: false,
             splitScreen: this.props.splitScreen,
             hideToolbars: this.props.hideToolbars
         };
         this.previewInFocus = false;
-        this.unchangedDocRepo = this.props.docRepo.clone();
     }
 
     public render() {
         const {
             editorScrollPercentage,
             toolbarOutOfFocus,
-            docRepo,
-            editorKey,
-            isSaving,
             activeMenu,
             hideToolbars,
             splitScreen
         } = this.state;
 
-        const { renderedContent, statistics } = docRepo.currentDoc;
         return (
-            <Mutation mutation={this.UPDATE_DOC_REPO}>
-                {(updateDoc, { data }) => (
+            <EditorContext.Consumer>
+                {({
+                    docRepo,
+                    isSaving,
+                    editorKey,
+                    updateCurrentDoc,
+                    newDoc,
+                    openDoc,
+                    removeCurrentDoc,
+                    updateCurrentDocName
+                }) => (
                     <div
                         className={classnames({
                             'editor-container': true,
@@ -95,17 +78,13 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                     >
                         <Toolbar
                             lostFocus={toolbarOutOfFocus}
-                            docName={docRepo.currentDoc.docName}
-                            onDocNameChange={this.handleDocNameChange}
                             onMenuToggle={this.handleMenuToggle}
                             activeMenu={activeMenu}
                         />
                         <div className="left-pane">
                             <SimpleMDE
                                 key={editorKey}
-                                onChange={(value: string) =>
-                                    this.handleEditorChange(value, updateDoc)
-                                }
+                                onChange={updateCurrentDoc}
                                 getMdeInstance={this.setInstance}
                                 value={docRepo.currentDoc.content}
                                 events={{
@@ -170,7 +149,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                         <div className="right-pane">
                             <Preview
                                 scrollPercentage={editorScrollPercentage}
-                                previewContent={renderedContent}
+                                previewContent={
+                                    docRepo.currentDoc.renderedContent
+                                }
                                 onScroll={this.handlePreviewScroll}
                                 onFocus={this.handlePreviewFocus}
                                 onBlur={this.handlePreviewBlur}
@@ -180,15 +161,9 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                         <SideBar isOpen={activeMenu !== undefined}>
                             {activeMenu === Menu.File && (
                                 <FileMenu
-                                    onNewFileClicked={() =>
-                                        this.handleNewFileClicked(updateDoc)
-                                    }
-                                    onFileOpenClicked={
-                                        this.handleFileOpenClicked
-                                    }
-                                    onFileRemoveClicked={
-                                        this.handleFileRemoveClicked
-                                    }
+                                    onNewFileClicked={newDoc}
+                                    onFileOpenClicked={openDoc}
+                                    onFileRemoveClicked={removeCurrentDoc}
                                     docRepo={docRepo}
                                 />
                             )}
@@ -202,16 +177,16 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                         <StatusBar
                             onToolbarToggle={this.handleToolbarToggle}
                             onSplitScreenToggle={this.handleSplitScreenToggle}
-                            charCount={statistics.charCount}
-                            lineCount={statistics.lineCount}
-                            wordCount={statistics.wordCount}
+                            charCount={docRepo.currentDoc.statistics.charCount}
+                            lineCount={docRepo.currentDoc.statistics.lineCount}
+                            wordCount={docRepo.currentDoc.statistics.wordCount}
                             isSaving={isSaving}
                             hideToolbar={hideToolbars}
                             splitScreen={splitScreen}
                         />
                     </div>
                 )}
-            </Mutation>
+            </EditorContext.Consumer>
         );
     }
 
@@ -226,20 +201,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
     };
     private handlePreviewBlur = () => {
         this.previewInFocus = false;
-    };
-    private handleEditorChange = (
-        value: string,
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
-        const { docRepo } = this.state;
-        docRepo.currentDoc.content = value;
-        docRepo.updateDoc(docRepo.currentDoc);
-
-        this.setState({
-            docRepo
-        });
-
-        debounce(this.updateDocRepo, 5000)(updateDocMutation);
     };
 
     private handleEditorScroll = (e: any) => {
@@ -266,72 +227,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
     private handleMenuToggle = (menu: Menu) => {
         const { activeMenu } = this.state;
         this.setState({ activeMenu: activeMenu === menu ? undefined : menu });
-    };
-
-    private handleNewFileClicked = (
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
-        const { docRepo } = this.state;
-        const { defaultDoc } = this.props;
-
-        docRepo.newDoc(defaultDoc);
-        this.setState({
-            docRepo,
-            editorKey: uuidv4()
-        });
-
-        this.updateDocRepo(updateDocMutation);
-    };
-
-    private handleFileOpenClicked = (id: string) => {
-        const { docRepo } = this.state;
-        docRepo.openDoc(id);
-        this.setState({
-            docRepo,
-            editorKey: uuidv4()
-        });
-    };
-
-    private handleFileRemoveClicked = () => {
-        const { docRepo } = this.state;
-        docRepo.removeDoc(docRepo.currentDoc.id);
-        this.setState({
-            docRepo,
-            editorKey: uuidv4()
-        });
-    };
-
-    private handleDocNameChange = (newDocName: string) => {
-        const { docRepo } = this.state;
-        docRepo.updateDocName(docRepo.currentDoc, newDocName);
-        this.setState({ docRepo });
-    };
-
-    private updateDocRepo = (
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
-        this.setState({ isSaving: true });
-        const { docRepo } = this.state;
-
-        const docRepoMutation = deriveDocRepoMutation(
-            docRepo,
-            this.unchangedDocRepo
-        );
-        // there is a change
-        if (
-            docRepoMutation.newDocs.length > 0 ||
-            docRepoMutation.updatedDocs.length > 0 ||
-            docRepoMutation.deletedDocIds.length > 0
-        ) {
-            updateDocMutation({
-                variables: { docRepoMutation }
-            }).then(() => {
-                this.unchangedDocRepo = docRepo.clone();
-                setTimeout(() => {
-                    this.setState({ isSaving: false });
-                }, 500);
-            });
-        }
     };
 
     private handleSplitScreenToggle = () => {
