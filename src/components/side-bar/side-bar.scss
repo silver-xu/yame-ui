@@ -2,9 +2,10 @@
 
 .side-bar {
     position: absolute;
-    height: calc(100% - 78px);
+
     right: 0;
     top: 54px;
+    bottom: 24px;
     max-width: 350px;
     width: 350px;
     background: $lite-gray;
@@ -37,6 +38,11 @@
 
 .no-toolbar {
     .side-bar {
+        top: 0;
+        bottom: 24px;
+    }
+
+    .side-bar-overlay {
         top: 0;
     }
 }
