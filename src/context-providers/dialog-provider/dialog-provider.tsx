@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileManager } from '../dialogs';
+import { FileManager } from '../../components/dialogs';
 
 export interface IDialogContextValue {
     setFileManagerOpen: (open: boolean) => void;

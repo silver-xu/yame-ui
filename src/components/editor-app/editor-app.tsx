@@ -1,7 +1,10 @@
 import { MuiThemeProvider } from '@material-ui/core';
 import React from 'react';
+import {
+    AuthContext,
+    AuthProvider
+} from '../../context-providers/auth-provider';
 import MuiTheme from '../../theme';
-import { AuthContext, AuthProvider } from '../auth-provider';
 import { EditorQuery } from '../editor-query';
 import './editor-app.css';
 

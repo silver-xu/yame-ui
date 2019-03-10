@@ -15,8 +15,11 @@ import {
     faUnlockAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CommandButton, ExpandableContainer } from '../../side-bar-items';
-import { ShareLinks } from '../../side-bar-items/share-links';
+import {
+    CommandButton,
+    ExpandableContainer,
+    ShareLinks
+} from '../side-bar-items';
 
 library.add(
     faExternalLinkSquareAlt,

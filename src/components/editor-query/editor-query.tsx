@@ -7,10 +7,11 @@ import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
+import { DialogProvider } from '../../context-providers/dialog-provider';
+import { EditorProvider } from '../../context-providers/editor-provider';
+import { MenuProvider } from '../../context-providers/menu-provider';
 import { DocRepo, IUser } from '../../types';
 import Editor from '../editor';
-import { EditorProvider } from '../editor-provider/editor-provider';
-import { DialogProvider } from '../dialog-provider/dialog-provider';
 
 const API_URL = 'http://localhost:3001/graphql';
 
@@ -90,7 +91,9 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
                                 defaultDoc={data.defaultDoc}
                             >
                                 <DialogProvider>
-                                    <Editor />
+                                    <MenuProvider>
+                                        <Editor />
+                                    </MenuProvider>
                                 </DialogProvider>
                             </EditorProvider>
                         </div>

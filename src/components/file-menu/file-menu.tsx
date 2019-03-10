@@ -10,13 +10,12 @@ import {
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
-import React from 'react';
-import { CommandButton } from '../../side-bar-items';
+import React, { useContext } from 'react';
+import { DialogContext } from '../../context-providers/dialog-provider';
+import { MenuContext } from '../../context-providers/menu-provider';
 import { DocRepo } from '../../types';
+import { CommandButton } from '../side-bar-items';
 import './file-menu.scss';
-import { DialogContext } from '../dialog-provider/dialog-provider';
 
 library.add(
     faPlus,
@@ -39,30 +38,39 @@ export interface IFileMenuProps {
 export const FileMenu = (props: IFileMenuProps) => {
     const { onNewFileClicked } = props;
 
+    const { setFileManagerOpen } = useContext(DialogContext);
+    const { setActiveMenu } = useContext(MenuContext);
+
+    const handleNewFileClicked = () => {
+        onNewFileClicked();
+        setActiveMenu(undefined);
+    };
+
+    const handleFileManagerOpen = () => {
+        setFileManagerOpen(true);
+        setActiveMenu(undefined);
+    };
+
     return (
-        <DialogContext.Consumer>
-            {({ setFileManagerOpen }) => (
-                <div className="file-menu generic-menu">
-                    <CommandButton
-                        description="Create a new document"
-                        heading="New Document"
-                        icon="plus"
-                        onClick={onNewFileClicked}
-                    />
-                    <CommandButton
-                        description="Open an existing document from cloud"
-                        heading="Open a Document"
-                        icon="file"
-                        onClick={() => setFileManagerOpen(true)}
-                    />
-                    <CommandButton
-                        description="Upload a Markdown file from local drive"
-                        heading="Upload Markdown"
-                        icon="file-upload"
-                    />
-                </div>
-            )}
-        </DialogContext.Consumer>
+        <div className="file-menu generic-menu">
+            <CommandButton
+                description="Create a new document"
+                heading="New Document"
+                icon="plus"
+                onClick={handleNewFileClicked}
+            />
+            <CommandButton
+                description="Open an existing document from cloud"
+                heading="Open a Document"
+                icon="file"
+                onClick={handleFileManagerOpen}
+            />
+            <CommandButton
+                description="Upload a Markdown file from local drive"
+                heading="Upload Markdown"
+                icon="file-upload"
+            />
+        </div>
     );
 
     // return (

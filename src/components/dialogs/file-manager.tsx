@@ -1,6 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
-import React, { useState } from 'react';
-import { DialogContext } from '../dialog-provider/dialog-provider';
+import React from 'react';
 
 export interface IFileManagerProps {
     open: boolean;

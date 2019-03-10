@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import './side-bar-items.scss';
+
 library.add(faChevronRight);
 
 export interface IExpandableContainer {

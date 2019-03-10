@@ -5,9 +5,12 @@
     height: calc(100% - 78px);
     right: 0;
     top: 54px;
-    width: calc(20% - 6px);
+    max-width: 350px;
+    width: 350px;
     background: $lite-gray;
     z-index: 1002;
+    transition: max-width 0.5s;
+    overflow: hidden;
 }
 
 .side-bar-overlay {
@@ -19,6 +22,17 @@
     right: 0;
     bottom: 0;
     opacity: 0.5;
+    display: block;
+}
+
+.hide {
+    .side-bar {
+        max-width: 0px;
+    }
+
+    .side-bar-overlay {
+        display: none;
+    }
 }
 
 .no-toolbar {
@@ -31,6 +45,7 @@
     padding: 10px 15px;
     box-sizing: border-box;
     height: 100%;
+    width: 350px;
     overflow-y: auto;
     overflow-x: hidden;
 
