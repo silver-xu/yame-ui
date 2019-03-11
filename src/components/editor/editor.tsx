@@ -57,15 +57,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
 
         return (
             <EditorContext.Consumer>
-                {({
-                    docRepo,
-                    isSaving,
-                    editorKey,
-                    updateCurrentDoc,
-                    newDoc,
-                    openDoc,
-                    removeCurrentDoc
-                }) => (
+                {({ docRepo, isSaving, editorKey, updateCurrentDoc }) => (
                     <MenuContext.Consumer>
                         {({ activeMenu, setActiveMenu }) => (
                             <div
@@ -100,9 +92,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                                 this.handleEditorScroll(e),
                                             update: () => {},
                                             renderLine: () => {},
-                                            mousedown: () => {
-                                                this.handleEditorAndPreviewClick();
-                                            },
+                                            mousedown: () => {},
                                             dblclick: () => {},
                                             touchstart: () => {},
                                             contextmenu: () => {},
@@ -155,23 +145,14 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                         }
                                         onScroll={this.handlePreviewScroll}
                                         onFocus={this.handlePreviewFocus}
+                                        onMouseOver={this.handlePreviewFocus}
                                         onBlur={this.handlePreviewBlur}
-                                        onMouseDown={
-                                            this.handleEditorAndPreviewClick
-                                        }
                                     />
                                 </div>
                                 <SideBar>
                                     <React.Fragment>
                                         {activeMenu === Menu.File && (
-                                            <FileMenu
-                                                onNewFileClicked={newDoc}
-                                                onFileOpenClicked={openDoc}
-                                                onFileRemoveClicked={
-                                                    removeCurrentDoc
-                                                }
-                                                docRepo={docRepo}
-                                            />
+                                            <FileMenu />
                                         )}
                                         {activeMenu === Menu.Share && (
                                             <ShareMenu shareLink="http://yame.io/silver-xu/resume" />
@@ -206,12 +187,6 @@ export class Editor extends Component<IEditorProps, IEditorState> {
             </EditorContext.Consumer>
         );
     }
-
-    private handleEditorAndPreviewClick = () => {
-        this.setState({
-            toolbarOutOfFocus: true
-        });
-    };
 
     private handlePreviewFocus = () => {
         this.previewInFocus = true;

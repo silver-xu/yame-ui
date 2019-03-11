@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { MenuContext } from '../../context-providers/menu-provider';
 import './side-bar.scss';
 
@@ -9,21 +9,27 @@ export interface ISideBarProps {
 
 export const SideBar = (props: ISideBarProps) => {
     const { children } = props;
+
+    const { open, inTransition, setActiveMenu } = useContext(MenuContext);
+
     return (
-        <MenuContext.Consumer>
-            {({ open, setActiveMenu }) => (
-                <div
-                    className={classnames({
-                        hide: !open
-                    })}
-                >
-                    <div
-                        className="side-bar-overlay"
-                        onClick={() => setActiveMenu(undefined)}
-                    />
-                    <div className="side-bar">{children}</div>;
-                </div>
-            )}
-        </MenuContext.Consumer>
+        <React.Fragment>
+            <div
+                className={classnames({
+                    hide: !open && !inTransition,
+                    'side-bar-overlay': true
+                })}
+                onClick={() => setActiveMenu(undefined)}
+            />
+            <div
+                className={classnames({
+                    hide: !open,
+                    'side-bar': true
+                })}
+            >
+                {children}
+            </div>
+            ;
+        </React.Fragment>
     );
 };

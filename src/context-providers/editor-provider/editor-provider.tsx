@@ -19,7 +19,7 @@ export interface IEditorContextValue {
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
     openDoc: (id: string) => void;
-    removeCurrentDoc: () => void;
+    removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
 }
 
@@ -40,7 +40,7 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     updateCurrentDoc: () => {},
     newDoc: () => {},
     openDoc: (_: string) => {},
-    removeCurrentDoc: () => {},
+    removeDoc: (_: string) => {},
     updateCurrentDocName: (_: string) => {}
 });
 
@@ -151,10 +151,11 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         });
     };
 
-    const removeCurrentDoc = (
+    const removeDoc = (
+        id: string,
         updateDocMutation: MutationFn<any, OperationVariables>
     ) => {
-        docRepo.removeDoc(docRepo.currentDoc.id);
+        docRepo.removeDoc(id);
         setUIState({
             ...uiState,
             editorKey: uuidv4()
@@ -198,7 +199,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                             updateCurrentDoc(value, updateDoc),
                         newDoc: () => newDoc(updateDoc),
                         openDoc: (id: string) => openDoc(id),
-                        removeCurrentDoc: () => removeCurrentDoc(updateDoc),
+                        removeDoc: (id: string) => removeDoc(id, updateDoc),
                         updateCurrentDocName: (newDocName: string) =>
                             updateCurrentDocName(newDocName, updateDoc)
                     }}

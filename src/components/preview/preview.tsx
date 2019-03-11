@@ -9,7 +9,7 @@ export interface IPreviewProps {
     onScroll: (scrollPercentage: number) => void;
     onFocus: () => void;
     onBlur: () => void;
-    onMouseDown: () => void;
+    onMouseOver: () => void;
 }
 
 export class Preview extends Component<IPreviewProps> {
@@ -33,7 +33,8 @@ export class Preview extends Component<IPreviewProps> {
             previewContent: content,
             onFocus,
             onBlur,
-            onMouseDown
+
+            onMouseOver
         } = this.props;
 
         return (
@@ -44,7 +45,7 @@ export class Preview extends Component<IPreviewProps> {
                     onScroll={this.handleScroll}
                     onMouseEnter={onFocus}
                     onMouseLeave={onBlur}
-                    onMouseDown={onMouseDown}
+                    onMouseOver={onMouseOver}
                     dangerouslySetInnerHTML={this.injectPreviewMarkup(content)}
                 />
             </div>

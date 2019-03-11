@@ -10,8 +10,12 @@
     width: 350px;
     background: $lite-gray;
     z-index: 1002;
-    transition: max-width 0.5s;
+    transition: max-width 0.3s;
     overflow: hidden;
+
+    &.hide {
+        max-width: 0px;
+    }
 }
 
 .side-bar-overlay {
@@ -24,14 +28,8 @@
     bottom: 0;
     opacity: 0.5;
     display: block;
-}
 
-.hide {
-    .side-bar {
-        max-width: 0px;
-    }
-
-    .side-bar-overlay {
+    &.hide {
         display: none;
     }
 }

@@ -12,6 +12,7 @@ import { EditorProvider } from '../../context-providers/editor-provider';
 import { MenuProvider } from '../../context-providers/menu-provider';
 import { DocRepo, IUser } from '../../types';
 import Editor from '../editor';
+import { Loading } from '../loading';
 
 const API_URL = 'http://localhost:3001/graphql';
 
@@ -98,12 +99,12 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
                             </EditorProvider>
                         </div>
                     ) : (
-                        <div>Initializing...</div>
+                        <Loading text="Initializing Yame editor..." />
                     );
                 }}
             </Query>
         </ApolloProvider>
     ) : (
-        <div>Retrieving User...</div>
+        <Loading text="Authenticating User..." />
     );
 });

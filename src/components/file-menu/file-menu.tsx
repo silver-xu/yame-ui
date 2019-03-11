@@ -12,8 +12,8 @@ import {
 
 import React, { useContext } from 'react';
 import { DialogContext } from '../../context-providers/dialog-provider';
+import { EditorContext } from '../../context-providers/editor-provider';
 import { MenuContext } from '../../context-providers/menu-provider';
-import { DocRepo } from '../../types';
 import { CommandButton } from '../side-bar-items';
 import './file-menu.scss';
 
@@ -28,21 +28,13 @@ library.add(
     faCheck
 );
 
-export interface IFileMenuProps {
-    docRepo: DocRepo;
-    onNewFileClicked: () => void;
-    onFileOpenClicked: (id: string) => void;
-    onFileRemoveClicked: () => void;
-}
-
-export const FileMenu = (props: IFileMenuProps) => {
-    const { onNewFileClicked } = props;
-
+export const FileMenu = () => {
     const { setFileManagerOpen } = useContext(DialogContext);
     const { setActiveMenu } = useContext(MenuContext);
+    const { newDoc } = useContext(EditorContext);
 
     const handleNewFileClicked = () => {
-        onNewFileClicked();
+        newDoc();
         setActiveMenu(undefined);
     };
 
@@ -60,8 +52,8 @@ export const FileMenu = (props: IFileMenuProps) => {
                 onClick={handleNewFileClicked}
             />
             <CommandButton
-                description="Open an existing document from cloud"
-                heading="Open a Document"
+                description="Manage existing document from cloud"
+                heading="Open Document Repository"
                 icon="file"
                 onClick={handleFileManagerOpen}
             />
@@ -72,69 +64,4 @@ export const FileMenu = (props: IFileMenuProps) => {
             />
         </div>
     );
-
-    // return (
-    //     <div className="file-menu">
-    //         <ul className="menu-header">
-    //             <li onClick={props.onNewFileClicked}>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="plus" />
-    //                 </i>
-    //             </li>
-    //             <li onClick={props.onFileRemoveClicked}>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="trash-alt" />
-    //                 </i>
-    //             </li>
-    //             <li>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="file-upload" />
-    //                 </i>
-    //                 <input type="file" accept=".md,.markdown" />
-    //             </li>
-    //             <li>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="download" />
-    //                 </i>
-    //             </li>
-    //             <li>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="file-pdf" />
-    //                 </i>
-    //             </li>
-    //             <li>
-    //                 <i>
-    //                     <FontAwesomeIcon icon="file-word" />
-    //                 </i>
-    //             </li>
-    //         </ul>
-    //         <ul className="file-list">
-    //             {docRepo.sortedDocs.map(doc => (
-    //                 <li
-    //                     key={doc.id}
-    //                     className={classnames({
-    //                         active: docRepo.currentDocId === doc.id
-    //                     })}
-    //                     onClick={() => onFileOpenClicked(doc.id)}
-    //                 >
-    //                     {docRepo.currentDocId === doc.id ? (
-    //                         <i>
-    //                             <FontAwesomeIcon icon="check" />
-    //                         </i>
-    //                     ) : (
-    //                         <i className="placeholder" />
-    //                     )}
-    //                     <span className="doc-name">
-    //                         {doc.docName.length > 0
-    //                             ? doc.docName
-    //                             : 'Untitled file'}
-    //                     </span>
-    //                     <span className="time-span">
-    //                         {doc.friendlyLastModifiedTimespan} ago
-    //                     </span>
-    //                 </li>
-    //             ))}
-    //         </ul>
-    //     </div>
-    // );
 };
