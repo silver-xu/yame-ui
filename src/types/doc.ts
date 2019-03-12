@@ -16,6 +16,10 @@ const xssOptions = {
         p: []
     }
 };
+
+const nodeRegex = new RegExp(/<h[1-3] id="[0-9a-zA-Z]*">.*<\/h[1-3]>/g);
+const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/g);
+
 const converter = new showdown.Converter({
     tables: true,
     smoothLivePreview: true,
@@ -24,10 +28,26 @@ const converter = new showdown.Converter({
     extensions: [showdownHighlight]
 });
 
+export interface IContentNode {
+    text: string;
+    dom: HTMLElement;
+    docNodes?: IContentNode[];
+}
+
 export class Doc {
+    // using cached rendered content to boost performance of rendering
     get renderedContent(): string {
-        const dangerousHtml = converter.makeHtml(this.content);
-        return xss(dangerousHtml, xssOptions);
+        if (
+            this.content !== this.unchangedContent ||
+            !this.renderedContentCached
+        ) {
+            const dangerousHtml = converter.makeHtml(this.content);
+            this.renderedContentCached = xss(dangerousHtml, xssOptions);
+            this.unchangedContent = this.content;
+        }
+
+        // it will never be undefined
+        return this.renderedContentCached as string;
     }
 
     get statistics(): IDocStatistics {
@@ -51,6 +71,9 @@ export class Doc {
     public content: string;
     public lastModified: Date;
 
+    private renderedContentCached?: string;
+    private unchangedContent: string;
+
     constructor(
         id: string,
         docName: string,
@@ -60,6 +83,7 @@ export class Doc {
         this.id = id;
         this.docName = docName;
         this.content = content;
+        this.unchangedContent = content;
         this.lastModified = new Date(lastModified);
     }
 
@@ -71,4 +95,17 @@ export class Doc {
                 comparisonDoc.lastModified.toISOString()
         );
     };
+
+    public buildContentNodeTree(): IContentNode[] | undefined {
+        // using cached rendered content so the following statement has minimum performance penalty
+        let matches = nodeRegex.exec(this.renderedContent);
+        const flatContentNodeTree: IContentNode = [];
+        while (matches !== null) {
+            const match = matches[0];
+            flatContentNodeTree.push({});
+            matches = nodeRegex.exec(this.renderedContent);
+        }
+
+        return undefined;
+    }
 }
