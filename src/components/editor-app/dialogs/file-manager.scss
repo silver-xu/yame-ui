@@ -1,0 +1,16 @@
+@import '../../../styles/colors.scss';
+
+.remove {
+    &:hover {
+        color: $secondary;
+    }
+}
+
+.select {
+    width: 100%;
+    &:after {
+        content: 'a';
+        width: 100%;
+        display: inline-block;
+    }
+}

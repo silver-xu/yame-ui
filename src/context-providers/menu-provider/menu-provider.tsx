@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu } from '../../components/toolbar';
+import { Menu } from '../../components/editor-app/toolbar';
 
 export interface IMenuContextValue {
     activeMenu?: Menu;

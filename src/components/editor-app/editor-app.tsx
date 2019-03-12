@@ -5,8 +5,8 @@ import {
     AuthProvider
 } from '../../context-providers/auth-provider';
 import MuiTheme from '../../theme';
-import { EditorQuery } from '../editor-query';
 import './editor-app.css';
+import { EditorQuery } from './editor-query';
 
 export const EditorApp = () => {
     return (
