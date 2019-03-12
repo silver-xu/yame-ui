@@ -16,6 +16,26 @@ const converter = new showdown.Converter({
 });
 
 export class Doc {
+    get renderedContent(): string {
+        return converter.makeHtml(this.content);
+    }
+
+    get statistics(): IDocStatistics {
+        return getDocStatistics(this);
+    }
+
+    get friendlyLastModifiedTimespan(): string {
+        return `${getShortFriendlyDateDifference(
+            new Date(),
+            this.lastModified
+        )}`;
+    }
+
+    public static parseFromResponse(docResponse: any): Doc {
+        const { id, docName, content, lastModified } = docResponse.doc;
+        return new Doc(id, docName, content, lastModified);
+    }
+
     public id: string;
     public docName: string;
     public content: string;
@@ -31,21 +51,6 @@ export class Doc {
         this.docName = docName;
         this.content = content;
         this.lastModified = new Date(lastModified);
-    }
-
-    get renderedContent(): string {
-        return converter.makeHtml(this.content);
-    }
-
-    get statistics(): IDocStatistics {
-        return getDocStatistics(this);
-    }
-
-    get friendlyLastModifiedTimespan(): string {
-        return `${getShortFriendlyDateDifference(
-            new Date(),
-            this.lastModified
-        )}`;
     }
 
     public equals = (comparisonDoc: Doc): boolean => {

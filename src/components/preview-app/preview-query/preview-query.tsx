@@ -7,10 +7,7 @@ import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
-import { DialogProvider } from '../../../context-providers/dialog-provider';
-import { EditorProvider } from '../../../context-providers/editor-provider';
-import { MenuProvider } from '../../../context-providers/menu-provider';
-import { DocRepo, IUser } from '../../../types';
+import { Doc, IUser } from '../../../types';
 import { Loading } from '../../loading';
 import { Preview } from '../preview';
 
@@ -18,13 +15,11 @@ const API_URL = 'http://localhost:3001/graphql';
 
 const DOC_REPO_QUERY = gql`
     {
-        docRepo {
-            docs {
-                id
-                docName
-                content
-                lastModified
-            }
+        doc {
+            id
+            docName
+            content
+            lastModified
         }
     }
 `;
@@ -77,9 +72,14 @@ export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    return data ? (
+                    if (loading || error) {
+                        return null;
+                    }
+
+                    const doc = Doc.parseFromResponse(data);
+                    return doc ? (
                         <div className="App">
-                            <Preview doc={data.doc} />
+                            <Preview doc={doc} />
                         </div>
                     ) : (
                         <Loading text="Initializing Yame Previewer..." />
