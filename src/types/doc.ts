@@ -5,19 +5,29 @@ import { getShortFriendlyDateDifference } from '../utils/time';
 // tslint:disable-next-line:no-var-requires
 const showdownHighlight = require('showdown-highlight');
 // tslint:disable-next-line:no-var-requires
-const xssFilter = require('showdown-xss-filter');
-
+const xss = require('xss');
+const xssOptions = {
+    whiteList: {
+        a: ['href', 'title', 'target'],
+        h1: ['id'],
+        h2: ['id'],
+        h3: ['id'],
+        h4: ['id'],
+        p: []
+    }
+};
 const converter = new showdown.Converter({
     tables: true,
     smoothLivePreview: true,
     strikethrough: true,
     requireSpaceBeforeHeadingText: true,
-    extensions: [showdownHighlight, xssFilter]
+    extensions: [showdownHighlight]
 });
 
 export class Doc {
     get renderedContent(): string {
-        return converter.makeHtml(this.content);
+        const dangerousHtml = converter.makeHtml(this.content);
+        return xss(dangerousHtml, xssOptions);
     }
 
     get statistics(): IDocStatistics {
