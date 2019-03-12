@@ -12,7 +12,7 @@ import { EditorProvider } from '../../../context-providers/editor-provider';
 import { MenuProvider } from '../../../context-providers/menu-provider';
 import { DocRepo, IUser } from '../../../types';
 import { Loading } from '../../loading';
-import Editor from '../editor';
+import { Preview } from '../preview';
 
 const API_URL = 'http://localhost:3001/graphql';
 
@@ -26,19 +26,16 @@ const DOC_REPO_QUERY = gql`
                 lastModified
             }
         }
-        defaultDoc {
-            namePrefix
-            defaultContent
-        }
     }
 `;
 
-export interface IEditorQueryProps {
+export interface IPreviewQueryProps {
     currentUser?: IUser;
+    docId: string;
 }
 
-export const EditorQuery = React.memo((props: IEditorQueryProps) => {
-    const { currentUser } = props;
+export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
+    const { currentUser, docId } = props;
 
     const authLink = setContext((_, { headers }: { headers: any }) => {
         return {
@@ -76,30 +73,16 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
         <ApolloProvider client={client}>
             <Query
                 query={DOC_REPO_QUERY}
-                variables={{ authToken: currentUser.authToken }}
+                variables={{ authToken: currentUser.authToken, docId }}
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    const docRepo =
-                        data && data.docRepo
-                            ? DocRepo.parseFromResponse(data.docRepo)
-                            : undefined;
-
-                    return docRepo ? (
+                    return data ? (
                         <div className="App">
-                            <EditorProvider
-                                docRepo={docRepo}
-                                defaultDoc={data.defaultDoc}
-                            >
-                                <DialogProvider>
-                                    <MenuProvider>
-                                        <Editor />
-                                    </MenuProvider>
-                                </DialogProvider>
-                            </EditorProvider>
+                            <Preview doc={data.doc} />
                         </div>
                     ) : (
-                        <Loading text="Initializing Yame editor..." />
+                        <Loading text="Initializing Yame Previewer..." />
                     );
                 }}
             </Query>
