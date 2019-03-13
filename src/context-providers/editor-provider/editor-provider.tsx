@@ -105,7 +105,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const debouncedSaveDocRepo = (
         updateDocMutation: MutationFn<any, OperationVariables>
     ) => {
-        debounce(saveDocRepo, 5000)(updateDocMutation);
+        debounce(saveDocRepo, 1500)(updateDocMutation);
     };
 
     const updateCurrentDoc = (

@@ -20,9 +20,16 @@ export enum UserType {
     Facebook = 'Facebook'
 }
 
+export interface IDoc {
+    id: string;
+    docName: string;
+    content: string;
+    lastModified: Date;
+}
+
 export interface IDocRepoMutation {
-    newDocs: Doc[];
-    updatedDocs: Doc[];
+    newDocs: IDoc[];
+    updatedDocs: IDoc[];
     deletedDocIds: string[];
 }
 

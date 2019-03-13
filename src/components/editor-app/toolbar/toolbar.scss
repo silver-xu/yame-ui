@@ -52,8 +52,25 @@
             margin: 0 5px;
             list-style: none;
             position: relative;
+            cursor: pointer;
 
-            > i {
+            &:hover {
+                color: $white;
+            }
+
+            a {
+                color: $medium-lite-gray;
+
+                &:visited {
+                    color: $medium-lite-gray;
+                }
+
+                &:hover {
+                    color: $white;
+                }
+            }
+
+            i {
                 padding: 3px 8px;
                 display: block;
                 border-radius: 3px;

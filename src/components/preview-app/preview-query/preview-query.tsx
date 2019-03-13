@@ -13,9 +13,9 @@ import { Preview } from '../preview';
 
 const API_URL = 'http://localhost:3001/graphql';
 
-const DOC_REPO_QUERY = gql`
-    {
-        doc {
+const DOC_QUERY = gql`
+    query Doc($docId: String!) {
+        doc(docId: $docId) {
             id
             docName
             content
@@ -67,19 +67,14 @@ export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
     return currentUser ? (
         <ApolloProvider client={client}>
             <Query
-                query={DOC_REPO_QUERY}
+                query={DOC_QUERY}
                 variables={{ authToken: currentUser.authToken, docId }}
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    if (loading || error) {
-                        return null;
-                    }
-
-                    const doc = Doc.parseFromResponse(data);
-                    return doc ? (
+                    return !loading && !error && data.doc ? (
                         <div className="App">
-                            <Preview doc={doc} />
+                            <Preview doc={Doc.parseFromResponse(data)} />
                         </div>
                     ) : (
                         <Loading text="Initializing Yame Previewer..." />

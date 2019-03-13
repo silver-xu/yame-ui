@@ -66,9 +66,16 @@ export const Toolbar = (props: IToolbarProps) => {
             </div>
             <ul>
                 <li>
-                    <i>
-                        <FontAwesomeIcon icon={['fab', 'firefox']} />
-                    </i>
+                    <a
+                        href={`http://localhost:3000/preview/${
+                            docRepo.currentDoc.id
+                        }`}
+                        target="_blank"
+                    >
+                        <i>
+                            <FontAwesomeIcon icon={['fab', 'firefox']} />
+                        </i>
+                    </a>
                 </li>
 
                 <li onClick={() => setActiveMenu(Menu.File)}>

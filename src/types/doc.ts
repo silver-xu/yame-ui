@@ -1,6 +1,7 @@
 import * as showdown from 'showdown';
-import { IDocStatistics } from '.';
+import { IDoc, IDocStatistics } from '.';
 import { getDocStatistics } from '../services/doc-service';
+import { getMatches } from '../utils/regex';
 import { getShortFriendlyDateDifference } from '../utils/time';
 // tslint:disable-next-line:no-var-requires
 const showdownHighlight = require('showdown-highlight');
@@ -13,12 +14,26 @@ const xssOptions = {
         h2: ['id'],
         h3: ['id'],
         h4: ['id'],
-        p: []
+        p: [],
+        ul: [],
+        ol: [],
+        li: [],
+        table: [],
+        th: [],
+        tr: [],
+        td: [],
+        thead: [],
+        tbody: [],
+        b: [],
+        i: [],
+        em: [],
+        pre: []
     }
 };
 
-const nodeRegex = new RegExp(/<h[1-3] id="[0-9a-zA-Z]*">.*<\/h[1-3]>/g);
-const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/g);
+const nodeRegex = new RegExp(/<h[1-3] id=".*">.*<\/h[1-3]>/gm);
+const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/gm);
+const nodeIdRegex = new RegExp(/id="(.*?)"/gm);
 
 const converter = new showdown.Converter({
     tables: true,
@@ -29,12 +44,14 @@ const converter = new showdown.Converter({
 });
 
 export interface IContentNode {
+    level: number;
     text: string;
-    dom: HTMLElement;
-    docNodes?: IContentNode[];
+    id: string;
+    parentNode?: IContentNode;
+    nodes: IContentNode[];
 }
 
-export class Doc {
+export class Doc implements IDoc {
     // using cached rendered content to boost performance of rendering
     get renderedContent(): string {
         if (
@@ -72,6 +89,8 @@ export class Doc {
     public lastModified: Date;
 
     private renderedContentCached?: string;
+    private contentTreeCached?: IContentNode;
+    private flatContentTreeCached?: IContentNode[];
     private unchangedContent: string;
 
     constructor(
@@ -96,16 +115,84 @@ export class Doc {
         );
     };
 
-    public buildContentNodeTree(): IContentNode[] | undefined {
-        // using cached rendered content so the following statement has minimum performance penalty
-        let matches = nodeRegex.exec(this.renderedContent);
-        const flatContentNodeTree: IContentNode = [];
-        while (matches !== null) {
-            const match = matches[0];
-            flatContentNodeTree.push({});
-            matches = nodeRegex.exec(this.renderedContent);
+    public buildContentNodeTree = (): IContentNode => {
+        if (this.content !== this.unchangedContent || !this.contentTreeCached) {
+            const flatContentNodeTree = this.getFlatContentNodeTree();
+            const rootNode = {
+                id: 'root',
+                text: 'root',
+                level: 0,
+                nodes: []
+            };
+
+            this.recursivelyBuildContentNodeTree(
+                flatContentNodeTree,
+                0,
+                rootNode
+            );
+            this.contentTreeCached = rootNode;
+        }
+        return this.contentTreeCached;
+    };
+
+    private getFlatContentNodeTree = (): IContentNode[] => {
+        if (
+            this.content !== this.unchangedContent ||
+            !this.flatContentTreeCached
+        ) {
+            // using cached rendered content so the following statement has minimum performance penalty
+            const matches = getMatches(this.renderedContent, nodeRegex, 0);
+            this.flatContentTreeCached = matches.map(match => {
+                const node = match;
+                const textMatch = getMatches(node, nodeTextRegex, 1);
+                const text = textMatch ? textMatch[0] : '';
+                const idMatch = getMatches(node, nodeIdRegex, 1);
+                const id = idMatch ? idMatch[0] : '';
+                const level = parseInt(node.substring(2, 3), 10);
+                return {
+                    id,
+                    text,
+                    level,
+                    nodes: []
+                };
+            });
+        }
+        return this.flatContentTreeCached;
+    };
+
+    private recursivelyBuildContentNodeTree = (
+        flatContentNodeTree: IContentNode[],
+        currentIndex: number,
+        lastNode: IContentNode
+    ) => {
+        if (currentIndex >= flatContentNodeTree.length) {
+            return;
+        } else if (flatContentNodeTree[currentIndex].level < lastNode.level) {
+            if (lastNode.parentNode) {
+                this.recursivelyBuildContentNodeTree(
+                    flatContentNodeTree,
+                    currentIndex,
+                    lastNode.parentNode
+                );
+            }
+            return;
+        } else if (flatContentNodeTree[currentIndex].level === lastNode.level) {
+            if (lastNode.parentNode) {
+                flatContentNodeTree[currentIndex].parentNode =
+                    lastNode.parentNode;
+                lastNode.parentNode.nodes.push(
+                    flatContentNodeTree[currentIndex]
+                );
+            }
+        } else if (flatContentNodeTree[currentIndex].level > lastNode.level) {
+            flatContentNodeTree[currentIndex].parentNode = lastNode;
+            lastNode.nodes.push(flatContentNodeTree[currentIndex]);
         }
 
-        return undefined;
-    }
+        this.recursivelyBuildContentNodeTree(
+            flatContentNodeTree,
+            currentIndex + 1,
+            flatContentNodeTree[currentIndex]
+        );
+    };
 }

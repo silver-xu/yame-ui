@@ -32,7 +32,14 @@ export const deriveDocRepoMutation = (
 ): IDocRepoMutation => {
     const newDocs = Object.entries(docRepo.docs)
         .filter(([id]: [string, Doc]) => !unChangedDocRepo.docs[id])
-        .map(([, doc]: [string, Doc]) => doc);
+        .map(([, doc]: [string, Doc]) => {
+            return {
+                id: doc.id,
+                docName: doc.docName,
+                content: doc.content,
+                lastModified: doc.lastModified
+            };
+        });
 
     const updatedDocs = Object.entries(docRepo.docs)
         .filter(
@@ -40,7 +47,14 @@ export const deriveDocRepoMutation = (
                 unChangedDocRepo.docs[id] &&
                 !unChangedDocRepo.docs[id].equals(doc)
         )
-        .map(([, doc]: [string, Doc]) => doc);
+        .map(([, doc]: [string, Doc]) => {
+            return {
+                id: doc.id,
+                docName: doc.docName,
+                content: doc.content,
+                lastModified: doc.lastModified
+            };
+        });
 
     const deletedDocIds = Object.entries(unChangedDocRepo.docs)
         .filter(([id]: [string, Doc]) => !docRepo.docs[id])
