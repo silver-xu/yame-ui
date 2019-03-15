@@ -21,6 +21,7 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
+    publishCurrentDoc: () => void;
 }
 
 export interface IEditorProviderUIState {
@@ -41,12 +42,19 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     newDoc: () => {},
     openDoc: (_: string) => {},
     removeDoc: (_: string) => {},
-    updateCurrentDocName: (_: string) => {}
+    updateCurrentDocName: (_: string) => {},
+    publishCurrentDoc: () => {}
 });
 
 const UPDATE_DOC_REPO = gql`
     mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
         updateDocRepo(docRepoMutation: $docRepoMutation)
+    }
+`;
+
+const PUBLISH_DOC = gql`
+    mutation publishDoc($docMutation: DocMutation) {
+        publishDoc(docMutation: $docMutation)
     }
 `;
 
@@ -187,25 +195,48 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo(updateDocMutation);
     };
 
+    const publishCurrentDoc = async (
+        publishDocMutation: MutationFn<any, OperationVariables>
+    ) => {
+        const { id, docName, content, lastModified } = docRepo.currentDoc;
+        await publishDocMutation({
+            variables: {
+                docMutation: {
+                    id,
+                    docName,
+                    content,
+                    lastModified
+                }
+            }
+        });
+    };
+
     return (
-        <Mutation mutation={UPDATE_DOC_REPO}>
-            {updateDoc => (
-                <EditorContext.Provider
-                    value={{
-                        docRepo,
-                        isSaving,
-                        editorKey,
-                        updateCurrentDoc: (value: string) =>
-                            updateCurrentDoc(value, updateDoc),
-                        newDoc: () => newDoc(updateDoc),
-                        openDoc: (id: string) => openDoc(id),
-                        removeDoc: (id: string) => removeDoc(id, updateDoc),
-                        updateCurrentDocName: (newDocName: string) =>
-                            updateCurrentDocName(newDocName, updateDoc)
-                    }}
-                >
-                    {children}
-                </EditorContext.Provider>
+        <Mutation mutation={PUBLISH_DOC}>
+            {publishDoc => (
+                <Mutation mutation={UPDATE_DOC_REPO}>
+                    {updateDoc => (
+                        <EditorContext.Provider
+                            value={{
+                                docRepo,
+                                isSaving,
+                                editorKey,
+                                updateCurrentDoc: (value: string) =>
+                                    updateCurrentDoc(value, updateDoc),
+                                newDoc: () => newDoc(updateDoc),
+                                openDoc: (id: string) => openDoc(id),
+                                removeDoc: (id: string) =>
+                                    removeDoc(id, updateDoc),
+                                updateCurrentDocName: (newDocName: string) =>
+                                    updateCurrentDocName(newDocName, updateDoc),
+                                publishCurrentDoc: () =>
+                                    publishCurrentDoc(publishDoc)
+                            }}
+                        >
+                            {children}
+                        </EditorContext.Provider>
+                    )}
+                </Mutation>
             )}
         </Mutation>
     );

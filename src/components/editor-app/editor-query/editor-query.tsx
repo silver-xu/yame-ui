@@ -25,6 +25,12 @@ const DOC_REPO_QUERY = gql`
                 content
                 lastModified
             }
+            publishedDocs {
+                id
+                docName
+                content
+                lastModified
+            }
         }
         defaultDoc {
             namePrefix

@@ -40,6 +40,7 @@ const converter = new showdown.Converter({
     smoothLivePreview: true,
     strikethrough: true,
     requireSpaceBeforeHeadingText: true,
+    disableForced4SpacesIndentedSublists: true,
     extensions: [showdownHighlight]
 });
 

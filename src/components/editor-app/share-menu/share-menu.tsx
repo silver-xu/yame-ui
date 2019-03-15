@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import React from 'react';
+import React, { useContext } from 'react';
 import './share-menu.scss';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -20,6 +20,7 @@ import {
     ExpandableContainer,
     ShareLinks
 } from '../side-bar-items';
+import { EditorContext } from '../../../context-providers/editor-provider';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -39,6 +40,7 @@ export interface IShareMenuProps {
 
 export const ShareMenu = (props: IShareMenuProps) => {
     const { shareLink } = props;
+    const { publishCurrentDoc: publishDoc } = useContext(EditorContext);
     return (
         <div className="share-menu generic-menu">
             <CommandButton
@@ -52,11 +54,11 @@ export const ShareMenu = (props: IShareMenuProps) => {
                 icon="file-pdf"
             />
             <CommandButton
+                onClick={publishDoc}
                 description="Please publish first to obtain sharing links"
                 heading="Publish Now"
                 icon="external-link-square-alt"
             />
-
             <ShareLinks shareLink={shareLink} />
             <ExpandableContainer
                 description="Options about sharing"
