@@ -35,7 +35,10 @@ export interface IEditorProviderDocState {
 }
 
 export const EditorContext = React.createContext<IEditorContextValue>({
-    docRepo: new DocRepo({ foo: new Doc('foo', 'bar', 'foobar', new Date()) }),
+    docRepo: new DocRepo(
+        { foo: new Doc('foo', 'bar', 'foobar', new Date()) },
+        { foo: new Doc('foo', 'bar', 'foobar', new Date()) }
+    ),
     isSaving: false,
     editorKey: '',
     updateCurrentDoc: () => {},

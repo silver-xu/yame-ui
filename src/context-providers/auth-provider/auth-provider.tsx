@@ -4,7 +4,7 @@ import { useFacebookLogin } from '../../hooks/react-use-fb-login';
 import { IUser, UserType } from '../../types';
 
 const AUTH_TOKEN_KEY = 'anonymousAuthToken';
-const APP_ID = '566204683881459';
+const APP_ID = process.env.REACT_APP_FB_APP_ID || '';
 
 const getAnonymousUser = () => {
     const anonymousAuthToken = localStorage.getItem(AUTH_TOKEN_KEY);

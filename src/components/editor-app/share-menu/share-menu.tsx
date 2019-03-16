@@ -15,12 +15,12 @@ import {
     faUnlockAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { EditorContext } from '../../../context-providers/editor-provider';
 import {
     CommandButton,
     ExpandableContainer,
     ShareLinks
 } from '../side-bar-items';
-import { EditorContext } from '../../../context-providers/editor-provider';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -40,7 +40,8 @@ export interface IShareMenuProps {
 
 export const ShareMenu = (props: IShareMenuProps) => {
     const { shareLink } = props;
-    const { publishCurrentDoc: publishDoc } = useContext(EditorContext);
+    const { publishCurrentDoc, docRepo } = useContext(EditorContext);
+    const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();
     return (
         <div className="share-menu generic-menu">
             <CommandButton
@@ -54,10 +55,15 @@ export const ShareMenu = (props: IShareMenuProps) => {
                 icon="file-pdf"
             />
             <CommandButton
-                onClick={publishDoc}
-                description="Please publish first to obtain sharing links"
+                onClick={publishCurrentDoc}
+                description={
+                    hasCurrentDocUpdatedSincePublished
+                        ? 'The current document has not been published since last change'
+                        : 'The current document has already been published'
+                }
                 heading="Publish Now"
                 icon="external-link-square-alt"
+                disabled={!hasCurrentDocUpdatedSincePublished}
             />
             <ShareLinks shareLink={shareLink} />
             <ExpandableContainer

@@ -102,7 +102,7 @@ export const FileManager = React.memo(() => {
                                     {doc.docName}
                                 </TableCell>
                                 <TableCell align="right">
-                                    {doc.friendlyLastModifiedTimespan} ago
+                                    {doc.getFriendlyLastModifiedTimespan()} ago
                                 </TableCell>
                                 <TableCell align="center">
                                     <div

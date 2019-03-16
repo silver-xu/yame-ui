@@ -28,6 +28,18 @@
         &:hover {
             background: $medium-ultra-lite-gray;
         }
+
+        &.disabled {
+            h3,
+            .primary,
+            svg {
+                color: $medium-lite-gray;
+            }
+
+            &:hover {
+                background: none;
+            }
+        }
     }
 
     .chev {

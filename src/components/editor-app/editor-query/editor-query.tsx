@@ -14,7 +14,7 @@ import { DocRepo, IUser } from '../../../types';
 import { Loading } from '../../loading';
 import Editor from '../editor';
 
-const API_URL = 'http://localhost:3001/graphql';
+const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
 const DOC_REPO_QUERY = gql`
     {

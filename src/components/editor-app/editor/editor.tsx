@@ -140,9 +140,7 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                         scrollPercentage={
                                             editorScrollPercentage
                                         }
-                                        previewContent={
-                                            docRepo.currentDoc.renderedContent
-                                        }
+                                        previewContent={docRepo.currentDoc.renderContent()}
                                         onScroll={this.handlePreviewScroll}
                                         onFocus={this.handlePreviewFocus}
                                         onMouseOver={this.handlePreviewFocus}
@@ -168,13 +166,16 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                         this.handleSplitScreenToggle
                                     }
                                     charCount={
-                                        docRepo.currentDoc.statistics.charCount
+                                        docRepo.currentDoc.getStatistics()
+                                            .charCount
                                     }
                                     lineCount={
-                                        docRepo.currentDoc.statistics.lineCount
+                                        docRepo.currentDoc.getStatistics()
+                                            .lineCount
                                     }
                                     wordCount={
-                                        docRepo.currentDoc.statistics.wordCount
+                                        docRepo.currentDoc.getStatistics()
+                                            .wordCount
                                     }
                                     isSaving={isSaving}
                                     hideToolbar={hideToolbars}

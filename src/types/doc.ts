@@ -53,32 +53,6 @@ export interface IContentNode {
 }
 
 export class Doc implements IDoc {
-    // using cached rendered content to boost performance of rendering
-    get renderedContent(): string {
-        if (
-            this.content !== this.unchangedContent ||
-            !this.renderedContentCached
-        ) {
-            const dangerousHtml = converter.makeHtml(this.content);
-            this.renderedContentCached = xss(dangerousHtml, xssOptions);
-            this.unchangedContent = this.content;
-        }
-
-        // it will never be undefined
-        return this.renderedContentCached as string;
-    }
-
-    get statistics(): IDocStatistics {
-        return getDocStatistics(this);
-    }
-
-    get friendlyLastModifiedTimespan(): string {
-        return `${getShortFriendlyDateDifference(
-            new Date(),
-            this.lastModified
-        )}`;
-    }
-
     public static parseFromResponse(docResponse: any): Doc {
         const { id, docName, content, lastModified } = docResponse.doc;
         return new Doc(id, docName, content, lastModified);
@@ -116,6 +90,32 @@ export class Doc implements IDoc {
         );
     };
 
+    // using cached rendered content to boost performance of rendering
+    public renderContent = (): string => {
+        if (
+            this.content !== this.unchangedContent ||
+            !this.renderedContentCached
+        ) {
+            const dangerousHtml = converter.makeHtml(this.content);
+            this.renderedContentCached = xss(dangerousHtml, xssOptions);
+            this.unchangedContent = this.content;
+        }
+
+        // it will never be undefined
+        return this.renderedContentCached as string;
+    };
+
+    public getStatistics = (): IDocStatistics => {
+        return getDocStatistics(this);
+    };
+
+    public getFriendlyLastModifiedTimespan = (): string => {
+        return `${getShortFriendlyDateDifference(
+            new Date(),
+            this.lastModified
+        )}`;
+    };
+
     public buildContentNodeTree = (): IContentNode => {
         if (this.content !== this.unchangedContent || !this.contentTreeCached) {
             const flatContentNodeTree = this.getFlatContentNodeTree();
@@ -142,7 +142,7 @@ export class Doc implements IDoc {
             !this.flatContentTreeCached
         ) {
             // using cached rendered content so the following statement has minimum performance penalty
-            const matches = getMatches(this.renderedContent, nodeRegex, 0);
+            const matches = getMatches(this.renderContent(), nodeRegex, 0);
             this.flatContentTreeCached = matches.map(match => {
                 const node = match;
                 const textMatch = getMatches(node, nodeTextRegex, 1);

@@ -10,7 +10,7 @@ export const Content = (props: IContentProps) => {
     const { doc } = props;
 
     const createMarkup = () => {
-        return { __html: doc.renderedContent };
+        return { __html: doc.renderContent() };
     };
 
     return (
