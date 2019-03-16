@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { FileManager } from '../../components/dialogs';
-import { RemoveFileAlert } from '../../components/dialogs/remove-file-alert';
+import {
+    FileManager,
+    RemoveFileAlert
+} from '../../components/editor-app/dialogs';
 import { Doc } from '../../types';
 
 export interface IDialogContextValue {

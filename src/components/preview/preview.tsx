@@ -33,7 +33,6 @@ export class Preview extends Component<IPreviewProps> {
             previewContent: content,
             onFocus,
             onBlur,
-
             onMouseOver
         } = this.props;
 

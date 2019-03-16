@@ -21,6 +21,7 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
+    publishCurrentDoc: () => void;
 }
 
 export interface IEditorProviderUIState {
@@ -34,19 +35,29 @@ export interface IEditorProviderDocState {
 }
 
 export const EditorContext = React.createContext<IEditorContextValue>({
-    docRepo: new DocRepo({ foo: new Doc('foo', 'bar', 'foobar', new Date()) }),
+    docRepo: new DocRepo(
+        { foo: new Doc('foo', 'bar', 'foobar', new Date()) },
+        { foo: new Doc('foo', 'bar', 'foobar', new Date()) }
+    ),
     isSaving: false,
     editorKey: '',
     updateCurrentDoc: () => {},
     newDoc: () => {},
     openDoc: (_: string) => {},
     removeDoc: (_: string) => {},
-    updateCurrentDocName: (_: string) => {}
+    updateCurrentDocName: (_: string) => {},
+    publishCurrentDoc: () => {}
 });
 
 const UPDATE_DOC_REPO = gql`
     mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
         updateDocRepo(docRepoMutation: $docRepoMutation)
+    }
+`;
+
+const PUBLISH_DOC = gql`
+    mutation publishDoc($docMutation: DocMutation) {
+        publishDoc(docMutation: $docMutation)
     }
 `;
 
@@ -105,7 +116,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const debouncedSaveDocRepo = (
         updateDocMutation: MutationFn<any, OperationVariables>
     ) => {
-        debounce(saveDocRepo, 5000)(updateDocMutation);
+        debounce(saveDocRepo, 1500)(updateDocMutation);
     };
 
     const updateCurrentDoc = (
@@ -187,25 +198,48 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo(updateDocMutation);
     };
 
+    const publishCurrentDoc = async (
+        publishDocMutation: MutationFn<any, OperationVariables>
+    ) => {
+        const { id, docName, content, lastModified } = docRepo.currentDoc;
+        await publishDocMutation({
+            variables: {
+                docMutation: {
+                    id,
+                    docName,
+                    content,
+                    lastModified
+                }
+            }
+        });
+    };
+
     return (
-        <Mutation mutation={UPDATE_DOC_REPO}>
-            {updateDoc => (
-                <EditorContext.Provider
-                    value={{
-                        docRepo,
-                        isSaving,
-                        editorKey,
-                        updateCurrentDoc: (value: string) =>
-                            updateCurrentDoc(value, updateDoc),
-                        newDoc: () => newDoc(updateDoc),
-                        openDoc: (id: string) => openDoc(id),
-                        removeDoc: (id: string) => removeDoc(id, updateDoc),
-                        updateCurrentDocName: (newDocName: string) =>
-                            updateCurrentDocName(newDocName, updateDoc)
-                    }}
-                >
-                    {children}
-                </EditorContext.Provider>
+        <Mutation mutation={PUBLISH_DOC}>
+            {publishDoc => (
+                <Mutation mutation={UPDATE_DOC_REPO}>
+                    {updateDoc => (
+                        <EditorContext.Provider
+                            value={{
+                                docRepo,
+                                isSaving,
+                                editorKey,
+                                updateCurrentDoc: (value: string) =>
+                                    updateCurrentDoc(value, updateDoc),
+                                newDoc: () => newDoc(updateDoc),
+                                openDoc: (id: string) => openDoc(id),
+                                removeDoc: (id: string) =>
+                                    removeDoc(id, updateDoc),
+                                updateCurrentDocName: (newDocName: string) =>
+                                    updateCurrentDocName(newDocName, updateDoc),
+                                publishCurrentDoc: () =>
+                                    publishCurrentDoc(publishDoc)
+                            }}
+                        >
+                            {children}
+                        </EditorContext.Provider>
+                    )}
+                </Mutation>
             )}
         </Mutation>
     );

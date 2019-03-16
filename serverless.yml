@@ -1,0 +1,17 @@
+service: yame-ui
+
+provider:
+    name: aws
+    runtime: nodejs8.10
+    stage: ${opt:stage}
+    region: ap-southeast-2
+
+plugins:
+    - serverless-finch
+
+custom:
+    client:
+        bucketName: ${opt:stage}.yame.io
+        distributionFolder: build
+        indexDocument: index.html
+        errorDocument: index.html

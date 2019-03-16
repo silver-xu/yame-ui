@@ -1,0 +1,103 @@
+@import '../../../styles/colors.scss';
+
+.header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 20px 0;
+    background: #039be5;
+    color: $white;
+    text-align: center;
+}
+
+.nav {
+    position: absolute;
+    background: $lite-blue-gray;
+    top: 60px;
+    left: 0;
+    padding: 20px 0;
+
+    width: 300px;
+    bottom: 0;
+
+    a {
+        color: $dark-gray;
+        text-decoration: none;
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        font-weight: 400;
+
+        &.active {
+            color: $lite-blue;
+            font-weight: 500;
+        }
+
+        &:hover {
+            color: $lite-blue;
+        }
+    }
+
+    > ul {
+        margin: 0;
+        padding: 0;
+
+        > li {
+            list-style: none;
+
+            > a {
+                color: $black;
+                padding: 10px 20px;
+            }
+
+            > ul {
+                padding: 10px 0 0 0;
+
+                > li {
+                    list-style: none;
+
+                    > a {
+                        color: $dark-gray;
+                        padding: 10px 40px;
+                    }
+
+                    > ul {
+                        padding: 8px 0 0 0;
+
+                        > li {
+                            list-style: none;
+
+                            > a {
+                                color: $medium-gray;
+                                padding: 10px 60px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.content {
+    scroll-behavior: smooth;
+    position: absolute;
+    top: 60px;
+    left: 300px;
+    right: 0;
+    bottom: 0;
+    overflow-y: scroll;
+}
+
+.floating-tools {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+
+    .hide {
+        display: none;
+    }
+}

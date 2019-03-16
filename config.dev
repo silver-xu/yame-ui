@@ -1,0 +1,2 @@
+REACT_APP_FB_APP_ID ?= 268079694111991
+REACT_APP_EXP_API_URL ?= http://api.dev.yame.io/graphql

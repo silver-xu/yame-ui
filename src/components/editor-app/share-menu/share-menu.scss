@@ -1,0 +1,75 @@
+@import '../../../styles/colors.scss';
+
+.generic-menu {
+    padding: 10px 15px;
+    box-sizing: border-box;
+
+    h3 {
+        font-weight: 400;
+        font-size: 14px;
+        margin: 10px 0 10px 0;
+        padding: 0;
+        color: $dark-gray;
+    }
+
+    h4 {
+        font-weight: 100;
+        color: $medium-gray;
+        font-size: 13px;
+        margin: 20px 0 10px 0;
+    }
+
+    .primary {
+        margin: 15px 0 10px 0;
+
+        border: 0;
+        &:focus {
+            outline: 0;
+        }
+    }
+
+    svg {
+        display: inline-block;
+        margin-right: 10px;
+        color: $dark-gray;
+        cursor: pointer;
+    }
+
+    .link {
+        padding: 10px;
+        width: calc(100% - 50px);
+        box-sizing: border-box;
+        background: $transparent;
+        color: $medium-gray;
+        border: 0;
+    }
+
+    .field {
+        margin: 15px 0;
+        color: $dark-gray;
+
+        svg {
+            font-size: 20px;
+
+            &.narrow {
+                font-size: 14px;
+            }
+        }
+
+        label {
+            display: inline-block;
+            width: 250px;
+            font-size: 14px;
+        }
+    }
+
+    .secret {
+        width: 100%;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: none;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+}

@@ -38,16 +38,19 @@
             -webkit-animation-delay: -0.32s;
             animation-delay: -0.32s;
             margin-right: 10px;
+            background: $bounce-1;
         }
 
         .bounce2 {
             -webkit-animation-delay: -0.16s;
             animation-delay: -0.16s;
             margin-right: 10px;
+            background: $bounce-2;
         }
 
         .bounce3 {
             margin-right: 0;
+            background: $bounce-3;
         }
     }
 
