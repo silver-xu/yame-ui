@@ -11,7 +11,7 @@ import { Doc, IUser } from '../../../types';
 import { Loading } from '../../loading';
 import { Preview } from '../preview';
 
-const API_URL = 'http://localhost:3001/graphql';
+const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
 const DOC_QUERY = gql`
     query Doc($docId: String!) {

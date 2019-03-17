@@ -17,6 +17,8 @@ import './toolbar.scss';
 
 library.add(faFolder, faShare, faUserSecret, faSync, fab);
 
+const BASE_URL = process.env.REACT_APP_BASE_URL || '';
+
 export enum Menu {
     File = 'File',
     Share = 'Share',
@@ -67,9 +69,7 @@ export const Toolbar = (props: IToolbarProps) => {
             <ul>
                 <li>
                     <a
-                        href={`http://localhost:3000/preview/${
-                            docRepo.currentDoc.id
-                        }`}
+                        href={`${BASE_URL}/preview/${docRepo.currentDoc.id}`}
                         target="_blank"
                     >
                         <i>

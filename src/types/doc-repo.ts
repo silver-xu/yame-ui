@@ -57,6 +57,7 @@ export class DocRepo {
     public static parseFromResponse(docRepoResponse: any): DocRepo {
         const newDocs: { [id: string]: Doc } = {};
         const newPublishedDocs: { [id: string]: Doc } = {};
+
         docRepoResponse.docs.forEach((doc: any) => {
             newDocs[doc.id] = new Doc(
                 doc.id,
@@ -147,6 +148,9 @@ export class DocRepo {
     };
 
     public hasCurrentDocUpdatedSincePublished = () => {
+        if (!this.publishedDocs[this.currentDoc.id]) {
+            return true;
+        }
         const { content, docName } = this.publishedDocs[this.currentDoc.id];
         return (
             this.currentDoc.content !== content ||
