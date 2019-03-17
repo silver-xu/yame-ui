@@ -11,8 +11,8 @@ node_modules:
 start: node_modules		
 	npm start
 
-dist-dev: node_modules
-	export STAGE=dev && npm run build
+dist: node_modules
+	npm run build
 
-deploy: dist-dev
+deploy: dist
 	sls client deploy -y --stage ${STAGE}
