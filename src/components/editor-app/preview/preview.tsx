@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-
-import 'highlight.js/styles/vs.css';
 import './preview.scss';
 
 export interface IPreviewProps {
