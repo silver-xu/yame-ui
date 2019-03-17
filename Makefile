@@ -15,5 +15,8 @@ start: node_modules
 dist: node_modules
 	npm run build
 
+invalidate:
+	aws cloudfront create-invalidation --distribution-id EIJJC03H7RV4H --paths "/*"
+
 deploy: dist
 	sls client deploy -y --stage ${STAGE} --no-confirm
