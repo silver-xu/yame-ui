@@ -9,11 +9,11 @@ export REACT_APP_BASE_URL
 node_modules:
 	npm install
 
-start: node_modules		
+start: node_modules
 	npm start
 
 dist: node_modules
 	npm run build
 
 deploy: dist
-	sls client deploy -y --stage ${STAGE}
+	sls client deploy -y --stage ${STAGE} --no-confirm
