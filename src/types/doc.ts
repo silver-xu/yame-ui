@@ -10,10 +10,10 @@ const xss = require('xss');
 const xssOptions = {
     whiteList: {
         a: ['href', 'title', 'target'],
-        h1: ['id'],
-        h2: ['id'],
-        h3: ['id'],
-        h4: ['id'],
+        h1: [],
+        h2: [],
+        h3: [],
+        h4: [],
         p: [],
         ul: [],
         ol: [],
@@ -27,7 +27,9 @@ const xssOptions = {
         b: [],
         i: [],
         em: [],
-        pre: []
+        pre: [],
+        code: [],
+        span: []
     }
 };
 
