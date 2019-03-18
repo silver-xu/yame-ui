@@ -2,7 +2,15 @@ language: node_js
 node_js:
     - '8.10'
 
-before_install:
+branches:
+    only:
+        - master
+
+install:
     - pip install --user awscli
-script:
-    - make deploy STAGE=dev
+
+jobs:
+    include:
+        - stage: dev deploy
+          script:
+              - make deploy STAGE=dev
