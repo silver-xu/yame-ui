@@ -3,6 +3,6 @@ node_js:
     - '8.10'
 
 before_install:
-    - pip install awscli
+    - pip install --user awscli
 script:
     - make deploy STAGE=dev
