@@ -49,7 +49,7 @@ export const ExpandableContainer = (props: IExpandableContainer) => {
             <div
                 className={classnames({
                     hide: !expanded,
-                    content: true
+                    'container-content': true
                 })}
             >
                 {children}

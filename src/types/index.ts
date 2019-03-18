@@ -38,4 +38,9 @@ export interface IDefaultDoc {
     defaultContent: string;
 }
 
+export interface IPublishResult {
+    normalizedUsername: string;
+    permalink: string;
+}
+
 export { Doc, DocRepo };

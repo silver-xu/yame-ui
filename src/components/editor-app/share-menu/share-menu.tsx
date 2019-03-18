@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './share-menu.scss';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -21,6 +21,7 @@ import {
     ExpandableContainer,
     ShareLinks
 } from '../side-bar-items';
+import { IPublishResult } from '../../../types';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -39,9 +40,18 @@ export interface IShareMenuProps {
 }
 
 export const ShareMenu = (props: IShareMenuProps) => {
-    const { shareLink } = props;
     const { publishCurrentDoc, docRepo } = useContext(EditorContext);
+    const [publishResult, setPublishResult] = useState<
+        IPublishResult | undefined
+    >(undefined);
+
     const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();
+
+    const publishDoc = async () => {
+        setPublishResult(await publishCurrentDoc());
+        docRepo.publishedDocs[docRepo.currentDocId] = docRepo.currentDoc;
+    };
+
     return (
         <div className="share-menu generic-menu">
             <CommandButton
@@ -54,25 +64,33 @@ export const ShareMenu = (props: IShareMenuProps) => {
                 heading="Download as Pdf"
                 icon="file-pdf"
             />
-            <CommandButton
-                onClick={publishCurrentDoc}
-                description={
-                    hasCurrentDocUpdatedSincePublished
-                        ? 'The current document has not been published since last change'
-                        : 'The current document has already been published'
-                }
-                heading="Publish Now"
-                icon="external-link-square-alt"
-                disabled={!hasCurrentDocUpdatedSincePublished}
-            />
-            <ShareLinks shareLink={shareLink} />
+            {hasCurrentDocUpdatedSincePublished ? (
+                <CommandButton
+                    onClick={publishDoc}
+                    description="The current document has not been published since last change"
+                    heading="Publish Now"
+                    icon="external-link-square-alt"
+                    disabled={!hasCurrentDocUpdatedSincePublished}
+                />
+            ) : (
+                <ExpandableContainer
+                    description="The document has been successfully published"
+                    heading="Document Published"
+                    icon="cogs"
+                    expanded={true}
+                >
+                    {publishResult && (
+                        <ShareLinks publishResult={publishResult} />
+                    )}
+                </ExpandableContainer>
+            )}
+
             <ExpandableContainer
-                description="Options about sharing"
+                description="Sharing options"
                 heading="Options"
                 icon="cogs"
             >
                 <div className="container">
-                    <h3>Options about sharing</h3>
                     <div className="field">
                         <FontAwesomeIcon icon="file-word" />
                         <label>Generate MS Word</label>
@@ -97,7 +115,7 @@ export const ShareMenu = (props: IShareMenuProps) => {
                         className="secret"
                         placeholder="Please enter secret phrase"
                     />
-                    <h3>Options about secrets</h3>
+                    <h3>Secrets settings</h3>
                     <div className="field">
                         <FontAwesomeIcon icon="file-alt" />
                         <label>Protect the document</label>

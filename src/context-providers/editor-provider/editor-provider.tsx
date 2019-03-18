@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
-import { Doc, DocRepo, IDefaultDoc } from '../../types';
+import { Doc, DocRepo, IDefaultDoc, IPublishResult } from '../../types';
 import { debounce } from '../../utils/deboune';
 
 export interface IEditorProviderProps {
@@ -21,7 +21,7 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
-    publishCurrentDoc: () => void;
+    publishCurrentDoc: () => Promise<IPublishResult>;
 }
 
 export interface IEditorProviderUIState {
@@ -46,7 +46,8 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     openDoc: (_: string) => {},
     removeDoc: (_: string) => {},
     updateCurrentDocName: (_: string) => {},
-    publishCurrentDoc: () => {}
+    publishCurrentDoc: () =>
+        Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' })
 });
 
 const UPDATE_DOC_REPO = gql`
@@ -57,7 +58,10 @@ const UPDATE_DOC_REPO = gql`
 
 const PUBLISH_DOC = gql`
     mutation publishDoc($docMutation: DocMutation) {
-        publishDoc(docMutation: $docMutation)
+        publishDoc(docMutation: $docMutation) {
+            normalizedUsername
+            permalink
+        }
     }
 `;
 
@@ -200,9 +204,9 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
 
     const publishCurrentDoc = async (
         publishDocMutation: MutationFn<any, OperationVariables>
-    ) => {
+    ): Promise<IPublishResult> => {
         const { id, docName, content, lastModified } = docRepo.currentDoc;
-        await publishDocMutation({
+        return ((await publishDocMutation({
             variables: {
                 docMutation: {
                     id,
@@ -211,7 +215,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                     lastModified
                 }
             }
-        });
+        })) as any).data.publishDoc;
     };
 
     return (

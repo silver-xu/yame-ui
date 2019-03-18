@@ -5,7 +5,7 @@ import { IUser, UserType } from '../../types';
 
 const AUTH_TOKEN_KEY = 'anonymousAuthToken';
 const APP_ID = process.env.REACT_APP_FB_APP_ID || '';
-console.log(APP_ID);
+
 const getAnonymousUser = () => {
     const anonymousAuthToken = localStorage.getItem(AUTH_TOKEN_KEY);
     const anonymousOrNewAuthToken = anonymousAuthToken
