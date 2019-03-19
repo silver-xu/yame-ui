@@ -42,5 +42,14 @@ export interface IPublishResult {
     normalizedUsername: string;
     permalink: string;
 }
+export interface IDocAccess {
+    id: string;
+    userId: string;
+    permalink: string;
+    generatePDF: boolean;
+    generateWord: boolean;
+    secret: string;
+    protectionMode: 'A' | 'S' | undefined;
+}
 
 export { Doc, DocRepo };

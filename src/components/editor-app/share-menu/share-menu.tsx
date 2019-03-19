@@ -16,12 +16,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { EditorContext } from '../../../context-providers/editor-provider';
+import { IPublishResult } from '../../../types';
 import {
     CommandButton,
     ExpandableContainer,
     ShareLinks
 } from '../side-bar-items';
-import { IPublishResult } from '../../../types';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -40,10 +40,12 @@ export interface IShareMenuProps {
 }
 
 export const ShareMenu = (props: IShareMenuProps) => {
-    const { publishCurrentDoc, docRepo } = useContext(EditorContext);
-    const [publishResult, setPublishResult] = useState<
-        IPublishResult | undefined
-    >(undefined);
+    const {
+        publishCurrentDoc,
+        docRepo,
+        publishResult,
+        setPublishResult
+    } = useContext(EditorContext);
 
     const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();
 

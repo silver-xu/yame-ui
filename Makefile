@@ -10,6 +10,7 @@ node_modules:
 	npm install
 
 start: node_modules
+	echo ${REACT_APP_EXP_API_URL}
 	npm start
 
 dist: node_modules

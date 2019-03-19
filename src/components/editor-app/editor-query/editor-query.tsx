@@ -16,7 +16,7 @@ import Editor from '../editor';
 
 const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
-const DOC_REPO_QUERY = gql`
+const EDITOR_QUERY = gql`
     {
         docRepo {
             docs {
@@ -35,6 +35,20 @@ const DOC_REPO_QUERY = gql`
         defaultDoc {
             namePrefix
             defaultContent
+        }
+    }
+`;
+
+const DOC_ACCESS_QUERY = gql`
+    query DocAccess($docId: String) {
+        docAccess(docId: $docId) {
+            id
+            userId
+            permalink
+            generatePDF
+            generateWord
+            secret
+            protectionMode
         }
     }
 `;
@@ -81,7 +95,7 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
     return currentUser ? (
         <ApolloProvider client={client}>
             <Query
-                query={DOC_REPO_QUERY}
+                query={EDITOR_QUERY}
                 variables={{ authToken: currentUser.authToken }}
                 fetchPolicy="network-only"
             >

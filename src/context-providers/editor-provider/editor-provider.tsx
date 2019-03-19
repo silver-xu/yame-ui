@@ -1,9 +1,15 @@
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
-import { Mutation, MutationFn, OperationVariables } from 'react-apollo';
+import { Mutation, MutationFn, OperationVariables, Query } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
-import { Doc, DocRepo, IDefaultDoc, IPublishResult } from '../../types';
+import {
+    Doc,
+    DocRepo,
+    IDefaultDoc,
+    IDocAccess,
+    IPublishResult
+} from '../../types';
 import { debounce } from '../../utils/deboune';
 
 export interface IEditorProviderProps {
@@ -16,6 +22,9 @@ export interface IEditorContextValue {
     docRepo: DocRepo;
     isSaving: boolean;
     editorKey: string;
+    docAccess?: IDocAccess;
+    publishResult?: IPublishResult;
+    setPublishResult: (publishResult: IPublishResult | undefined) => void;
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
     openDoc: (id: string) => void;
@@ -41,6 +50,7 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     ),
     isSaving: false,
     editorKey: '',
+    setPublishResult: () => {},
     updateCurrentDoc: () => {},
     newDoc: () => {},
     openDoc: (_: string) => {},
@@ -65,6 +75,29 @@ const PUBLISH_DOC = gql`
     }
 `;
 
+const DOC_ACCESS = gql`
+    query DocAccess($id: String) {
+        docAccess(id: $id) {
+            id
+            userId
+            permalink
+            generatePDF
+            generateWord
+            secret
+            protectionMode
+        }
+    }
+`;
+
+const PUBLISH_RESULT = gql`
+    query PublishResult($id: String) {
+        publishResult(id: $id) {
+            normalizedUsername
+            permalink
+        }
+    }
+`;
+
 export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const { docRepo: initialDocRepo, defaultDoc, children } = props;
 
@@ -77,6 +110,14 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         docRepo: initialDocRepo,
         unchangedDocRepo: initialDocRepo.clone()
     });
+
+    const [docAccess, setDocAccess] = useState<IDocAccess | undefined>(
+        undefined
+    );
+
+    const [publishResult, setPublishResult] = useState<
+        IPublishResult | undefined
+    >(undefined);
 
     const { isSaving, editorKey } = uiState;
     const { docRepo, unchangedDocRepo } = docState;
@@ -219,32 +260,99 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     };
 
     return (
-        <Mutation mutation={PUBLISH_DOC}>
-            {publishDoc => (
-                <Mutation mutation={UPDATE_DOC_REPO}>
-                    {updateDoc => (
-                        <EditorContext.Provider
-                            value={{
-                                docRepo,
-                                isSaving,
-                                editorKey,
-                                updateCurrentDoc: (value: string) =>
-                                    updateCurrentDoc(value, updateDoc),
-                                newDoc: () => newDoc(updateDoc),
-                                openDoc: (id: string) => openDoc(id),
-                                removeDoc: (id: string) =>
-                                    removeDoc(id, updateDoc),
-                                updateCurrentDocName: (newDocName: string) =>
-                                    updateCurrentDocName(newDocName, updateDoc),
-                                publishCurrentDoc: () =>
-                                    publishCurrentDoc(publishDoc)
-                            }}
-                        >
-                            {children}
-                        </EditorContext.Provider>
-                    )}
-                </Mutation>
-            )}
-        </Mutation>
+        <Query query={PUBLISH_RESULT} variables={{ id: docRepo.currentDoc.id }}>
+            {({
+                loading: publishResultLoading,
+                error: publishResultError,
+                data: publishResultData
+            }) => {
+                if (
+                    !publishResultLoading &&
+                    !publishResultError &&
+                    publishResultData
+                ) {
+                    setPublishResult(publishResultData.publishResult);
+                }
+
+                return (
+                    <Query
+                        query={DOC_ACCESS}
+                        variables={{ id: docRepo.currentDoc.id }}
+                    >
+                        {({
+                            loading: docAccessLoading,
+                            error: docAccessError,
+                            data: docAccessData
+                        }) => {
+                            if (
+                                !docAccessLoading &&
+                                !docAccessError &&
+                                docAccessData
+                            ) {
+                                setDocAccess(docAccessData.docAccess);
+                            }
+                            return (
+                                <Mutation mutation={PUBLISH_DOC}>
+                                    {publishDoc => (
+                                        <Mutation mutation={UPDATE_DOC_REPO}>
+                                            {updateDoc => (
+                                                <EditorContext.Provider
+                                                    value={{
+                                                        docRepo,
+                                                        isSaving,
+                                                        editorKey,
+                                                        docAccess,
+                                                        publishResult,
+                                                        setPublishResult: (
+                                                            value:
+                                                                | IPublishResult
+                                                                | undefined
+                                                        ) =>
+                                                            setPublishResult(
+                                                                value
+                                                            ),
+                                                        updateCurrentDoc: (
+                                                            value: string
+                                                        ) =>
+                                                            updateCurrentDoc(
+                                                                value,
+                                                                updateDoc
+                                                            ),
+                                                        newDoc: () =>
+                                                            newDoc(updateDoc),
+                                                        openDoc: (id: string) =>
+                                                            openDoc(id),
+                                                        removeDoc: (
+                                                            id: string
+                                                        ) =>
+                                                            removeDoc(
+                                                                id,
+                                                                updateDoc
+                                                            ),
+                                                        updateCurrentDocName: (
+                                                            newDocName: string
+                                                        ) =>
+                                                            updateCurrentDocName(
+                                                                newDocName,
+                                                                updateDoc
+                                                            ),
+                                                        publishCurrentDoc: () =>
+                                                            publishCurrentDoc(
+                                                                publishDoc
+                                                            )
+                                                    }}
+                                                >
+                                                    {children}
+                                                </EditorContext.Provider>
+                                            )}
+                                        </Mutation>
+                                    )}
+                                </Mutation>
+                            );
+                        }}
+                    </Query>
+                );
+            }}
+        </Query>
     );
 });
