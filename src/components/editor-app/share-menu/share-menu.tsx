@@ -75,16 +75,7 @@ export const ShareMenu = (props: IShareMenuProps) => {
                     disabled={!hasCurrentDocUpdatedSincePublished}
                 />
             ) : (
-                <ExpandableContainer
-                    description="The document has been successfully published previously. Since then there has been no change"
-                    heading="Document Published"
-                    icon="external-link-square-alt"
-                    expanded={true}
-                >
-                    {publishResult && (
-                        <ShareLinks publishResult={publishResult} />
-                    )}
-                </ExpandableContainer>
+                publishResult && <ShareLinks publishResult={publishResult} />
             )}
 
             <ExpandableContainer

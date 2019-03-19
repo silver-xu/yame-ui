@@ -14,7 +14,7 @@ export const ShareLinks = (props: IShareLinksProps) => {
 
     return (
         <div className="container">
-            <h3>Please copy the following link to share amongst:</h3>
+            <h3>Please copy and paste the following link to share:</h3>
             <input
                 type="input"
                 className="link"
