@@ -54,19 +54,11 @@
             position: relative;
             cursor: pointer;
 
-            &:hover {
-                color: $white;
-            }
-
             a {
                 color: $medium-lite-gray;
 
                 &:visited {
                     color: $medium-lite-gray;
-                }
-
-                &:hover {
-                    color: $white;
                 }
             }
 
@@ -75,7 +67,12 @@
                 display: block;
                 border-radius: 3px;
 
+                &:hover {
+                    color: $white;
+                }
+
                 &.active {
+                    color: $medium-lite-gray;
                     background: $white;
                 }
             }
