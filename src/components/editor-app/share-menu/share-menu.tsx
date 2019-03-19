@@ -16,7 +16,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { EditorContext } from '../../../context-providers/editor-provider';
-import { IPublishResult } from '../../../types';
 import {
     CommandButton,
     ExpandableContainer,

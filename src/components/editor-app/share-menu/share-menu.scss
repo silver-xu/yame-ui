@@ -30,7 +30,7 @@
 
     svg {
         display: inline-block;
-        margin-right: 10px;
+        margin: 0 10px 0 0;
         color: $dark-gray;
         cursor: pointer;
     }
@@ -42,6 +42,18 @@
         background: $transparent;
         color: $medium-gray;
         border: 0;
+        font-size: 12px;
+        height: 80px;
+    }
+
+    .link-icon {
+        margin: 10px 10px 10px 0;
+        vertical-align: top;
+        display: inline-block;
+
+        svg {
+            margin: 0;
+        }
     }
 
     .field {

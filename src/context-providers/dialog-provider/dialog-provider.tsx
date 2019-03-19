@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import {
     FileManager,
-    RemoveFileAlert
+    RemoveFileAlert,
+    NotificationBar
 } from '../../components/editor-app/dialogs';
 import { Doc } from '../../types';
 
 export interface IDialogContextValue {
     setFileManagerOpen: (open: boolean) => void;
     setRemoveFileAlertOpen: (open: boolean, doc?: Doc) => void;
+    openNotificationBar: (message: string) => void;
+    closeNotificationBar: () => void;
     isFileManagerOpen: boolean;
     isRemoveFileAlertOpen: boolean;
     docToRemove?: Doc;
@@ -22,12 +25,19 @@ export const DialogContext = React.createContext<IDialogContextValue>({
     isFileManagerOpen: false,
     setRemoveFileAlertOpen: () => {},
     isRemoveFileAlertOpen: false,
+    openNotificationBar: () => {},
+    closeNotificationBar: () => {},
     docToRemove: new Doc('foo', 'bar', 'foobar', new Date())
 });
 
 export interface IRemoveFileAlertState {
     isRemoveFileAlertOpen: boolean;
     doc?: Doc;
+}
+
+export interface INotificationBarState {
+    message: string;
+    isNotificationBarOpen: boolean;
 }
 
 export const DialogProvider = React.memo((props: IDialogProviderProps) => {
@@ -37,6 +47,13 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
     >({
         isRemoveFileAlertOpen: false,
         doc: new Doc('foo', 'bar', 'foobar', new Date())
+    });
+
+    const [notificationBarState, setNotificationBarState] = useState<
+        INotificationBarState
+    >({
+        message: '',
+        isNotificationBarOpen: false
     });
 
     const { children } = props;
@@ -49,6 +66,19 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
             doc
         });
     };
+    const handleOpenNotificationBar = (message: string) => {
+        setNotificationBarState({
+            message,
+            isNotificationBarOpen: true
+        });
+    };
+
+    const handleCloseNotificationBar = () => {
+        setNotificationBarState({
+            ...notificationBarState,
+            isNotificationBarOpen: false
+        });
+    };
 
     return (
         <DialogContext.Provider
@@ -58,11 +88,17 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
                 isRemoveFileAlertOpen:
                     removeFileAlertState.isRemoveFileAlertOpen,
                 setRemoveFileAlertOpen: handleRemoveFileAlertOpen,
+                openNotificationBar: handleOpenNotificationBar,
+                closeNotificationBar: handleCloseNotificationBar,
                 docToRemove: removeFileAlertState.doc
             }}
         >
             <FileManager />
             <RemoveFileAlert />
+            <NotificationBar
+                message={notificationBarState.message}
+                open={notificationBarState.isNotificationBarOpen}
+            />
             {children}
         </DialogContext.Provider>
     );

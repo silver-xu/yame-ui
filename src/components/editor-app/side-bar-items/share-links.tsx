@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useContext } from 'react';
+import { DialogContext } from '../../../context-providers/dialog-provider';
 import { IPublishResult } from '../../../types';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || '';
@@ -10,23 +11,42 @@ export interface IShareLinksProps {
 
 export const ShareLinks = (props: IShareLinksProps) => {
     const { normalizedUsername, permalink } = props.publishResult;
+    const { openNotificationBar } = useContext(DialogContext);
     const sharableLink = `${BASE_URL}/${normalizedUsername}/${permalink}`;
+    const linkRef = React.createRef<HTMLTextAreaElement>();
+
+    const handleCopy = () => {
+        const link = linkRef.current;
+        if (link) {
+            link.select();
+            const copied = document.execCommand('copy');
+            if (copied) {
+                openNotificationBar(
+                    `The sharing link has been copied to clipboard`
+                );
+            }
+        }
+    };
+
+    const handleLinkFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+        e.target.select();
+    };
 
     return (
         <div className="container">
             <h3>Please copy and paste the following link to share:</h3>
-            <input
-                type="input"
+            <textarea
+                ref={linkRef}
                 className="link"
                 value={sharableLink}
                 onFocus={handleLinkFocus}
             />
-            <FontAwesomeIcon icon="copy" />
-            <FontAwesomeIcon icon="pen-alt" />
+            <span onClick={handleCopy} className="link-icon">
+                <FontAwesomeIcon icon="copy" />
+            </span>
+            <span className="link-icon">
+                <FontAwesomeIcon icon="pen-alt" />
+            </span>
         </div>
     );
-};
-
-const handleLinkFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.setSelectionRange(0, e.target.value.length);
 };
