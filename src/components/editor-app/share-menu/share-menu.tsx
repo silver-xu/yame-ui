@@ -69,16 +69,16 @@ export const ShareMenu = (props: IShareMenuProps) => {
             {hasCurrentDocUpdatedSincePublished ? (
                 <CommandButton
                     onClick={publishDoc}
-                    description="The current document has not been published since last change"
-                    heading="Publish Now"
+                    description="The current document has not been published since lastest changes."
+                    heading="Click to Publish"
                     icon="external-link-square-alt"
                     disabled={!hasCurrentDocUpdatedSincePublished}
                 />
             ) : (
                 <ExpandableContainer
-                    description="The document has been successfully published"
+                    description="The document has been successfully published previously. Since then there has been no change"
                     heading="Document Published"
-                    icon="cogs"
+                    icon="external-link-square-alt"
                     expanded={true}
                 >
                     {publishResult && (
