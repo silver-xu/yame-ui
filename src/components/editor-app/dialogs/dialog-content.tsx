@@ -6,7 +6,8 @@ export const DialogContent = withStyles(theme => ({
     root: {
         borderTop: `1px solid ${theme.palette.divider}`,
         borderBottom: `1px solid ${theme.palette.divider}`,
-        padding: '0px'
+        padding: '0',
+        minHeight: 300
     }
 }))((props: { children: React.ReactNode; classes: any }) => {
     const { children, classes } = props;

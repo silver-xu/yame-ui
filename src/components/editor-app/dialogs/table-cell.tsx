@@ -5,7 +5,9 @@ import React from 'react';
 
 export const TableCell = withStyles(theme => ({
     root: {
-        cursor: 'pointer'
+        cursor: 'pointer',
+        paddingTop: 15,
+        paddingBottom: 15
     }
 }))(
     (props: {
