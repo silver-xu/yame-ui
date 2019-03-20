@@ -15,6 +15,7 @@ import { EditorContext } from '../../../../context-providers/editor-provider';
 import { CommandButton } from '../../side-bar-items';
 import { ShareLinks } from './share-links';
 
+import { DialogContext } from '../../../../context-providers/dialog-provider';
 import '../menu.scss';
 import './share-menu.scss';
 
@@ -37,12 +38,14 @@ export const ShareMenu = () => {
         publishResult,
         setPublishResult
     } = useContext(EditorContext);
+    const { openNotificationBar } = useContext(DialogContext);
 
     const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();
 
     const publishDoc = async () => {
         setPublishResult(await publishCurrentDoc());
         docRepo.publishedDocs[docRepo.currentDocId] = docRepo.currentDoc;
+        openNotificationBar('Document has been successfully published');
     };
 
     return (
