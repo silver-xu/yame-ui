@@ -59,6 +59,7 @@ export const ShareLinks = (props: IShareLinksProps) => {
     const handlePermalinkUpdate = async () => {
         await updateCurrentPermalink(permalink);
         setEditingMode(false);
+        openNotificationBar('Permalink has been successfully updated');
     };
 
     return !editingMode ? (
