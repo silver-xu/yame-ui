@@ -65,9 +65,7 @@ export const FileManager = React.memo(() => {
             open={isFileManagerOpen}
             fullWidth={true}
         >
-            <DialogTitle onClose={handleClose}>
-                My document Repository
-            </DialogTitle>
+            <DialogTitle onClose={handleClose}>My Cloud documents</DialogTitle>
             <DialogContent>
                 <Table>
                     <colgroup>

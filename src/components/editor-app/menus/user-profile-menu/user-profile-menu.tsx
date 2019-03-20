@@ -1,8 +1,10 @@
 import classnames from 'classnames';
 import React, { useContext } from 'react';
-import { AuthContext } from '../../../context-providers/auth-provider';
-import { UserType } from '../../../types';
-import { CommandButton } from '../side-bar-items';
+import { AuthContext } from '../../../../context-providers/auth-provider';
+import { UserType } from '../../../../types';
+import { CommandButton } from '../../side-bar-items';
+
+import '../menu.scss';
 
 export const UserProfileMenu = () => {
     const { currentUser, login, logout } = useContext(AuthContext);

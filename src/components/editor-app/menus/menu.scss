@@ -35,32 +35,6 @@
         cursor: pointer;
     }
 
-    .link {
-        padding: 10px;
-        width: calc(100% - 50px);
-        box-sizing: border-box;
-        background: $transparent;
-        color: $medium-gray;
-        border: 0;
-        font-size: 12px;
-        height: 80px;
-
-        &:hover,
-        &:focus {
-            outline: 0px !important;
-        }
-    }
-
-    .link-icon {
-        margin: 10px 10px 10px 0;
-        vertical-align: top;
-        display: inline-block;
-
-        svg {
-            margin: 0;
-        }
-    }
-
     .field {
         margin: 15px 0;
         color: $dark-gray;

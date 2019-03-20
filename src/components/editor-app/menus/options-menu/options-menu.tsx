@@ -1,6 +1,5 @@
 import Button from '@material-ui/core/Button';
-import React, { useContext, useState } from 'react';
-import './share-menu.scss';
+import React from 'react';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -15,9 +14,9 @@ import {
     faUnlockAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { EditorContext } from '../../../context-providers/editor-provider';
-import { CommandButton, ExpandableContainer } from '../side-bar-items';
-import { ShareLinks } from './share-links';
+
+import '../menu.scss';
+import './options-menu.scss';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -31,51 +30,12 @@ library.add(
     faCogs
 );
 
-export const ShareMenu = () => {
-    const {
-        publishCurrentDoc,
-        docRepo,
-        publishResult,
-        setPublishResult
-    } = useContext(EditorContext);
-
-    const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();
-
-    const publishDoc = async () => {
-        setPublishResult(await publishCurrentDoc());
-        docRepo.publishedDocs[docRepo.currentDocId] = docRepo.currentDoc;
-    };
-
+export const OptionsMenu = () => {
     return (
-        <div className="share-menu generic-menu">
-            <CommandButton
-                description="Export the document as Microsoft Word"
-                heading="Download as Word"
-                icon="file-word"
-            />
-            <CommandButton
-                description="Export the document as Adobe Pdf"
-                heading="Download as Pdf"
-                icon="file-pdf"
-            />
-            {hasCurrentDocUpdatedSincePublished ? (
-                <CommandButton
-                    onClick={publishDoc}
-                    description="The current document has not been published since lastest changes."
-                    heading="Click to Publish"
-                    icon="external-link-square-alt"
-                    disabled={!hasCurrentDocUpdatedSincePublished}
-                />
-            ) : (
-                publishResult && <ShareLinks publishResult={publishResult} />
-            )}
-
-            <ExpandableContainer
-                description="Sharing options"
-                heading="Options"
-                icon="cogs"
-            >
+        <React.Fragment>
+            <div className="menu generic-menu">
                 <div className="container">
+                    <h3>Sharing options</h3>
                     <div className="field">
                         <FontAwesomeIcon icon="file-word" />
                         <label>Generate MS Word</label>
@@ -117,15 +77,7 @@ export const ShareMenu = () => {
                         <input type="checkbox" />
                     </div>
                 </div>
-                <div className="container buttons">
-                    <Button variant="contained" color="primary" size="small">
-                        Update
-                    </Button>
-                    <Button variant="contained" size="small">
-                        Cancel
-                    </Button>
-                </div>
-            </ExpandableContainer>
-        </div>
+            </div>
+        </React.Fragment>
     );
 };

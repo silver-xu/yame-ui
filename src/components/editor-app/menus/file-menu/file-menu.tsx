@@ -11,11 +11,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import React, { useContext } from 'react';
-import { DialogContext } from '../../../context-providers/dialog-provider';
-import { EditorContext } from '../../../context-providers/editor-provider';
-import { MenuContext } from '../../../context-providers/menu-provider';
-import { CommandButton } from '../side-bar-items';
-import './file-menu.scss';
+import { DialogContext } from '../../../../context-providers/dialog-provider';
+import { EditorContext } from '../../../../context-providers/editor-provider';
+import { MenuContext } from '../../../../context-providers/menu-provider';
+import { CommandButton } from '../../side-bar-items';
+import '../menu.scss';
 
 library.add(
     faPlus,
@@ -52,14 +52,14 @@ export const FileMenu = () => {
                 onClick={handleNewFileClicked}
             />
             <CommandButton
-                description="Manage existing document from cloud"
-                heading="Open Document Repository"
+                description="Open existing document from cloud"
+                heading="Open from Cloud"
                 icon="file"
                 onClick={handleFileManagerOpen}
             />
             <CommandButton
-                description="Upload a Markdown file from local drive"
-                heading="Upload Markdown"
+                description="Upload a Markdown file"
+                heading="Upload Document"
                 icon="file-upload"
             />
         </div>

@@ -31,6 +31,7 @@ export interface IEditorContextValue {
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
     publishCurrentDoc: () => Promise<IPublishResult>;
+    updateCurrentPermalink: (permalink: string) => void;
 }
 
 export interface IEditorProviderUIState {
@@ -57,12 +58,19 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     removeDoc: (_: string) => {},
     updateCurrentDocName: (_: string) => {},
     publishCurrentDoc: () =>
-        Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' })
+        Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' }),
+    updateCurrentPermalink: (_: string) => {}
 });
 
 const UPDATE_DOC_REPO = gql`
     mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
         updateDocRepo(docRepoMutation: $docRepoMutation)
+    }
+`;
+
+const UPDATE_PERMALINK = gql`
+    mutation UpdatePermalink($id: String, $permalink: String) {
+        updatePermalink(id: $id, permalink: $permalink)
     }
 `;
 
@@ -211,7 +219,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         id: string,
         updateDocMutation: MutationFn<any, OperationVariables>
     ) => {
-        docRepo.removeDoc(id);
+        docRepo.removeDoc(id, defaultDoc);
         setUIState({
             ...uiState,
             editorKey: uuidv4()
@@ -259,6 +267,19 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         })) as any).data.publishDoc;
     };
 
+    const updateCurrentPermalink = async (
+        permalink: string,
+        updatePermalinkMutation: MutationFn<any, OperationVariables>
+    ) => {
+        const { id, docName, content, lastModified } = docRepo.currentDoc;
+        await updatePermalinkMutation({
+            variables: {
+                id: docRepo.currentDocId,
+                permalink
+            }
+        });
+    };
+
     return (
         <Query query={PUBLISH_RESULT} variables={{ id: docRepo.currentDoc.id }}>
             {({
@@ -294,56 +315,73 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                             return (
                                 <Mutation mutation={PUBLISH_DOC}>
                                     {publishDoc => (
-                                        <Mutation mutation={UPDATE_DOC_REPO}>
-                                            {updateDoc => (
-                                                <EditorContext.Provider
-                                                    value={{
-                                                        docRepo,
-                                                        isSaving,
-                                                        editorKey,
-                                                        docAccess,
-                                                        publishResult,
-                                                        setPublishResult: (
-                                                            value:
-                                                                | IPublishResult
-                                                                | undefined
-                                                        ) =>
-                                                            setPublishResult(
-                                                                value
-                                                            ),
-                                                        updateCurrentDoc: (
-                                                            value: string
-                                                        ) =>
-                                                            updateCurrentDoc(
-                                                                value,
-                                                                updateDoc
-                                                            ),
-                                                        newDoc: () =>
-                                                            newDoc(updateDoc),
-                                                        openDoc: (id: string) =>
-                                                            openDoc(id),
-                                                        removeDoc: (
-                                                            id: string
-                                                        ) =>
-                                                            removeDoc(
-                                                                id,
-                                                                updateDoc
-                                                            ),
-                                                        updateCurrentDocName: (
-                                                            newDocName: string
-                                                        ) =>
-                                                            updateCurrentDocName(
-                                                                newDocName,
-                                                                updateDoc
-                                                            ),
-                                                        publishCurrentDoc: () =>
-                                                            publishCurrentDoc(
-                                                                publishDoc
-                                                            )
-                                                    }}
+                                        <Mutation mutation={UPDATE_PERMALINK}>
+                                            {updatePermalink => (
+                                                <Mutation
+                                                    mutation={UPDATE_DOC_REPO}
                                                 >
-                                                    {children}
-                                                </EditorContext.Provider>
+                                                    {updateDoc => (
+                                                        <EditorContext.Provider
+                                                            value={{
+                                                                docRepo,
+                                                                isSaving,
+                                                                editorKey,
+                                                                docAccess,
+                                                                publishResult,
+                                                                setPublishResult: (
+                                                                    value:
+                                                                        | IPublishResult
+                                                                        | undefined
+                                                                ) =>
+                                                                    setPublishResult(
+                                                                        value
+                                                                    ),
+                                                                updateCurrentDoc: (
+                                                                    value: string
+                                                                ) =>
+                                                                    updateCurrentDoc(
+                                                                        value,
+                                                                        updateDoc
+                                                                    ),
+                                                                newDoc: () =>
+                                                                    newDoc(
+                                                                        updateDoc
+                                                                    ),
+                                                                openDoc: (
+                                                                    id: string
+                                                                ) =>
+                                                                    openDoc(id),
+                                                                removeDoc: (
+                                                                    id: string
+                                                                ) =>
+                                                                    removeDoc(
+                                                                        id,
+                                                                        updateDoc
+                                                                    ),
+                                                                updateCurrentDocName: (
+                                                                    newDocName: string
+                                                                ) =>
+                                                                    updateCurrentDocName(
+                                                                        newDocName,
+                                                                        updateDoc
+                                                                    ),
+                                                                publishCurrentDoc: () =>
+                                                                    publishCurrentDoc(
+                                                                        publishDoc
+                                                                    ),
+                                                                updateCurrentPermalink: (
+                                                                    permalink: string
+                                                                ) =>
+                                                                    updateCurrentPermalink(
+                                                                        permalink,
+                                                                        updatePermalink
+                                                                    )
+                                                            }}
+                                                        >
+                                                            {children}
+                                                        </EditorContext.Provider>
+                                                    )}
+                                                </Mutation>
                                             )}
                                         </Mutation>
                                     )}

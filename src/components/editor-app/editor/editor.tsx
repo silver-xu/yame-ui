@@ -4,14 +4,12 @@ import React, { Component } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
-import { FileMenu } from '../file-menu/file-menu';
-import { OptionsMenu } from '../options-menu';
+import { FileMenu, OptionsMenu, ShareMenu, UserProfileMenu } from '../menus';
 import Preview from '../preview';
-import { ShareMenu } from '../share-menu';
 import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
 import { Menu, Toolbar } from '../toolbar';
-import { UserProfileMenu } from '../user-profile-menu';
+
 import './editor.scss';
 
 export interface IEditorProps extends IEditorDefaultProps {}

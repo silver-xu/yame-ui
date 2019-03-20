@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import { Doc, DocRepo, IDocRepoMutation } from '../types';
+import { Doc, DocRepo, IDocRepoMutation, IDefaultDoc } from '../types';
 
 export const addDocToRepo = (doc: Doc, docRepo: DocRepo) => {
     docRepo.docs[doc.id] = doc;
@@ -11,10 +11,7 @@ export const getDocFromRepo = (id: string, docRepo: DocRepo) => {
 };
 
 export const removeDocFromRepo = (doc: Doc, docRepo: DocRepo) => {
-    if (Object.keys(docRepo.docs).length > 1) {
-        delete docRepo.docs[doc.id];
-        docRepo.currentDocId = docRepo.sortedDocs[0].id;
-    }
+    delete docRepo.docs[doc.id];
 };
 
 export const openDocInRepo = (doc: Doc, docRepo: DocRepo) => {
