@@ -63,7 +63,10 @@ export const ShareLinks = (props: IShareLinksProps) => {
 
     return !editingMode ? (
         <div className="container">
-            <h3>Please copy and paste the following link to share:</h3>
+            <h3>
+                The document has been published. Please copy and paste the
+                following link to share:
+            </h3>
             <textarea
                 ref={linkRef}
                 className="link"
