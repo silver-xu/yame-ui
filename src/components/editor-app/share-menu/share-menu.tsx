@@ -16,11 +16,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { EditorContext } from '../../../context-providers/editor-provider';
-import {
-    CommandButton,
-    ExpandableContainer,
-    ShareLinks
-} from '../side-bar-items';
+import { CommandButton, ExpandableContainer } from '../side-bar-items';
+import { ShareLinks } from './share-links';
 
 library.add(
     faExternalLinkSquareAlt,
@@ -34,11 +31,7 @@ library.add(
     faCogs
 );
 
-export interface IShareMenuProps {
-    shareLink: string;
-}
-
-export const ShareMenu = (props: IShareMenuProps) => {
+export const ShareMenu = () => {
     const {
         publishCurrentDoc,
         docRepo,

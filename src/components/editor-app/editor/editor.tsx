@@ -5,6 +5,7 @@ import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
 import { FileMenu } from '../file-menu/file-menu';
+import { OptionsMenu } from '../options-menu';
 import Preview from '../preview';
 import { ShareMenu } from '../share-menu';
 import { SideBar } from '../side-bar';
@@ -153,7 +154,10 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                             <FileMenu />
                                         )}
                                         {activeMenu === Menu.Share && (
-                                            <ShareMenu shareLink="http://yame.io/silver-xu/resume" />
+                                            <ShareMenu />
+                                        )}
+                                        {activeMenu === Menu.Options && (
+                                            <OptionsMenu />
                                         )}
                                         {activeMenu === Menu.UserProfile && (
                                             <UserProfileMenu />

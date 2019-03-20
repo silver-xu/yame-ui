@@ -44,6 +44,11 @@
         border: 0;
         font-size: 12px;
         height: 80px;
+
+        &:hover,
+        &:focus {
+            outline: 0px !important;
+        }
     }
 
     .link-icon {

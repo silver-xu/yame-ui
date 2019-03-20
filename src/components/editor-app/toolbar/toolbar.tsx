@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import {
+    faCog,
     faFolder,
     faShare,
     faSync,
@@ -15,14 +16,15 @@ import { MenuContext } from '../../../context-providers/menu-provider';
 import { UserType } from '../../../types';
 import './toolbar.scss';
 
-library.add(faFolder, faShare, faUserSecret, faSync, fab);
+library.add(faFolder, faShare, faUserSecret, faSync, fab, faCog);
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
 export enum Menu {
     File = 'File',
     Share = 'Share',
-    UserProfile = 'UserProfile'
+    UserProfile = 'UserProfile',
+    Options = 'Options'
 }
 
 export interface IToolbarProps {
@@ -94,6 +96,15 @@ export const Toolbar = (props: IToolbarProps) => {
                         })}
                     >
                         <FontAwesomeIcon icon="share" />
+                    </i>
+                </li>
+                <li onClick={() => setActiveMenu(Menu.Options)}>
+                    <i
+                        className={classnames({
+                            active: activeMenu === Menu.Options
+                        })}
+                    >
+                        <FontAwesomeIcon icon="cog" />
                     </i>
                 </li>
                 <li onClick={() => setActiveMenu(Menu.UserProfile)}>

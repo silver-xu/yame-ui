@@ -1,7 +1,11 @@
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { IPublishResult } from '../../../types';
+
+library.add(faPencilAlt);
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
@@ -45,7 +49,7 @@ export const ShareLinks = (props: IShareLinksProps) => {
                 <FontAwesomeIcon icon="copy" />
             </span>
             <span className="link-icon">
-                <FontAwesomeIcon icon="pen-alt" />
+                <FontAwesomeIcon icon="pencil-alt" />
             </span>
         </div>
     );
