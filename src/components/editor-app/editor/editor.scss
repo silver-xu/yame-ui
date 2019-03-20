@@ -6,12 +6,18 @@
     height: 100%;
     width: 100%;
     padding: 0;
+    background: $ultra-lite-gray;
+
     pre {
         padding: 5px 4px;
     }
 
-    .CodeMirror-gutter-wrapper {
-        top: calc(50% - 10px);
+    .CodeMirror-gutter {
+        background: $lite-gray;
+
+        .CodeMirror-gutter-wrapper {
+            top: calc(50% - 10px);
+        }
     }
 }
 
@@ -22,22 +28,22 @@
     border-radius: 0;
     box-sizing: border-box;
     border: none;
-    padding: 3px 0;
+    padding: 0px 0;
     position: fixed;
     top: 0px;
     left: 0px;
     width: calc(100%);
     z-index: 1001;
-    height: 54px;
+    height: 45px;
 
     button {
         background: transparent;
         color: $medium-lite-gray;
         border: none;
         -webkit-appearance: none;
-        font-size: 20px;
+        font-size: 16px;
         cursor: pointer;
-        margin: 0 8px;
+        margin: 0 5px;
         &:focus {
             outline: 0;
         }
@@ -46,18 +52,18 @@
     i.separator {
         background: transparent;
         color: transparent;
-        font-size: 20px;
+        font-size: 16px;
         border-right: 1px solid $medium-lite-gray;
     }
 }
 
 .splitter {
     position: absolute;
-    top: 54px;
+    top: 45px;
     left: calc(50% - 3px);
     bottom: 25px;
     width: 6px;
-    background: #dddddd;
+    background: $white;
 }
 
 .left-pane,
@@ -65,7 +71,7 @@
     width: calc(50% - 3px);
     bottom: 25px;
     position: absolute;
-    top: 55px;
+    top: 45px;
     z-index: 100;
 }
 

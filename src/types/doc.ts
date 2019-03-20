@@ -29,7 +29,8 @@ const xssOptions = {
         em: [],
         pre: [],
         code: [],
-        span: []
+        span: [],
+        strong: []
     }
 };
 
