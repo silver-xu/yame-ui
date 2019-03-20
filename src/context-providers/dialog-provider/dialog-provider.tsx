@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
     FileManager,
-    RemoveFileAlert,
-    NotificationBar
+    NotificationBar,
+    RemoveFileAlert
 } from '../../components/editor-app/dialogs';
 import { Doc } from '../../types';
 

@@ -27,13 +27,15 @@
     border-radius: 0;
     box-sizing: border-box;
     border: none;
-    padding: 0px 0;
+    padding: 0;
     position: fixed;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     width: calc(100%);
     z-index: 1001;
     height: 45px;
+    display: flex;
+    align-items: center;
 
     button {
         background: transparent;
