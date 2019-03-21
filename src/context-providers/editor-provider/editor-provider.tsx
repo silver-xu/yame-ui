@@ -31,7 +31,7 @@ export interface IEditorContextValue {
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
     publishCurrentDoc: () => Promise<IPublishResult>;
-    updateCurrentPermalink: (permalink: string) => void;
+    updateCurrentPermalink: (permalink: string) => Promise<boolean>;
 }
 
 export interface IEditorProviderUIState {
@@ -59,7 +59,7 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     updateCurrentDocName: (_: string) => {},
     publishCurrentDoc: () =>
         Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' }),
-    updateCurrentPermalink: (_: string) => {}
+    updateCurrentPermalink: (_: string) => Promise.resolve(true)
 });
 
 const UPDATE_DOC_REPO = gql`
@@ -270,14 +270,13 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const updateCurrentPermalink = async (
         permalink: string,
         updatePermalinkMutation: MutationFn<any, OperationVariables>
-    ) => {
-        const { id, docName, content, lastModified } = docRepo.currentDoc;
-        await updatePermalinkMutation({
+    ): Promise<boolean> => {
+        return ((await updatePermalinkMutation({
             variables: {
                 id: docRepo.currentDocId,
                 permalink
             }
-        });
+        })) as any).data.updatePermalink;
     };
 
     return (
@@ -332,10 +331,11 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                                                                     value:
                                                                         | IPublishResult
                                                                         | undefined
-                                                                ) =>
+                                                                ) => {
                                                                     setPublishResult(
                                                                         value
-                                                                    ),
+                                                                    );
+                                                                },
                                                                 updateCurrentDoc: (
                                                                     value: string
                                                                 ) =>
@@ -369,10 +369,12 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                                                                     publishCurrentDoc(
                                                                         publishDoc
                                                                     ),
-                                                                updateCurrentPermalink: (
+                                                                updateCurrentPermalink: async (
                                                                     permalink: string
-                                                                ) =>
-                                                                    updateCurrentPermalink(
+                                                                ): Promise<
+                                                                    boolean
+                                                                > =>
+                                                                    await updateCurrentPermalink(
                                                                         permalink,
                                                                         updatePermalink
                                                                     )
