@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
+import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import { DialogProvider } from '../../../context-providers/dialog-provider';
 import { EditorProvider } from '../../../context-providers/editor-provider';
 import { MenuProvider } from '../../../context-providers/menu-provider';
@@ -94,35 +95,37 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
 
     return currentUser ? (
         <ApolloProvider client={client}>
-            <Query
-                query={EDITOR_QUERY}
-                variables={{ authToken: currentUser.authToken }}
-                fetchPolicy="network-only"
-            >
-                {({ loading, error, data }) => {
-                    const docRepo =
-                        data && data.docRepo
-                            ? DocRepo.parseFromResponse(data.docRepo)
-                            : undefined;
+            <ApolloHooksProvider client={client}>
+                <Query
+                    query={EDITOR_QUERY}
+                    variables={{ authToken: currentUser.authToken }}
+                    fetchPolicy="network-only"
+                >
+                    {({ loading, error, data }) => {
+                        const docRepo =
+                            data && data.docRepo
+                                ? DocRepo.parseFromResponse(data.docRepo)
+                                : undefined;
 
-                    return docRepo ? (
-                        <div className="App">
-                            <EditorProvider
-                                docRepo={docRepo}
-                                defaultDoc={data.defaultDoc}
-                            >
-                                <DialogProvider>
-                                    <MenuProvider>
-                                        <Editor />
-                                    </MenuProvider>
-                                </DialogProvider>
-                            </EditorProvider>
-                        </div>
-                    ) : (
-                        <Loading text="Initializing Yame editor..." />
-                    );
-                }}
-            </Query>
+                        return docRepo ? (
+                            <div className="App">
+                                <EditorProvider
+                                    docRepo={docRepo}
+                                    defaultDoc={data.defaultDoc}
+                                >
+                                    <DialogProvider>
+                                        <MenuProvider>
+                                            <Editor />
+                                        </MenuProvider>
+                                    </DialogProvider>
+                                </EditorProvider>
+                            </div>
+                        ) : (
+                            <Loading text="Initializing Yame editor..." />
+                        );
+                    }}
+                </Query>
+            </ApolloHooksProvider>
         </ApolloProvider>
     ) : (
         <Loading text="Authenticating User..." />
