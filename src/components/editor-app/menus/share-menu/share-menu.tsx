@@ -32,9 +32,12 @@ library.add(
 );
 
 export const ShareMenu = () => {
-    const { publishCurrentDoc, docRepo, setPublishResult } = useContext(
-        EditorContext
-    );
+    const {
+        publishCurrentDoc,
+        docRepo,
+        publishResult,
+        setPublishResult
+    } = useContext(EditorContext);
     const { openNotificationBar } = useContext(DialogContext);
 
     const hasCurrentDocUpdatedSincePublished = docRepo.hasCurrentDocUpdatedSincePublished();

@@ -7,16 +7,15 @@
     right: 0px;
     height: 60px;
     box-sizing: border-box;
-    padding: 20px;
-    border-bottom: 1px solid $lite-gray;
-    color: $medium-gray;
-    text-align: left;
+    padding: 20px 0;
+    background: #039be5;
+    color: $white;
+    text-align: center;
 }
 
 .nav {
     position: absolute;
-    border-right: 1px solid $lite-gray;
-    box-sizing: border-box;
+    background: $lite-blue-gray;
     top: 60px;
     left: 0;
     padding: 20px 0;
@@ -51,29 +50,29 @@
 
             > a {
                 color: $black;
-                padding: 5px 20px;
+                padding: 10px 20px;
             }
 
             > ul {
-                padding: 5px 0 0 0;
+                padding: 10px 0 0 0;
 
                 > li {
                     list-style: none;
 
                     > a {
                         color: $dark-gray;
-                        padding: 5px 40px;
+                        padding: 10px 40px;
                     }
 
                     > ul {
-                        padding: 5px 0 0 0;
+                        padding: 8px 0 0 0;
 
                         > li {
                             list-style: none;
 
                             > a {
                                 color: $medium-gray;
-                                padding: 5px 60px;
+                                padding: 10px 60px;
                             }
                         }
                     }

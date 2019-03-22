@@ -90,7 +90,7 @@ export const ShareLinks = React.memo(() => {
         }
     };
 
-    return !editingMode ? (
+    const linkNode = permalink ? (
         <div className="container">
             <h3>
                 The document has been published. Please copy and paste the
@@ -99,7 +99,7 @@ export const ShareLinks = React.memo(() => {
             <textarea
                 ref={linkRef}
                 className="link"
-                value={sharableLink}
+                defaultValue={sharableLink}
                 onFocus={handleLinkFocus}
             />
             <span onClick={handleCopy} className="link-icon">
@@ -109,7 +109,9 @@ export const ShareLinks = React.memo(() => {
                 <FontAwesomeIcon icon="pencil-alt" />
             </span>
         </div>
-    ) : (
+    ) : null;
+
+    const editNode = (
         <React.Fragment>
             <div className="container">
                 <h3>Please update permalink of the document</h3>
@@ -143,4 +145,6 @@ export const ShareLinks = React.memo(() => {
             </div>
         </React.Fragment>
     );
+
+    return !editingMode ? linkNode : editNode;
 });

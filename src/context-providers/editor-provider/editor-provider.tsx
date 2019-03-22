@@ -148,11 +148,23 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         if (!publishResult && publishResultData) {
             setPublishResult(publishResultData.publishResult);
         }
+    }, [
+        docRepo.currentDoc.id,
+        publishResultData && publishResultData.publishResult
+            ? publishResultData.publishResult.permalink
+            : undefined
+    ]);
 
+    useEffect(() => {
         if (!docAccess && docAccessData) {
             setDocAccess(docAccessData.docAccess);
         }
-    }, [docRepo.currentDoc.id]);
+    }, [
+        docRepo.currentDoc.id,
+        docAccessData && docAccessData.docAccess
+            ? docAccessData.docAccess.id
+            : undefined
+    ]);
 
     const publishDocMutation = useMutation(PUBLISH_DOC);
     const updatePermalinkMutation = useMutation(UPDATE_PERMALINK);
@@ -265,9 +277,15 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     };
 
     const publishCurrentDoc = async (): Promise<IPublishResult> => {
+        const { id, docName, content, lastModified } = docRepo.currentDoc;
         return (await publishDocMutation({
             variables: {
-                docMutation: docRepo.currentDoc
+                docMutation: {
+                    id,
+                    docName,
+                    content,
+                    lastModified
+                }
             }
         })).data.publishDoc;
     };

@@ -6,7 +6,7 @@ import { Content } from '../content';
 import { Fab } from '@material-ui/core';
 import classnames from 'classnames';
 import { isElementInViewport } from '../../../utils/dom';
-import './preview.scss';
+import './view.scss';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +15,7 @@ import throttle from 'lodash.throttle';
 
 library.add(faArrowUp);
 
-export interface IPreviewProps {
+export interface IViewProps {
     doc: Doc;
 }
 
@@ -27,7 +27,7 @@ export interface INodeDom {
 const TOP_OFFSET = 60;
 const SHOWUPBUTTON_THREASHOLD = 200;
 
-export const Preview = (props: IPreviewProps) => {
+export const View = (props: IViewProps) => {
     const { doc } = props;
     const nodeTree = doc.buildContentNodeTree();
     const nodeDoms: { [id: string]: INodeDom } = {};
@@ -154,15 +154,11 @@ export const Preview = (props: IPreviewProps) => {
 
     return (
         <div>
-            <div className="header">
-                This is a preview of [{doc.docName}], copy & paste the url would
-                not work without your account.
-            </div>
-            <div className="nav">{renderTree(nodeTree)}</div>
+            <div className="nav">{renderTree(nodeTree)}</div> */}
             <div
                 className="content"
                 ref={contentRef}
-                onScroll={e => throttle(handleContentScroll, 100)(e)}
+                onScroll={() => throttle(handleContentScroll, 100)}
             >
                 <Content doc={doc} />
             </div>
