@@ -58,7 +58,7 @@ export interface IContentNode {
 
 export class Doc implements IDoc {
     public static parseFromResponse(docResponse: any): Doc {
-        const { id, docName, content, lastModified } = docResponse.doc;
+        const { id, docName, content, lastModified } = docResponse;
         return new Doc(id, docName, content, lastModified);
     }
 

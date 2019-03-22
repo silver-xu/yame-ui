@@ -4,27 +4,23 @@ import { Nav } from '../../common/nav';
 import { ScrollPane } from '../../common/scroll-pane';
 import { ViewContext } from '../../common/view-provider/view-provider';
 
-import './preview.scss';
+import './viewer.scss';
 
 export interface INodeDom {
     node: IContentNode;
     dom: Element;
 }
 
-export const Preview = () => {
+export const Viewer = () => {
     const { doc } = useContext(ViewContext);
     return (
-        <div className="preview">
+        <div className="viewer">
             <div className="header">
-                <h1>yame.io</h1>
-                <h2>
-                    This is a preview of [{doc.docName}], copy & paste the url
-                    would not work without your account.
-                </h2>
+                <h1>Yame.io</h1>
+                <h2>{doc.docName}</h2>
             </div>
             <Nav />
             <ScrollPane />
-            <div className="preview-only">Preview Only</div>
         </div>
     );
 };

@@ -1,0 +1,11 @@
+@import '../../../styles/colors.scss';
+
+.floating-tools {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+
+    .hide {
+        display: none;
+    }
+}

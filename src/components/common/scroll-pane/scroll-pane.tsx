@@ -1,23 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Doc } from '../../../types';
-import { IContentNode } from '../../../types/doc';
-import { Content } from '../content';
-
-import { Fab } from '@material-ui/core';
-import classnames from 'classnames';
-import { isElementInViewport } from '../../../utils/dom';
-import './view.scss';
-
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Fab } from '@material-ui/core';
+import classnames from 'classnames';
 import throttle from 'lodash.throttle';
+import React, { useContext, useEffect, useState } from 'react';
+import { IContentNode } from '../../../types/doc';
+import { isElementInViewport } from '../../../utils/dom';
+import { Content } from '../content';
+import { ViewContext } from '../view-provider/view-provider';
+
+import './scroll-pane.scss';
 
 library.add(faArrowUp);
-
-export interface IViewProps {
-    doc: Doc;
-}
 
 export interface INodeDom {
     node: IContentNode;
@@ -27,8 +22,14 @@ export interface INodeDom {
 const TOP_OFFSET = 60;
 const SHOWUPBUTTON_THREASHOLD = 200;
 
-export const View = (props: IViewProps) => {
-    const { doc } = props;
+export const ScrollPane = () => {
+    const {
+        doc,
+        surpressScrollTracking,
+        activeNode,
+        setActiveNode
+    } = useContext(ViewContext);
+
     const nodeTree = doc.buildContentNodeTree();
     const nodeDoms: { [id: string]: INodeDom } = {};
 
@@ -58,16 +59,7 @@ export const View = (props: IViewProps) => {
         return minClientTopNodeDom;
     };
 
-    const [activeNode, setActiveNode] = useState<IContentNode | undefined>(
-        undefined
-    );
-
-    const [surpressScrollTracking, setSurpressScrollTracking] = useState<
-        boolean
-    >(false);
-
     const [showScrollUp, setShowScrollUp] = useState<boolean>(false);
-
     const contentRef = React.createRef<HTMLDivElement>();
 
     useEffect(() => {
@@ -110,55 +102,18 @@ export const View = (props: IViewProps) => {
         }
     };
 
-    const handleLinkClick = (
-        e: React.MouseEvent<HTMLElement>,
-        node: IContentNode
-    ) => {
-        e.stopPropagation();
-        setSurpressScrollTracking(true);
-        setActiveNode(node);
-        setTimeout(() => {
-            setSurpressScrollTracking(false);
-        }, 1000);
-    };
-
     const handleUpClick = () => {
         if (contentRef.current) {
             contentRef.current.scrollTo(0, 0);
         }
     };
 
-    const renderTree = (treeNode: IContentNode) => {
-        return (
-            <ul>
-                {treeNode.nodes.map(node => (
-                    <li
-                        onClick={(e: React.MouseEvent<HTMLElement>) =>
-                            handleLinkClick(e, node)
-                        }
-                    >
-                        <a
-                            href={`#${node.id}`}
-                            className={classnames({
-                                active: activeNode && node.id === activeNode.id
-                            })}
-                        >
-                            {node.text}
-                        </a>
-                        {renderTree(node)}
-                    </li>
-                ))}
-            </ul>
-        );
-    };
-
     return (
         <div>
-            <div className="nav">{renderTree(nodeTree)}</div> */}
             <div
                 className="content"
                 ref={contentRef}
-                onScroll={() => throttle(handleContentScroll, 100)}
+                onScroll={e => throttle(handleContentScroll, 100)(e)}
             >
                 <Content doc={doc} />
             </div>

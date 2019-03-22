@@ -1,22 +1,20 @@
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
-import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { HttpLink } from 'apollo-link-http';
 import gql from 'graphql-tag';
 import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
-import { Doc, IUser } from '../../../types';
+import { Doc } from '../../../types';
 import { ViewProvider } from '../../common/view-provider/view-provider';
-import { Loading } from '../../loading';
-import { Preview } from '../preview';
+import { Viewer } from '../viewer/Viewer';
 
 const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
 const DOC_QUERY = gql`
-    query Doc($docId: String!) {
-        doc(docId: $docId) {
+    query DocByPermalink($username: String!, $permalink: String!) {
+        docByPermalink(username: $username, permalink: $permalink) {
             id
             docName
             content
@@ -25,22 +23,13 @@ const DOC_QUERY = gql`
     }
 `;
 
-export interface IPreviewQueryProps {
-    currentUser?: IUser;
-    docId: string;
+export interface IViewQueryProps {
+    username: string;
+    permalink: string;
 }
 
-export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
-    const { currentUser, docId } = props;
-
-    const authLink = setContext((_, { headers }: { headers: any }) => {
-        return {
-            headers: {
-                ...headers,
-                authorization: currentUser ? currentUser.authToken : undefined
-            }
-        };
-    });
+export const ViewerQuery = React.memo((props: IViewQueryProps) => {
+    const { username, permalink } = props;
 
     const client = new ApolloClient({
         link: ApolloLink.from([
@@ -56,36 +45,32 @@ export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
                     console.log(`[Network error]: ${networkError}`);
                 }
             }),
-            authLink.concat(
-                new HttpLink({
-                    uri: API_URL
-                })
-            )
+            new HttpLink({
+                uri: API_URL
+            })
         ]),
         cache: new InMemoryCache()
     });
 
-    return currentUser ? (
+    return (
         <ApolloProvider client={client}>
             <Query
                 query={DOC_QUERY}
-                variables={{ authToken: currentUser.authToken, docId }}
+                variables={{ username, permalink }}
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    return !loading && !error && data.doc ? (
+                    return !loading && !error && data.docByPermalink ? (
                         <div className="App">
-                            <ViewProvider doc={Doc.parseFromResponse(data.doc)}>
-                                <Preview />
+                            <ViewProvider
+                                doc={Doc.parseFromResponse(data.docByPermalink)}
+                            >
+                                <Viewer />
                             </ViewProvider>
                         </div>
-                    ) : (
-                        <Loading text="Initializing Yame Previewer..." />
-                    );
+                    ) : null;
                 }}
             </Query>
         </ApolloProvider>
-    ) : (
-        <Loading text="Authenticating User..." />
     );
 });
