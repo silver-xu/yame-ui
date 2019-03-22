@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo-hooks';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
@@ -130,21 +130,19 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const { isSaving, editorKey } = uiState;
     const { docRepo, unchangedDocRepo } = docState;
 
-    const {
-        loading: publishResultLoading,
-        error: publishResultError,
-        data: publishResultData
-    } = useQuery(PUBLISH_RESULT, {
-        variables: { id: docRepo.currentDoc.id }
-    });
+    const { loading: _, error: __, data: publishResultData } = useQuery(
+        PUBLISH_RESULT,
+        {
+            variables: { id: docRepo.currentDoc.id }
+        }
+    );
 
-    const {
-        loading: docAccessLoading,
-        error: docAccessError,
-        data: docAccessData
-    } = useQuery(DOC_ACCESS, {
-        variables: { id: docRepo.currentDoc.id }
-    });
+    const { loading: ___, error: ____, data: docAccessData } = useQuery(
+        DOC_ACCESS,
+        {
+            variables: { id: docRepo.currentDoc.id }
+        }
+    );
 
     useEffect(() => {
         if (!publishResult && publishResultData) {
