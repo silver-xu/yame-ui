@@ -11,6 +11,7 @@ import {
     IPublishResult
 } from '../../types';
 import { debounce } from '../../utils/deboune';
+import { useQuery, useMutation } from 'react-apollo-hooks';
 
 export interface IEditorProviderProps {
     docRepo: DocRepo;
@@ -130,9 +131,11 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const { isSaving, editorKey } = uiState;
     const { docRepo, unchangedDocRepo } = docState;
 
-    const saveDocRepo = (
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
+    const publishDocMutation = useMutation(PUBLISH_DOC);
+    const updatePermalinkMutation = useMutation(UPDATE_PERMALINK);
+    const updateDocRepoMutation = useMutation(UPDATE_DOC_REPO);
+
+    const saveDocRepo = () => {
         setUIState({
             ...uiState,
             isSaving: true
@@ -148,7 +151,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepoMutation.updatedDocs.length > 0 ||
             docRepoMutation.deletedDocIds.length > 0
         ) {
-            updateDocMutation({
+            updateDocRepoMutation({
                 variables: { docRepoMutation }
             }).then(() => {
                 setDocState({
@@ -166,16 +169,9 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         }
     };
 
-    const debouncedSaveDocRepo = (
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
-        debounce(saveDocRepo, 1500)(updateDocMutation);
-    };
+    const debouncedSaveDocRepo = () => debounce(saveDocRepo, 1500)();
 
-    const updateCurrentDoc = (
-        value: string,
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
+    const updateCurrentDoc = (value: string) => {
         docRepo.currentDoc.content = value;
         docRepo.updateDoc(docRepo.currentDoc);
 
@@ -184,10 +180,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepo
         });
 
-        debouncedSaveDocRepo(updateDocMutation);
+        debouncedSaveDocRepo();
     };
 
-    const newDoc = (updateDocMutation: MutationFn<any, OperationVariables>) => {
+    const newDoc = () => {
         docRepo.newDoc(defaultDoc);
         setUIState({
             ...uiState,
@@ -199,7 +195,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepo
         });
 
-        saveDocRepo(updateDocMutation);
+        saveDocRepo();
     };
 
     const openDoc = (id: string) => {
@@ -215,10 +211,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         });
     };
 
-    const removeDoc = (
-        id: string,
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
+    const removeDoc = (id: string) => {
         docRepo.removeDoc(id, defaultDoc);
         setUIState({
             ...uiState,
@@ -230,13 +223,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepo
         });
 
-        saveDocRepo(updateDocMutation);
+        saveDocRepo();
     };
 
-    const updateCurrentDocName = (
-        newDocName: string,
-        updateDocMutation: MutationFn<any, OperationVariables>
-    ) => {
+    const updateCurrentDocName = (newDocName: string) => {
         docRepo.updateDocName(docRepo.currentDoc, newDocName);
         setUIState({
             ...uiState,
@@ -248,152 +238,76 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepo
         });
 
-        saveDocRepo(updateDocMutation);
+        saveDocRepo();
     };
 
-    const publishCurrentDoc = async (
-        publishDocMutation: MutationFn<any, OperationVariables>
-    ): Promise<IPublishResult> => {
-        const { id, docName, content, lastModified } = docRepo.currentDoc;
-        return ((await publishDocMutation({
+    const publishCurrentDoc = async (): Promise<IPublishResult> => {
+        return (await publishDocMutation({
             variables: {
-                docMutation: {
-                    id,
-                    docName,
-                    content,
-                    lastModified
-                }
+                docMutation: docRepo.currentDoc
             }
-        })) as any).data.publishDoc;
+        })).data.publishDoc;
     };
 
     const updateCurrentPermalink = async (
-        permalink: string,
-        updatePermalinkMutation: MutationFn<any, OperationVariables>
+        permalink: string
     ): Promise<boolean> => {
-        return ((await updatePermalinkMutation({
+        return (await updatePermalinkMutation({
             variables: {
                 id: docRepo.currentDocId,
                 permalink
             }
-        })) as any).data.updatePermalink;
+        })).data.updatePermalink;
     };
 
-    return (
-        <Query query={PUBLISH_RESULT} variables={{ id: docRepo.currentDoc.id }}>
-            {({
-                loading: publishResultLoading,
-                error: publishResultError,
-                data: publishResultData
-            }) => {
-                if (
-                    !publishResult &&
-                    !publishResultLoading &&
-                    !publishResultError &&
-                    publishResultData
-                ) {
-                    setPublishResult(publishResultData.publishResult);
-                }
+    const {
+        loading: publishResultLoading,
+        error: publishResultError,
+        data: publishResultData
+    } = useQuery(PUBLISH_RESULT, {
+        variables: { id: docRepo.currentDoc.id }
+    });
 
-                return (
-                    <Query
-                        query={DOC_ACCESS}
-                        variables={{ id: docRepo.currentDoc.id }}
-                    >
-                        {({
-                            loading: docAccessLoading,
-                            error: docAccessError,
-                            data: docAccessData
-                        }) => {
-                            if (
-                                !docAccessLoading &&
-                                !docAccessError &&
-                                docAccessData
-                            ) {
-                                setDocAccess(docAccessData.docAccess);
-                            }
-                            return (
-                                <Mutation mutation={PUBLISH_DOC}>
-                                    {publishDoc => (
-                                        <Mutation mutation={UPDATE_PERMALINK}>
-                                            {updatePermalink => (
-                                                <Mutation
-                                                    mutation={UPDATE_DOC_REPO}
-                                                >
-                                                    {updateDoc => (
-                                                        <EditorContext.Provider
-                                                            value={{
-                                                                docRepo,
-                                                                isSaving,
-                                                                editorKey,
-                                                                docAccess,
-                                                                publishResult,
-                                                                setPublishResult: (
-                                                                    value:
-                                                                        | IPublishResult
-                                                                        | undefined
-                                                                ) => {
-                                                                    setPublishResult(
-                                                                        value
-                                                                    );
-                                                                },
-                                                                updateCurrentDoc: (
-                                                                    value: string
-                                                                ) =>
-                                                                    updateCurrentDoc(
-                                                                        value,
-                                                                        updateDoc
-                                                                    ),
-                                                                newDoc: () =>
-                                                                    newDoc(
-                                                                        updateDoc
-                                                                    ),
-                                                                openDoc: (
-                                                                    id: string
-                                                                ) =>
-                                                                    openDoc(id),
-                                                                removeDoc: (
-                                                                    id: string
-                                                                ) =>
-                                                                    removeDoc(
-                                                                        id,
-                                                                        updateDoc
-                                                                    ),
-                                                                updateCurrentDocName: (
-                                                                    newDocName: string
-                                                                ) =>
-                                                                    updateCurrentDocName(
-                                                                        newDocName,
-                                                                        updateDoc
-                                                                    ),
-                                                                publishCurrentDoc: () =>
-                                                                    publishCurrentDoc(
-                                                                        publishDoc
-                                                                    ),
-                                                                updateCurrentPermalink: async (
-                                                                    permalink: string
-                                                                ): Promise<
-                                                                    boolean
-                                                                > =>
-                                                                    await updateCurrentPermalink(
-                                                                        permalink,
-                                                                        updatePermalink
-                                                                    )
-                                                            }}
-                                                        >
-                                                            {children}
-                                                        </EditorContext.Provider>
-                                                    )}
-                                                </Mutation>
-                                            )}
-                                        </Mutation>
-                                    )}
-                                </Mutation>
-                            );
-                        }}
-                    </Query>
-                );
+    if (
+        !publishResult &&
+        !publishResultLoading &&
+        !publishResultError &&
+        publishResultData
+    ) {
+        setPublishResult(publishResultData.publishResult);
+    }
+
+    const {
+        loading: docAccessLoading,
+        error: docAccessError,
+        data: docAccessData
+    } = useQuery(DOC_ACCESS, {
+        variables: { id: docRepo.currentDoc.id }
+    });
+
+    if (!docAccess && !docAccessLoading && !docAccessError && docAccessData) {
+        setDocAccess(docAccessData.docAccess);
+    }
+
+    return (
+        <EditorContext.Provider
+            value={{
+                docRepo,
+                isSaving,
+                editorKey,
+                docAccess,
+                publishResult,
+                setPublishResult,
+                updateCurrentDoc,
+                newDoc,
+                openDoc,
+                removeDoc,
+                updateCurrentDocName,
+                publishCurrentDoc,
+                updateCurrentPermalink
             }}
-        </Query>
+        >
+            {children}
+        </EditorContext.Provider>
     );
 });
