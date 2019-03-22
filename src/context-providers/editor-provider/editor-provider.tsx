@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'react-apollo-hooks';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
@@ -130,6 +130,32 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const { isSaving, editorKey } = uiState;
     const { docRepo, unchangedDocRepo } = docState;
 
+    const {
+        loading: publishResultLoading,
+        error: publishResultError,
+        data: publishResultData
+    } = useQuery(PUBLISH_RESULT, {
+        variables: { id: docRepo.currentDoc.id }
+    });
+
+    const {
+        loading: docAccessLoading,
+        error: docAccessError,
+        data: docAccessData
+    } = useQuery(DOC_ACCESS, {
+        variables: { id: docRepo.currentDoc.id }
+    });
+
+    useEffect(() => {
+        if (!publishResult && publishResultData) {
+            setPublishResult(publishResultData.publishResult);
+        }
+
+        if (!docAccess && docAccessData) {
+            setDocAccess(docAccessData.docAccess);
+        }
+    }, [docRepo.currentDoc.id]);
+
     const publishDocMutation = useMutation(PUBLISH_DOC);
     const updatePermalinkMutation = useMutation(UPDATE_PERMALINK);
     const updateDocRepoMutation = useMutation(UPDATE_DOC_REPO);
@@ -258,35 +284,6 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             }
         })).data.updatePermalink;
     };
-
-    const {
-        loading: publishResultLoading,
-        error: publishResultError,
-        data: publishResultData
-    } = useQuery(PUBLISH_RESULT, {
-        variables: { id: docRepo.currentDoc.id }
-    });
-
-    if (
-        !publishResult &&
-        !publishResultLoading &&
-        !publishResultError &&
-        publishResultData
-    ) {
-        setPublishResult(publishResultData.publishResult);
-    }
-
-    const {
-        loading: docAccessLoading,
-        error: docAccessError,
-        data: docAccessData
-    } = useQuery(DOC_ACCESS, {
-        variables: { id: docRepo.currentDoc.id }
-    });
-
-    if (!docAccess && !docAccessLoading && !docAccessError && docAccessData) {
-        setDocAccess(docAccessData.docAccess);
-    }
 
     return (
         <EditorContext.Provider
