@@ -1,28 +1,40 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useState } from 'react';
-import { DialogContext } from '../../../../context-providers/dialog-provider';
-import { IPublishResult } from '../../../../types';
 import { Button } from '@material-ui/core';
+import React, { useContext, useState, useEffect } from 'react';
+import { DialogContext } from '../../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../../context-providers/editor-provider';
+import { IPublishResult } from '../../../../types';
 
 library.add(faPencilAlt);
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
-export interface IShareLinksProps {
-    publishResult: IPublishResult;
-}
-
-export const ShareLinks = (props: IShareLinksProps) => {
-    const { normalizedUsername } = props.publishResult;
+export const ShareLinks = React.memo(() => {
     const { openNotificationBar } = useContext(DialogContext);
-    const { updateCurrentPermalink } = useContext(EditorContext);
+    const {
+        updateCurrentPermalink,
+        setPublishResult,
+        publishResult
+    } = useContext(EditorContext);
+
+    if (!publishResult) {
+        return null;
+    }
+
     const [editingMode, setEditingMode] = useState<boolean>(false);
-    const [permalink, setPermalink] = useState<string>(
-        props.publishResult.permalink
-    );
+    const [permalink, setPermalink] = useState<string | undefined>(undefined);
+    const [originalPermalink, setOriginalPermalink] = useState<
+        string | undefined
+    >(undefined);
+
+    useEffect(() => {
+        setPermalink(publishResult.permalink);
+        setOriginalPermalink(publishResult.permalink);
+    }, [publishResult.permalink]);
+
+    const { normalizedUsername } = publishResult;
 
     const sharableLink = `${BASE_URL}/${normalizedUsername}/${permalink}`;
     const linkRef = React.createRef<HTMLTextAreaElement>();
@@ -57,9 +69,22 @@ export const ShareLinks = (props: IShareLinksProps) => {
     };
 
     const handlePermalinkUpdate = async () => {
-        await updateCurrentPermalink(permalink);
-        setEditingMode(false);
-        openNotificationBar('Permalink has been successfully updated');
+        if (permalink) {
+            const success = await updateCurrentPermalink(permalink);
+            if (success) {
+                setOriginalPermalink(permalink);
+                setEditingMode(false);
+
+                openNotificationBar(
+                    'Sharing link has been successfully updated'
+                );
+            } else {
+                setPermalink(originalPermalink);
+                openNotificationBar(
+                    'The link has already been used elsewhere. Please choose another link'
+                );
+            }
+        }
     };
 
     return !editingMode ? (
@@ -91,7 +116,7 @@ export const ShareLinks = (props: IShareLinksProps) => {
                 <span className="link">
                     <input
                         type="text"
-                        defaultValue={permalink}
+                        value={permalink}
                         onChange={handlePermalinkChange}
                     />
                 </span>
@@ -115,4 +140,4 @@ export const ShareLinks = (props: IShareLinksProps) => {
             </div>
         </React.Fragment>
     );
-};
+});
