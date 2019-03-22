@@ -15,8 +15,8 @@ export const ShareLinks = React.memo(() => {
     const { openNotificationBar } = useContext(DialogContext);
     const {
         updateCurrentPermalink,
-        setPublishResult,
-        publishResult
+        publishResult,
+        setPublishResult
     } = useContext(EditorContext);
 
     if (!publishResult) {
@@ -74,7 +74,10 @@ export const ShareLinks = React.memo(() => {
             if (success) {
                 setOriginalPermalink(permalink);
                 setEditingMode(false);
-
+                setPublishResult({
+                    ...publishResult,
+                    permalink
+                });
                 openNotificationBar(
                     'Sharing link has been successfully updated'
                 );

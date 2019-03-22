@@ -287,6 +287,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 data: publishResultData
             }) => {
                 if (
+                    !publishResult &&
                     !publishResultLoading &&
                     !publishResultError &&
                     publishResultData
