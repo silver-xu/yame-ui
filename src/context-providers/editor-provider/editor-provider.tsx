@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { Mutation, MutationFn, OperationVariables, Query } from 'react-apollo';
+import { useMutation, useQuery } from 'react-apollo-hooks';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
 import {

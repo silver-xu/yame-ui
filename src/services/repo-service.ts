@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4';
-import { Doc, DocRepo, IDocRepoMutation, IDefaultDoc } from '../types';
+import { Doc, DocRepo, IDefaultDoc, IDocRepoMutation } from '../types';
 
 export const addDocToRepo = (doc: Doc, docRepo: DocRepo) => {
     docRepo.docs[doc.id] = doc;
