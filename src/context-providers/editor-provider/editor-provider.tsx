@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
-import { Mutation, MutationFn, OperationVariables, Query } from 'react-apollo';
 import { useMutation, useQuery } from 'react-apollo-hooks';
 import uuidv4 from 'uuid/v4';
 import { deriveDocRepoMutation } from '../../services/repo-service';
@@ -12,7 +11,6 @@ import {
     IPublishResult
 } from '../../types';
 import { debounce } from '../../utils/deboune';
-import { useQuery, useMutation } from 'react-apollo-hooks';
 
 export interface IEditorProviderProps {
     docRepo: DocRepo;
