@@ -1,9 +1,9 @@
 import classnames from 'classnames';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Doc } from '../../../types';
 import { IContentNode } from '../../../types/doc';
-import './nav.scss';
 import { ViewContext } from '../view-provider/view-provider';
+import './nav.scss';
 
 export const Nav = () => {
     const {

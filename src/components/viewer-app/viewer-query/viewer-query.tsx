@@ -8,7 +8,7 @@ import React from 'react';
 import { ApolloProvider, Query } from 'react-apollo';
 import { Doc } from '../../../types';
 import { ViewProvider } from '../../common/view-provider/view-provider';
-import { Viewer } from '../viewer/Viewer';
+import { Viewer } from '../viewer';
 
 const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 

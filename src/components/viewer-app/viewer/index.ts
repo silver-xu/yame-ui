@@ -1,3 +1,3 @@
-export * from './preview';
-import { Preview } from './preview';
-export default Preview;
+export * from './viewer';
+import { Viewer } from './viewer';
+export default Viewer;
