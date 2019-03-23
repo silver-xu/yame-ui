@@ -5,7 +5,6 @@ import { Button } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { DialogContext } from '../../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../../context-providers/editor-provider';
-import { IPublishResult } from '../../../../types';
 
 library.add(faPencilAlt);
 

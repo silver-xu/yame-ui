@@ -1,12 +1,15 @@
+import PromiseWorker from 'promise-worker';
 import * as showdown from 'showdown';
 import { IDoc, IDocStatistics } from '.';
 import { getDocStatistics } from '../services/doc-service';
 import { getMatches } from '../utils/regex';
 import { getShortFriendlyDateDifference } from '../utils/time';
+
 // tslint:disable-next-line:no-var-requires
 const showdownHighlight = require('showdown-highlight');
 // tslint:disable-next-line:no-var-requires
 const xss = require('xss');
+
 const xssOptions = {
     whiteList: {
         a: ['href', 'title', 'target'],
@@ -34,6 +37,10 @@ const xssOptions = {
         blockquote: []
     }
 };
+
+// tslint:disable-next-line: no-var-requires
+const convertWorker = new Worker('../convert.worker.js');
+const promiseWorker = new PromiseWorker(convertWorker);
 
 const nodeRegex = new RegExp(/<h[1-3] id=".*">.*<\/h[1-3]>/gm);
 const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/gm);
@@ -95,13 +102,15 @@ export class Doc implements IDoc {
     };
 
     // using cached rendered content to boost performance of rendering
-    public renderContent = (): string => {
+    public renderContent = async (): Promise<string> => {
         if (
             this.content !== this.unchangedContent ||
             !this.renderedContentCached
         ) {
-            const dangerousHtml = converter.makeHtml(this.content);
-            this.renderedContentCached = xss(dangerousHtml, xssOptions);
+            this.renderedContentCached = await promiseWorker.postMessage(
+                this.content
+            );
+
             this.unchangedContent = this.content;
         }
 
@@ -120,9 +129,9 @@ export class Doc implements IDoc {
         )}`;
     };
 
-    public buildContentNodeTree = (): IContentNode => {
+    public buildContentNodeTree = async (): Promise<IContentNode> => {
         if (this.content !== this.unchangedContent || !this.contentTreeCached) {
-            const flatContentNodeTree = this.getFlatContentNodeTree();
+            const flatContentNodeTree = await this.getFlatContentNodeTree();
             const rootNode = {
                 id: 'root',
                 text: 'root',
@@ -140,13 +149,17 @@ export class Doc implements IDoc {
         return this.contentTreeCached;
     };
 
-    private getFlatContentNodeTree = (): IContentNode[] => {
+    private getFlatContentNodeTree = async (): Promise<IContentNode[]> => {
         if (
             this.content !== this.unchangedContent ||
             !this.flatContentTreeCached
         ) {
             // using cached rendered content so the following statement has minimum performance penalty
-            const matches = getMatches(this.renderContent(), nodeRegex, 0);
+            const matches = getMatches(
+                await this.renderContent(),
+                nodeRegex,
+                0
+            );
             this.flatContentTreeCached = matches.map(match => {
                 const node = match;
                 const textMatch = getMatches(node, nodeTextRegex, 1);

@@ -36,6 +36,7 @@
         "lodash.throttle": "^4.1.1",
         "npm": "^6.8.0",
         "primer-markdown": "^4.0.0",
+        "promise-worker": "^2.0.1",
         "react": "^16.8.0",
         "react-apollo": "^2.4.1",
         "react-apollo-hooks": "^0.4.3",
@@ -50,9 +51,9 @@
         "xss": "^1.0.3"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "format": "prettier --write '**/*.{ts,json,yml,yaml}'",
         "format:check": "prettier --list-different '**/*.{ts,json,yml,yaml}'",
@@ -86,12 +87,14 @@
         "jest": "^23.6.0",
         "node-sass": "^4.11.0",
         "prettier": "^1.16.4",
+        "react-app-rewired": "^2.1.1",
         "serverless": "^1.39.0",
         "serverless-finch": "^2.3.2",
         "tslint": "^5.12.1",
         "tslint-config-prettier": "^1.18.0",
         "tslint-eslint-rules": "^5.4.0",
         "tslint-react": "^3.6.0",
-        "typesafe-actions": "^3.0.0"
+        "typesafe-actions": "^3.0.0",
+        "worker-loader": "^2.0.0"
     }
 }

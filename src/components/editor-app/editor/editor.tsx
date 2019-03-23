@@ -10,6 +10,7 @@ import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
 import { Menu, Toolbar } from '../toolbar';
 
+import { DocRepo } from '../../../types';
 import './editor.scss';
 
 export interface IEditorProps extends IEditorDefaultProps {}
@@ -24,6 +25,7 @@ export interface IEditorState {
     toolbarOutOfFocus: boolean;
     splitScreen: boolean;
     hideToolbars: boolean;
+    renderedContent?: string;
 }
 
 export class Editor extends Component<IEditorProps, IEditorState> {
@@ -135,16 +137,20 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 </div>
                                 <div className="splitter" />
                                 <div className="right-pane">
-                                    <Preview
-                                        scrollPercentage={
-                                            editorScrollPercentage
-                                        }
-                                        previewContent={docRepo.currentDoc.renderContent()}
-                                        onScroll={this.handlePreviewScroll}
-                                        onFocus={this.handlePreviewFocus}
-                                        onMouseOver={this.handlePreviewFocus}
-                                        onBlur={this.handlePreviewBlur}
-                                    />
+                                    {this.state.renderedContent && (
+                                        <Preview
+                                            scrollPercentage={
+                                                editorScrollPercentage
+                                            }
+                                            previewContent={'abc'}
+                                            onScroll={this.handlePreviewScroll}
+                                            onFocus={this.handlePreviewFocus}
+                                            onMouseOver={
+                                                this.handlePreviewFocus
+                                            }
+                                            onBlur={this.handlePreviewBlur}
+                                        />
+                                    )}
                                 </div>
                                 <SideBar>
                                     <React.Fragment>

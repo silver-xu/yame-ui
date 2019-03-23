@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { Doc } from '../../../types';
 import { IContentNode } from '../../../types/doc';
 import { ViewContext } from '../view-provider/view-provider';
@@ -13,11 +13,20 @@ export const Nav = () => {
         setSurpressScrollTracking
     } = useContext(ViewContext);
 
-    const nodeTree = doc.buildContentNodeTree();
+    const [renderedTree, setRenderedTree] = useState<ReactNode | null>(null);
 
     useEffect(() => {
         setActiveNode(activeNode);
     }, [activeNode && activeNode.id]);
+
+    useEffect(() => {
+        recursivelyRenderTree();
+    }, []);
+
+    const recursivelyRenderTree = async () => {
+        const nodeTree = await doc.buildContentNodeTree();
+        setRenderedTree(await renderTree(nodeTree));
+    };
 
     const handleLinkClick = (
         e: React.MouseEvent<HTMLElement>,
@@ -31,29 +40,27 @@ export const Nav = () => {
         }, 1000);
     };
 
-    const renderTree = (treeNode: IContentNode) => {
-        return (
-            <ul>
-                {treeNode.nodes.map(node => (
-                    <li
-                        onClick={(e: React.MouseEvent<HTMLElement>) =>
-                            handleLinkClick(e, node)
-                        }
+    const renderTree = async (treeNode: IContentNode) => (
+        <ul>
+            {treeNode.nodes.map(async node => (
+                <li
+                    onClick={(e: React.MouseEvent<HTMLElement>) =>
+                        handleLinkClick(e, node)
+                    }
+                >
+                    <a
+                        href={`#${node.id}`}
+                        className={classnames({
+                            active: activeNode && node.id === activeNode.id
+                        })}
                     >
-                        <a
-                            href={`#${node.id}`}
-                            className={classnames({
-                                active: activeNode && node.id === activeNode.id
-                            })}
-                        >
-                            {node.text}
-                        </a>
-                        {renderTree(node)}
-                    </li>
-                ))}
-            </ul>
-        );
-    };
+                        {node.text}
+                    </a>
+                    {await renderTree(node)}
+                </li>
+            ))}
+        </ul>
+    );
 
-    return <div className="nav">{renderTree(nodeTree)}</div>;
+    return <div className="nav">{renderedTree}</div>;
 };

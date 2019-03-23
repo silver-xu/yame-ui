@@ -24,6 +24,7 @@ export interface IEditorContextValue {
     editorKey: string;
     docAccess?: IDocAccess;
     publishResult?: IPublishResult;
+    renderedContent?: string;
     setPublishResult: (publishResult: IPublishResult | undefined) => void;
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
@@ -123,6 +124,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         undefined
     );
 
+    const [renderedContent, setRenderedContent] = useState<string | undefined>(
+        undefined
+    );
+
     const [publishResult, setPublishResult] = useState<
         IPublishResult | undefined
     >(undefined);
@@ -165,6 +170,14 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             ? docAccessData.docAccess.id
             : undefined
     ]);
+
+    useEffect(() => {
+        getRenderedContent();
+    }, [docRepo.currentDoc.content]);
+
+    const getRenderedContent = async () => {
+        setRenderedContent(await docRepo.currentDoc.renderContent());
+    };
 
     const publishDocMutation = useMutation(PUBLISH_DOC);
     const updatePermalinkMutation = useMutation(UPDATE_PERMALINK);
@@ -273,7 +286,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             docRepo
         });
 
-        saveDocRepo();
+        debouncedSaveDocRepo();
     };
 
     const publishCurrentDoc = async (): Promise<IPublishResult> => {
@@ -309,6 +322,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 editorKey,
                 docAccess,
                 publishResult,
+                renderedContent,
                 setPublishResult,
                 updateCurrentDoc,
                 newDoc,

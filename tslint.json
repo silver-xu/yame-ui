@@ -5,7 +5,7 @@
         "tslint-eslint-rules",
         "tslint-config-prettier"
     ],
-    "linterOptions": { "exclude": ["node_modules/**/*.ts"] },
+    "linterOptions": { "exclude": ["node_modules/**/*.ts", "/**/*.js"] },
     "rules": {
         "quotemark": [true, "single", "jsx-double"],
         "no-console": [false],

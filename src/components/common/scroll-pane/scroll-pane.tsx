@@ -29,9 +29,16 @@ export const ScrollPane = () => {
         activeNode,
         setActiveNode
     } = useContext(ViewContext);
+    const [showScrollUp, setShowScrollUp] = useState<boolean>(false);
+    const [nodeTree, setNodeTree] = useState<IContentNode | undefined>(
+        undefined
+    );
 
-    const nodeTree = doc.buildContentNodeTree();
     const nodeDoms: { [id: string]: INodeDom } = {};
+
+    const recursivelyBuildContentTree = async () => {
+        setNodeTree(await doc.buildContentNodeTree());
+    };
 
     const traverseTree = (
         currentNode: IContentNode,
@@ -59,17 +66,19 @@ export const ScrollPane = () => {
         return minClientTopNodeDom;
     };
 
-    const [showScrollUp, setShowScrollUp] = useState<boolean>(false);
     const contentRef = React.createRef<HTMLDivElement>();
 
     useEffect(() => {
-        traverseTree(nodeTree, (node: IContentNode) => {
-            const element = document.querySelector(`#${node.id}`);
+        if (nodeTree) {
+            traverseTree(nodeTree, (node: IContentNode) => {
+                const element = document.querySelector(`#${node.id}`);
 
-            if (element) {
-                nodeDoms[node.id] = { dom: element, node };
-            }
-        });
+                if (element) {
+                    nodeDoms[node.id] = { dom: element, node };
+                }
+            });
+        }
+
         if (surpressScrollTracking) {
             return;
         }
@@ -79,6 +88,10 @@ export const ScrollPane = () => {
             setActiveNode(activeNodeDom ? activeNodeDom.node : undefined);
         }
     }, [{}]);
+
+    useEffect(() => {
+        recursivelyBuildContentTree();
+    }, []);
 
     const handleContentScroll = (e: React.SyntheticEvent<HTMLElement>) => {
         if (surpressScrollTracking) {
