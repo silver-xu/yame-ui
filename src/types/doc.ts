@@ -39,7 +39,8 @@ const xssOptions = {
 };
 
 // tslint:disable-next-line: no-var-requires
-const convertWorker = new Worker('../convert.worker.js');
+const worker = require('../convert.worker.js');
+const convertWorker = new Worker(worker);
 const promiseWorker = new PromiseWorker(convertWorker);
 
 const nodeRegex = new RegExp(/<h[1-3] id=".*">.*<\/h[1-3]>/gm);
