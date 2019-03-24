@@ -58,7 +58,14 @@ export class Editor extends Component<IEditorProps, IEditorState> {
 
         return (
             <EditorContext.Consumer>
-                {({ docRepo, isSaving, editorKey, updateCurrentDoc }) => (
+                {({
+                    docRepo,
+                    isSaving,
+                    editorKey,
+                    updateCurrentDoc,
+                    renderedContent,
+                    statistics
+                }) => (
                     <MenuContext.Consumer>
                         {({ activeMenu, setActiveMenu }) => (
                             <div
@@ -137,12 +144,12 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                 </div>
                                 <div className="splitter" />
                                 <div className="right-pane">
-                                    {this.state.renderedContent && (
+                                    {renderedContent && (
                                         <Preview
                                             scrollPercentage={
                                                 editorScrollPercentage
                                             }
-                                            previewContent={'abc'}
+                                            previewContent={renderedContent}
                                             onScroll={this.handlePreviewScroll}
                                             onFocus={this.handlePreviewFocus}
                                             onMouseOver={
@@ -168,27 +175,22 @@ export class Editor extends Component<IEditorProps, IEditorState> {
                                         )}
                                     </React.Fragment>
                                 </SideBar>
-                                <StatusBar
-                                    onToolbarToggle={this.handleToolbarToggle}
-                                    onSplitScreenToggle={
-                                        this.handleSplitScreenToggle
-                                    }
-                                    charCount={
-                                        docRepo.currentDoc.getStatistics()
-                                            .charCount
-                                    }
-                                    lineCount={
-                                        docRepo.currentDoc.getStatistics()
-                                            .lineCount
-                                    }
-                                    wordCount={
-                                        docRepo.currentDoc.getStatistics()
-                                            .wordCount
-                                    }
-                                    isSaving={isSaving}
-                                    hideToolbar={hideToolbars}
-                                    splitScreen={splitScreen}
-                                />
+                                {statistics ? (
+                                    <StatusBar
+                                        onToolbarToggle={
+                                            this.handleToolbarToggle
+                                        }
+                                        onSplitScreenToggle={
+                                            this.handleSplitScreenToggle
+                                        }
+                                        charCount={statistics.charCount}
+                                        lineCount={statistics.lineCount}
+                                        wordCount={statistics.wordCount}
+                                        isSaving={isSaving}
+                                        hideToolbar={hideToolbars}
+                                        splitScreen={splitScreen}
+                                    />
+                                ) : null}
                             </div>
                         )}
                     </MenuContext.Consumer>

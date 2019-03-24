@@ -1,8 +1,7 @@
 import { Doc, IDocStatistics } from '../types';
 
-export const getDocStatistics = (doc: Doc): IDocStatistics => {
-    const { renderContent } = doc;
-    const rawContent = 'abc'.replace(/(<([^>]+)>)/gi, '');
+export const getDocStatistics = (content: string): IDocStatistics => {
+    const rawContent = content.replace(/(<([^>]+)>)/gi, '');
     const words = rawContent.split(/[\s,.\r\n]+/);
     const lines = rawContent.split(/[\n\r]+/);
 

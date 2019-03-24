@@ -1,9 +1,6 @@
 import * as showdown from 'showdown';
-import registerPromiseWorker from 'promise-worker/register';
-
-// tslint:disable-next-line:no-var-requires
+const registerWebworker = require('webworker-promise/lib/register');
 const showdownHighlight = require('showdown-highlight');
-// tslint:disable-next-line:no-var-requires
 const xss = require('xss');
 
 const xssOptions = {
@@ -43,8 +40,8 @@ const converter = new showdown.Converter({
     extensions: [showdownHighlight]
 });
 
-registerPromiseWorker(message => {
+registerWebworker(async (message, emit) => {
     const dangerousHtml = converter.makeHtml(message);
-    console.log(dangerousHtml);
+
     return xss(dangerousHtml, xssOptions);
 });

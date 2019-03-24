@@ -39,9 +39,15 @@ const xssOptions = {
 };
 
 // tslint:disable-next-line: no-var-requires
-const worker = require('../convert.worker.js');
-const convertWorker = new Worker(worker);
-const promiseWorker = new PromiseWorker(convertWorker);
+// const worker = require('../convert.worker');
+// const convertWorker = new Worker(worker);
+// const promiseWorker = new PromiseWorker(convertWorker);
+
+// tslint:disable-next-line: no-var-requires
+const worker = require('../convert.worker');
+// tslint:disable-next-line: no-var-requires
+const WebworkerPromise = require('webworker-promise');
+const convertWorker = new WebworkerPromise(new worker());
 
 const nodeRegex = new RegExp(/<h[1-3] id=".*">.*<\/h[1-3]>/gm);
 const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/gm);
@@ -108,19 +114,15 @@ export class Doc implements IDoc {
             this.content !== this.unchangedContent ||
             !this.renderedContentCached
         ) {
-            this.renderedContentCached = await promiseWorker.postMessage(
-                this.content
-            );
+            const message = await convertWorker.postMessage(this.content);
+            this.renderedContentCached = String(message);
 
             this.unchangedContent = this.content;
+            return this.renderedContentCached;
         }
 
         // it will never be undefined
-        return this.renderedContentCached as string;
-    };
-
-    public getStatistics = (): IDocStatistics => {
-        return getDocStatistics(this);
+        return Promise.resolve(this.renderedContentCached as string);
     };
 
     public getFriendlyLastModifiedTimespan = (): string => {

@@ -8,9 +8,11 @@ import {
     DocRepo,
     IDefaultDoc,
     IDocAccess,
-    IPublishResult
+    IPublishResult,
+    IDocStatistics
 } from '../../types';
 import { debounce } from '../../utils/deboune';
+import { getDocStatistics } from '../../services/doc-service';
 
 export interface IEditorProviderProps {
     docRepo: DocRepo;
@@ -25,6 +27,7 @@ export interface IEditorContextValue {
     docAccess?: IDocAccess;
     publishResult?: IPublishResult;
     renderedContent?: string;
+    statistics?: IDocStatistics;
     setPublishResult: (publishResult: IPublishResult | undefined) => void;
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
@@ -128,6 +131,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         undefined
     );
 
+    const [docStatistics, setStatistics] = useState<IDocStatistics | undefined>(
+        undefined
+    );
+
     const [publishResult, setPublishResult] = useState<
         IPublishResult | undefined
     >(undefined);
@@ -176,7 +183,9 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     }, [docRepo.currentDoc.content]);
 
     const getRenderedContent = async () => {
-        setRenderedContent(await docRepo.currentDoc.renderContent());
+        const content = await docRepo.currentDoc.renderContent();
+        setRenderedContent(content);
+        setStatistics(getDocStatistics(content));
     };
 
     const publishDocMutation = useMutation(PUBLISH_DOC);
@@ -330,7 +339,8 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 removeDoc,
                 updateCurrentDocName,
                 publishCurrentDoc,
-                updateCurrentPermalink
+                updateCurrentPermalink,
+                statistics: docStatistics
             }}
         >
             {children}

@@ -25,7 +25,8 @@ export const Nav = () => {
 
     const recursivelyRenderTree = async () => {
         const nodeTree = await doc.buildContentNodeTree();
-        setRenderedTree(await renderTree(nodeTree));
+        const tree = renderTree(nodeTree);
+        setRenderedTree(tree);
     };
 
     const handleLinkClick = (
@@ -40,9 +41,9 @@ export const Nav = () => {
         }, 1000);
     };
 
-    const renderTree = async (treeNode: IContentNode) => (
+    const renderTree = (treeNode: IContentNode) => (
         <ul>
-            {treeNode.nodes.map(async node => (
+            {treeNode.nodes.map(node => (
                 <li
                     onClick={(e: React.MouseEvent<HTMLElement>) =>
                         handleLinkClick(e, node)
@@ -56,7 +57,7 @@ export const Nav = () => {
                     >
                         {node.text}
                     </a>
-                    {await renderTree(node)}
+                    {renderTree(node)}
                 </li>
             ))}
         </ul>
