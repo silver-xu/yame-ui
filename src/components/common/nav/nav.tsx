@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
-import { Doc } from '../../../types';
 import { IContentNode } from '../../../types/doc';
 import { ViewContext } from '../view-provider/view-provider';
 import './nav.scss';

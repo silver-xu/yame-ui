@@ -1,47 +1,7 @@
-import PromiseWorker from 'promise-worker';
-import * as showdown from 'showdown';
-import { IDoc, IDocStatistics } from '.';
-import { getDocStatistics } from '../services/doc-service';
+import { IDoc } from '.';
+
 import { getMatches } from '../utils/regex';
 import { getShortFriendlyDateDifference } from '../utils/time';
-
-// tslint:disable-next-line:no-var-requires
-const showdownHighlight = require('showdown-highlight');
-// tslint:disable-next-line:no-var-requires
-const xss = require('xss');
-
-const xssOptions = {
-    whiteList: {
-        a: ['href', 'title', 'target'],
-        h1: ['id'],
-        h2: ['id'],
-        h3: ['id'],
-        h4: ['id'],
-        p: [],
-        ul: [],
-        ol: [],
-        li: [],
-        table: [],
-        th: [],
-        tr: [],
-        td: [],
-        thead: [],
-        tbody: [],
-        b: [],
-        i: [],
-        em: [],
-        pre: [],
-        code: [],
-        span: [],
-        strong: [],
-        blockquote: []
-    }
-};
-
-// tslint:disable-next-line: no-var-requires
-// const worker = require('../convert.worker');
-// const convertWorker = new Worker(worker);
-// const promiseWorker = new PromiseWorker(convertWorker);
 
 // tslint:disable-next-line: no-var-requires
 const worker = require('../convert.worker');
@@ -52,15 +12,6 @@ const convertWorker = new WebworkerPromise(new worker());
 const nodeRegex = new RegExp(/<h[1-3] id=".*">.*<\/h[1-3]>/gm);
 const nodeTextRegex = new RegExp(/<h[1-3] id=".*">(.*?)<\/h[1-3]>/gm);
 const nodeIdRegex = new RegExp(/id="(.*?)"/gm);
-
-const converter = new showdown.Converter({
-    tables: true,
-    smoothLivePreview: true,
-    strikethrough: true,
-    requireSpaceBeforeHeadingText: true,
-    disableForced4SpacesIndentedSublists: true,
-    extensions: [showdownHighlight]
-});
 
 export interface IContentNode {
     level: number;
