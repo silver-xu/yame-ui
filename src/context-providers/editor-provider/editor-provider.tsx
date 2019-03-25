@@ -2,17 +2,17 @@ import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo-hooks';
 import uuidv4 from 'uuid/v4';
+import { getDocStatistics } from '../../services/doc-service';
 import { deriveDocRepoMutation } from '../../services/repo-service';
 import {
     Doc,
     DocRepo,
     IDefaultDoc,
     IDocAccess,
-    IPublishResult,
-    IDocStatistics
+    IDocStatistics,
+    IPublishResult
 } from '../../types';
 import { debounce } from '../../utils/deboune';
-import { getDocStatistics } from '../../services/doc-service';
 
 export interface IEditorProviderProps {
     docRepo: DocRepo;

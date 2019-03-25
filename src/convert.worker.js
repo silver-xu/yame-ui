@@ -1,47 +1,19 @@
-import * as showdown from 'showdown';
 const registerWebworker = require('webworker-promise/lib/register');
-const showdownHighlight = require('showdown-highlight');
-const xss = require('xss');
+const hljs = require('highlight.js');
+const MarkdownIt = require('markdown-it');
+const md = new MarkdownIt({
+    linkify: true,
+    highlight: function(str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return hljs.highlight(lang, str).value;
+            } catch (__) {}
+        }
 
-const xssOptions = {
-    whiteList: {
-        a: ['href', 'title', 'target'],
-        h1: ['id'],
-        h2: ['id'],
-        h3: ['id'],
-        h4: ['id'],
-        p: [],
-        ul: [],
-        ol: [],
-        li: [],
-        table: [],
-        th: [],
-        tr: [],
-        td: [],
-        thead: [],
-        tbody: [],
-        b: [],
-        i: [],
-        em: [],
-        pre: [],
-        code: [],
-        span: [],
-        strong: [],
-        blockquote: []
+        return '';
     }
-};
-
-const converter = new showdown.Converter({
-    tables: true,
-    smoothLivePreview: true,
-    strikethrough: true,
-    requireSpaceBeforeHeadingText: true,
-    disableForced4SpacesIndentedSublists: true,
-    extensions: [showdownHighlight]
 });
 
 registerWebworker(async (message, emit) => {
-    const dangerousHtml = converter.makeHtml(message);
-
-    return xss(dangerousHtml, xssOptions);
+    return md.render(message);
 });
