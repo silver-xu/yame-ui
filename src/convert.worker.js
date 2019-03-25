@@ -1,7 +1,7 @@
 const registerWebworker = require('webworker-promise/lib/register');
 const hljs = require('highlight.js');
-const MarkdownIt = require('markdown-it');
-const md = new MarkdownIt({
+const MarkdownHeadingId = require('markdown-it-named-headings');
+const md = require('markdown-it')({
     linkify: true,
     highlight: function(str, lang) {
         if (lang && hljs.getLanguage(lang)) {
@@ -12,8 +12,8 @@ const md = new MarkdownIt({
 
         return '';
     }
-});
+}).use(MarkdownHeadingId);
 
-registerWebworker(async (message, emit) => {
+registerWebworker(async (message, _) => {
     return md.render(message);
 });
