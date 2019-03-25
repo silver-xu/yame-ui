@@ -1,7 +1,8 @@
 @import '../../../styles/colors.scss';
 
 .nav {
-    overflow-y: scroll;
+    overflow-y: auto;
+
     a {
         color: $dark-gray;
         text-decoration: none;
