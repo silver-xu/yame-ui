@@ -5,6 +5,7 @@ import {
     Button,
     Dialog,
     DialogActions,
+    DialogContent,
     Table,
     TableBody,
     TableHead,
@@ -14,9 +15,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { Doc } from '../../../types';
-import { DialogContent } from './common/dialog-content';
 import { DialogTitle } from './common/dialog-title';
 import { TableCell } from './common/table-cell';
+import { FileManagerDialogContent } from './file-manager-dialog-content';
 
 import './file-manager.scss';
 
@@ -67,7 +68,7 @@ export const FileManager = React.memo(() => {
             fullWidth={true}
         >
             <DialogTitle onClose={handleClose}>My Cloud documents</DialogTitle>
-            <DialogContent>
+            <FileManagerDialogContent>
                 <Table>
                     <colgroup>
                         <col width="1%" />
@@ -122,7 +123,7 @@ export const FileManager = React.memo(() => {
                         ))}
                     </TableBody>
                 </Table>
-            </DialogContent>
+            </FileManagerDialogContent>
             <DialogActions>
                 <Button
                     variant="contained"

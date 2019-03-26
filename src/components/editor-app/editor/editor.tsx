@@ -11,6 +11,7 @@ import { StatusBar } from '../status-bar';
 import { Menu, Toolbar } from '../toolbar';
 
 import './editor.scss';
+import { DialogContext } from '../../../context-providers/dialog-provider';
 
 export interface IEditorDefaultProps {
     splitScreen: boolean;
@@ -98,6 +99,9 @@ export const Editor = (props: IEditorProps) => {
         renderedContent,
         statistics
     } = useContext(EditorContext);
+
+    const { setRegisterUserOpen } = useContext(DialogContext);
+    setRegisterUserOpen(true);
 
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
 

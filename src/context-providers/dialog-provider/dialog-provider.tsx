@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
     FileManager,
     NotificationBar,
+    RegisterUser,
     RemoveFileAlert
 } from '../../components/editor-app/dialogs';
 import { Doc } from '../../types';
@@ -87,8 +88,8 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
         });
     };
 
-    const handleSetRegisterUserOpen = (registerUserOpen: boolean) => {
-        setRegisterUserOpen(registerUserOpen);
+    const handleSetRegisterUserOpen = (open: boolean) => {
+        setRegisterUserOpen(open);
     };
 
     return (
@@ -107,6 +108,7 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
             }}
         >
             <FileManager />
+            <RegisterUser />
             <RemoveFileAlert />
             <NotificationBar
                 message={notificationBarState.message}
