@@ -4,8 +4,8 @@ import React from 'react';
 
 export const DialogContent = withStyles(theme => ({
     root: {
-        padding: 15,
-        minHeight: 300
+        padding: 30,
+        minHeight: 400
     }
 }))((props: { children: React.ReactNode; classes: any }) => {
     const { children, classes } = props;

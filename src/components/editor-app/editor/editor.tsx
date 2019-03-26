@@ -10,8 +10,8 @@ import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
 import { Menu, Toolbar } from '../toolbar';
 
-import './editor.scss';
 import { DialogContext } from '../../../context-providers/dialog-provider';
+import './editor.scss';
 
 export interface IEditorDefaultProps {
     splitScreen: boolean;

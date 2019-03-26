@@ -8,13 +8,15 @@ import {
     Button,
     Dialog,
     DialogActions,
+    Divider,
     Step,
     StepLabel,
-    Stepper
+    Stepper,
+    TextField
 } from '@material-ui/core';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { DialogContent } from './common/dialog-content';
-import './file-manager.scss';
+import './register-user.scss';
 
 library.add(faCheck);
 
@@ -55,6 +57,14 @@ export const RegisterUser = React.memo(() => {
                         );
                     })}
                 </Stepper>
+                <form noValidate={true} autoComplete="off" className="form">
+                    <TextField
+                        id="outlined-name"
+                        label="Please enter a username"
+                        margin="normal"
+                        fullWidth={true}
+                    />
+                </form>
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" color="primary">
