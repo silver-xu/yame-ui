@@ -31,7 +31,7 @@ export const DialogTitle = withStyles(theme => ({
         const { children, classes, onClose } = props;
         return (
             <MuiDialogTitle className={classes.root}>
-                <Typography variant="h6">{children}</Typography>
+                {children}
                 {onClose ? (
                     <IconButton
                         aria-label="Close"

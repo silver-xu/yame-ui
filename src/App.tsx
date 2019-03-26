@@ -7,7 +7,7 @@ import { ViewerApp } from './components/viewer-app';
 const App = () => {
     return (
         <BrowserRouter>
-            <React.Fragment>
+            <>
                 <Switch>
                     <Route exact={true} path="/editor" component={EditorApp} />
                     <Route
@@ -21,7 +21,7 @@ const App = () => {
                         component={ViewerApp}
                     />
                 </Switch>
-            </React.Fragment>
+            </>
         </BrowserRouter>
     );
 };

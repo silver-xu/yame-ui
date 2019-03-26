@@ -32,7 +32,7 @@ library.add(
 
 export const OptionsMenu = () => {
     return (
-        <React.Fragment>
+        <>
             <div className="menu generic-menu">
                 <div className="container">
                     <h3>Sharing options</h3>
@@ -78,6 +78,6 @@ export const OptionsMenu = () => {
                     </div>
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
 };

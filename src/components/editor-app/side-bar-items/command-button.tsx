@@ -24,7 +24,7 @@ export const CommandButton = (props: ICommandButtonProps) => {
     };
 
     return (
-        <React.Fragment>
+        <>
             <div
                 className={classnames({
                     container: true,
@@ -39,6 +39,6 @@ export const CommandButton = (props: ICommandButtonProps) => {
                     {heading}
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
 };

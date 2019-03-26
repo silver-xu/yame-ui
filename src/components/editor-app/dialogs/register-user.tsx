@@ -6,13 +6,24 @@ import { DialogTitle } from './common/dialog-title';
 
 import {
     Button,
+    CircularProgress,
+    createStyles,
     Dialog,
     DialogActions,
-    Divider,
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    Input,
+    InputLabel,
+    Radio,
+    RadioGroup,
     Step,
+    StepContent,
     StepLabel,
     Stepper,
-    TextField
+    Theme,
+    withStyles,
+    WithStyles
 } from '@material-ui/core';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { DialogContent } from './common/dialog-content';
@@ -20,22 +31,133 @@ import './register-user.scss';
 
 library.add(faCheck);
 
-function getSteps() {
-    return ['Select a unique username', 'Docs in anonymous workspace'];
+interface IError {
+    hasError: boolean;
+    errorMessage?: string;
 }
 
-export const RegisterUser = React.memo(() => {
+const styles = (theme: Theme) =>
+    createStyles({
+        container: {
+            display: 'flex',
+            flexWrap: 'wrap'
+        },
+        progress: {
+            marginLeft: 20
+        }
+    });
+
+export interface IRegisterUser extends WithStyles<typeof styles> {}
+
+const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
+    const [username, setUsername] = useState<string>('');
+    const [errors, setErrors] = useState<IError[]>([
+        {
+            hasError: false,
+            errorMessage: undefined
+        },
+        {
+            hasError: false,
+            errorMessage: undefined
+        }
+    ]);
+
     const { isRegisterUserOpen, setRegisterUserOpen } = useContext(
         DialogContext
     );
+
+    const [activeStep, setActiveStep] = useState<number>(0);
+
+    const [isProgressing, setIsProgressing] = useState<boolean>(false);
 
     const handleClose = () => {
         setRegisterUserOpen(false);
     };
 
-    const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
+    const handleNext = () => {
+        setIsProgressing(true);
+        if (steps[activeStep].validate()) {
+            setIsProgressing(false);
+            setActiveStep(activeStep + 1);
+        } else {
+            setIsProgressing(false);
+        }
+    };
 
-    const steps = getSteps();
+    const handleBack = () => {
+        setActiveStep(activeStep - 1);
+    };
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.currentTarget.value);
+    };
+
+    const steps = [
+        {
+            label: 'Select a unique username',
+            jsx: (
+                <>
+                    <FormControl error={errors[0].hasError}>
+                        <InputLabel htmlFor="component-error">
+                            Username
+                        </InputLabel>
+                        <Input
+                            id="component-error"
+                            aria-describedby="component-error-text"
+                            value={username}
+                            onChange={handleUsernameChange}
+                        />
+                        <FormHelperText id="component-error-text">
+                            {errors[0].errorMessage}
+                        </FormHelperText>
+                    </FormControl>
+                </>
+            ),
+            validate: (): boolean => {
+                if (username === '') {
+                    setErrors([
+                        {
+                            hasError: true,
+                            errorMessage:
+                                'In the world of yame.io, username is requireed'
+                        },
+                        errors[1]
+                    ]);
+
+                    return false;
+                }
+
+                return true;
+            }
+        },
+        {
+            label: 'Move document to your cloud account?',
+            jsx: (
+                <>
+                    <FormControl>
+                        <RadioGroup
+                            aria-label="Gender"
+                            name="gender1"
+                            value="yes"
+                        >
+                            <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yep, my local documents will be removed after merge"
+                            />
+                            <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="Mehh, I have second thoughts"
+                            />
+                        </RadioGroup>
+                    </FormControl>
+                </>
+            ),
+            validate: (): boolean => true
+        }
+    ];
+
     return (
         <Dialog
             aria-labelledby="customized-dialog-title"
@@ -45,32 +167,47 @@ export const RegisterUser = React.memo(() => {
             maxWidth="md"
         >
             <DialogTitle onClose={handleClose}>
-                Few things before you may start...
+                A few little things before you start...
             </DialogTitle>
             <DialogContent>
-                <Stepper activeStep={activeStep}>
-                    {steps.map((label, index) => {
-                        return (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        );
-                    })}
+                <Stepper activeStep={activeStep} orientation="vertical">
+                    {steps.map((step, idx) => (
+                        <Step key={idx}>
+                            <StepLabel>
+                                {step.label}
+                                {idx === activeStep && isProgressing && (
+                                    <CircularProgress
+                                        color="secondary"
+                                        className={props.classes.progress}
+                                        size={20}
+                                    />
+                                )}
+                            </StepLabel>
+                            <StepContent>{step.jsx}</StepContent>
+                        </Step>
+                    ))}
                 </Stepper>
-                <form noValidate={true} autoComplete="off" className="form">
-                    <TextField
-                        id="outlined-name"
-                        label="Please enter a username"
-                        margin="normal"
-                        fullWidth={true}
-                    />
-                </form>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" color="primary">
-                    Next
+                {activeStep !== 0 && (
+                    <Button
+                        variant="contained"
+                        color="default"
+                        onClick={handleBack}
+                    >
+                        Back
+                    </Button>
+                )}
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                >
+                    {activeStep < steps.length - 1 ? 'Next' : 'Complete'}
                 </Button>
             </DialogActions>
         </Dialog>
     );
 });
+
+export const RegisterUser = withStyles(styles)(UnstyledRegisterUser);

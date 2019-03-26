@@ -196,12 +196,12 @@ export const Editor = (props: IEditorProps) => {
                 )}
             </div>
             <SideBar>
-                <React.Fragment>
+                <>
                     {activeMenu === Menu.File && <FileMenu />}
                     {activeMenu === Menu.Share && <ShareMenu />}
                     {activeMenu === Menu.Options && <OptionsMenu />}
                     {activeMenu === Menu.UserProfile && <UserProfileMenu />}
-                </React.Fragment>
+                </>
             </SideBar>
             {statistics ? (
                 <StatusBar

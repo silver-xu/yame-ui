@@ -111,7 +111,7 @@ export const ShareLinks = React.memo(() => {
     ) : null;
 
     const editNode = (
-        <React.Fragment>
+        <>
             <div className="container">
                 <h3>Please update permalink of the document</h3>
                 <span className="link">
@@ -142,7 +142,7 @@ export const ShareLinks = React.memo(() => {
                     Cancel
                 </Button>
             </div>
-        </React.Fragment>
+        </>
     );
 
     return !editingMode ? linkNode : editNode;

@@ -13,7 +13,7 @@ export const SideBar = (props: ISideBarProps) => {
     const { open, inTransition, setActiveMenu } = useContext(MenuContext);
 
     return (
-        <React.Fragment>
+        <>
             <div
                 className={classnames({
                     hide: !open && !inTransition,
@@ -30,6 +30,6 @@ export const SideBar = (props: ISideBarProps) => {
                 {children}
             </div>
             ;
-        </React.Fragment>
+        </>
     );
 };

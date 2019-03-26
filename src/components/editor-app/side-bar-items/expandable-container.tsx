@@ -28,7 +28,7 @@ export const ExpandableContainer = (props: IExpandableContainer) => {
     const [expanded, setExpanded] = useState<boolean>(initiallyExpanded);
 
     return (
-        <React.Fragment>
+        <>
             <div
                 className="container expandable"
                 onClick={() => setExpanded(!expanded)}
@@ -54,7 +54,7 @@ export const ExpandableContainer = (props: IExpandableContainer) => {
             >
                 {children}
             </div>
-        </React.Fragment>
+        </>
     );
 };
 
