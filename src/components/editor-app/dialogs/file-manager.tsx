@@ -14,10 +14,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { Doc } from '../../../types';
-import { DialogContent } from './dialog-content';
-import { DialogTitle } from './dialog-title';
+import { DialogContent } from './common/dialog-content';
+import { DialogTitle } from './common/dialog-title';
+import { TableCell } from './common/table-cell';
+
 import './file-manager.scss';
-import { TableCell } from './table-cell';
 
 library.add(faTrashAlt, faCheck);
 
