@@ -115,7 +115,10 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
                                 >
                                     <DialogProvider>
                                         <MenuProvider>
-                                            <Editor />
+                                            <Editor
+                                                splitScreen={true}
+                                                hideToolbars={false}
+                                            />
                                         </MenuProvider>
                                     </DialogProvider>
                                 </EditorProvider>

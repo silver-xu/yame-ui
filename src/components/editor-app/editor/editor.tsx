@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
@@ -29,29 +29,32 @@ export interface IEditorState {
     previewInFocus: boolean;
 }
 
-export const Editor = (props: IEditorProps) => {
-    const [editorScrollPercentage, setEditorScrollPercentage] = useState<
-        number
-    >(0);
+let mdeInstance: any;
+let previewInFocus: boolean;
+export const Editor = React.memo((props: IEditorProps) => {
+    useEffect(() => {
+        previewInFocus = false;
+    }, []);
+
     const [splitScreen, setSplitScreen] = useState<boolean>(props.splitScreen);
     const [hideToolbars, setHideToolbars] = useState<boolean>(
         props.hideToolbars
     );
-
-    const [previewInFocus, setPreviewInFocus] = useState<boolean>(false);
-    const [mdeInstance, setMdeInstance] = useState<any>(undefined);
+    const [editorScrollPercentage, setEditorScrollPercentage] = useState<
+        number
+    >(0);
 
     const setInstance = (instance: any) => {
-        setMdeInstance(instance);
+        mdeInstance = instance;
         instance.codemirror.setOption('lineNumbers', true);
     };
 
     const handlePreviewFocus = () => {
-        setPreviewInFocus(true);
+        previewInFocus = true;
     };
 
     const handlePreviewBlur = () => {
-        setPreviewInFocus(false);
+        previewInFocus = false;
     };
 
     const handleEditorScroll = (e: any) => {
@@ -195,9 +198,4 @@ export const Editor = (props: IEditorProps) => {
             </div>
         </div>
     );
-};
-
-Editor.defaultProps = {
-    splitScreen: true,
-    hideToolbars: false
-};
+});
