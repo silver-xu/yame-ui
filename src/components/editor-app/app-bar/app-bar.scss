@@ -52,9 +52,18 @@
                 margin: 0;
                 color: $dark-gray;
                 list-style: none;
+                cursor: pointer;
 
                 &.active {
                     background: $white;
+                }
+
+                &:hover {
+                    color: $lite-blue;
+
+                    .icon {
+                        color: $lite-blue;
+                    }
                 }
             }
         }

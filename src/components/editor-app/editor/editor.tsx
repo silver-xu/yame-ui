@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
