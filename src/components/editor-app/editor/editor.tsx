@@ -30,40 +30,39 @@ export interface IEditorState {
 }
 
 export const Editor = (props: IEditorProps) => {
-    const [editorState, setEditorState] = useState<IEditorState>({
-        editorScrollPercentage: 0,
-        toolbarOutOfFocus: true,
-        splitScreen: props.splitScreen,
-        hideToolbars: props.hideToolbars,
-        previewInFocus: false
-    });
+    const [editorScrollPercentage, setEditorScrollPercentage] = useState<
+        number
+    >(0);
+    const [splitScreen, setSplitScreen] = useState<boolean>(props.splitScreen);
+    const [hideToolbars, setHideToolbars] = useState<boolean>(
+        props.hideToolbars
+    );
 
-    let mdeInstance: any;
+    const [previewInFocus, setPreviewInFocus] = useState<boolean>(false);
+    const [mdeInstance, setMdeInstance] = useState<any>(undefined);
+
     const setInstance = (instance: any) => {
-        mdeInstance = instance;
-        mdeInstance.codemirror.setOption('lineNumbers', true);
+        setMdeInstance(instance);
+        instance.codemirror.setOption('lineNumbers', true);
     };
 
     const handlePreviewFocus = () => {
-        setEditorState({ ...editorState, previewInFocus: true });
+        setPreviewInFocus(true);
     };
 
     const handlePreviewBlur = () => {
-        setEditorState({ ...editorState, previewInFocus: false });
+        setPreviewInFocus(false);
     };
 
     const handleEditorScroll = (e: any) => {
-        if (!editorState.previewInFocus) {
+        if (!previewInFocus) {
             const scrollPercentage = e.doc.scrollTop / e.doc.height;
-            setEditorState({
-                ...editorState,
-                editorScrollPercentage: scrollPercentage
-            });
+            setEditorScrollPercentage(scrollPercentage);
         }
     };
 
     const handlePreviewScroll = (previewScrollPercentage: number) => {
-        if (mdeInstance && editorState.previewInFocus) {
+        if (mdeInstance && previewInFocus) {
             const offsetTop =
                 mdeInstance.codemirror.doc.height * previewScrollPercentage;
             mdeInstance.codemirror.scrollTo(0, offsetTop);
@@ -71,25 +70,12 @@ export const Editor = (props: IEditorProps) => {
     };
 
     const handleSplitScreenToggle = () => {
-        setEditorState({
-            ...editorState,
-            splitScreen: !editorState.splitScreen
-        });
+        setSplitScreen(!splitScreen);
     };
 
     const handleToolbarToggle = () => {
-        setEditorState({
-            ...editorState,
-            hideToolbars: !editorState.hideToolbars
-        });
+        setHideToolbars(!hideToolbars);
     };
-
-    const {
-        editorScrollPercentage,
-        toolbarOutOfFocus,
-        hideToolbars,
-        splitScreen
-    } = editorState;
 
     const {
         docRepo,
