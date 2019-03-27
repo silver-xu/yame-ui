@@ -29,7 +29,6 @@ export const SideBar = (props: ISideBarProps) => {
             >
                 {children}
             </div>
-            ;
         </>
     );
 };

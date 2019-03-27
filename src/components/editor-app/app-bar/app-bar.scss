@@ -1,0 +1,10 @@
+@import '../../../styles/colors.scss';
+
+.app-bar {
+    position: absolute;
+    left: 0;
+    width: 300px;
+    top: 0;
+    bottom: 0;
+    background: $shade;
+}

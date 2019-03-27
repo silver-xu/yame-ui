@@ -4,13 +4,13 @@ import React, { useContext, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
+import { Appbar } from '../app-bar';
 import { FileMenu, OptionsMenu, ShareMenu, UserProfileMenu } from '../menus';
 import Preview from '../preview';
 import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
 import { Menu, Toolbar } from '../toolbar';
 
-import { DialogContext } from '../../../context-providers/dialog-provider';
 import './editor.scss';
 
 export interface IEditorDefaultProps {
@@ -100,9 +100,6 @@ export const Editor = (props: IEditorProps) => {
         statistics
     } = useContext(EditorContext);
 
-    const { setRegisterUserOpen } = useContext(DialogContext);
-    setRegisterUserOpen(true);
-
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
 
     return (
@@ -114,107 +111,102 @@ export const Editor = (props: IEditorProps) => {
                 'editor-only': !splitScreen
             })}
         >
-            <Toolbar
-                lostFocus={toolbarOutOfFocus}
-                onMenuToggle={setActiveMenu}
-            />
-            <div className="left-pane">
-                <SimpleMDE
-                    key={editorKey}
-                    onChange={updateCurrentDoc}
-                    getMdeInstance={setInstance}
-                    value={docRepo.currentDoc.content}
-                    events={{
-                        change: () => {},
-                        changes: () => {},
-                        beforeChange: () => {},
-                        cursorActivity: () => {},
-                        beforeSelectionChange: () => {},
-                        viewportChange: () => {},
-                        gutterClick: () => {},
-                        focus: () => {},
-                        blur: () => {},
-                        scroll: handleEditorScroll,
-                        update: () => {},
-                        renderLine: () => {},
-                        mousedown: () => {},
-                        dblclick: () => {},
-                        touchstart: () => {},
-                        contextmenu: () => {},
-                        keydown: () => {},
-                        keypress: () => {},
-                        keyup: () => {},
-                        cut: () => {},
-                        copy: () => {},
-                        paste: () => {},
-                        dragstart: () => {},
-                        dragenter: () => {},
-                        dragover: () => {},
-                        dragleave: () => {},
-                        drop: () => {}
-                    }}
-                    options={{
-                        status: false,
-                        autosave: {
-                            enabled: false,
-                            uniqueId: 'hackable'
-                        },
-                        toolbar: [
-                            'undo',
-                            'redo',
-                            '|',
-                            'bold',
-                            'italic',
-                            'strikethrough',
-                            '|',
-                            'heading-1',
-                            'heading-2',
-                            'heading-3',
-                            '|',
-                            'unordered-list',
-                            'ordered-list',
-                            '|',
-                            'code',
-                            'link',
-                            'image',
-                            'table'
-                        ]
-                    }}
-                />
-            </div>
-            <div className="splitter" />
-            <div className="right-pane">
-                {renderedContent && (
-                    <Preview
-                        scrollPercentage={editorScrollPercentage}
-                        previewContent={renderedContent}
-                        onScroll={handlePreviewScroll}
-                        onFocus={handlePreviewFocus}
-                        onMouseOver={handlePreviewFocus}
-                        onBlur={handlePreviewBlur}
+            <Appbar />
+            <div className="editor-wrapper">
+                {/* <Toolbar
+                    lostFocus={toolbarOutOfFocus}
+                    onMenuToggle={setActiveMenu}
+                /> */}
+                <div className="left-pane">
+                    <SimpleMDE
+                        key={editorKey}
+                        onChange={updateCurrentDoc}
+                        getMdeInstance={setInstance}
+                        value={docRepo.currentDoc.content}
+                        events={{
+                            change: () => {},
+                            changes: () => {},
+                            beforeChange: () => {},
+                            cursorActivity: () => {},
+                            beforeSelectionChange: () => {},
+                            viewportChange: () => {},
+                            gutterClick: () => {},
+                            focus: () => {},
+                            blur: () => {},
+                            scroll: handleEditorScroll,
+                            update: () => {},
+                            renderLine: () => {},
+                            mousedown: () => {},
+                            dblclick: () => {},
+                            touchstart: () => {},
+                            contextmenu: () => {},
+                            keydown: () => {},
+                            keypress: () => {},
+                            keyup: () => {},
+                            cut: () => {},
+                            copy: () => {},
+                            paste: () => {},
+                            dragstart: () => {},
+                            dragenter: () => {},
+                            dragover: () => {},
+                            dragleave: () => {},
+                            drop: () => {}
+                        }}
+                        options={{
+                            status: false,
+                            autosave: {
+                                enabled: false,
+                                uniqueId: 'hackable'
+                            },
+                            toolbar: [
+                                'undo',
+                                'redo',
+                                '|',
+                                'bold',
+                                'italic',
+                                'strikethrough',
+                                '|',
+                                'heading-1',
+                                'heading-2',
+                                'heading-3',
+                                '|',
+                                'unordered-list',
+                                'ordered-list',
+                                '|',
+                                'code',
+                                'link',
+                                'image',
+                                'table'
+                            ]
+                        }}
                     />
-                )}
+                </div>
+                <div className="splitter" />
+                <div className="right-pane">
+                    {renderedContent && (
+                        <Preview
+                            scrollPercentage={editorScrollPercentage}
+                            previewContent={renderedContent}
+                            onScroll={handlePreviewScroll}
+                            onFocus={handlePreviewFocus}
+                            onMouseOver={handlePreviewFocus}
+                            onBlur={handlePreviewBlur}
+                        />
+                    )}
+                </div>
+                {statistics ? (
+                    <StatusBar
+                        onToolbarToggle={handleToolbarToggle}
+                        onSplitScreenToggle={handleSplitScreenToggle}
+                        charCount={statistics.charCount}
+                        lineCount={statistics.lineCount}
+                        wordCount={statistics.wordCount}
+                        isSaving={isSaving}
+                        hideToolbar={hideToolbars}
+                        splitScreen={splitScreen}
+                    />
+                ) : null}
             </div>
-            <SideBar>
-                <>
-                    {activeMenu === Menu.File && <FileMenu />}
-                    {activeMenu === Menu.Share && <ShareMenu />}
-                    {activeMenu === Menu.Options && <OptionsMenu />}
-                    {activeMenu === Menu.UserProfile && <UserProfileMenu />}
-                </>
-            </SideBar>
-            {statistics ? (
-                <StatusBar
-                    onToolbarToggle={handleToolbarToggle}
-                    onSplitScreenToggle={handleSplitScreenToggle}
-                    charCount={statistics.charCount}
-                    lineCount={statistics.lineCount}
-                    wordCount={statistics.wordCount}
-                    isSaving={isSaving}
-                    hideToolbar={hideToolbars}
-                    splitScreen={splitScreen}
-                />
-            ) : null}
         </div>
     );
 };
