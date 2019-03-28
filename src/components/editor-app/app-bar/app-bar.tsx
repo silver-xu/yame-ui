@@ -4,6 +4,7 @@ import {
     faFolderOpen,
     faPen,
     faPenFancy,
+    faScroll,
     faShareAltSquare,
     faTrashAlt,
     faUserSecret
@@ -20,7 +21,8 @@ library.add(
     faShareAltSquare,
     faTrashAlt,
     faCogs,
-    faPen
+    faPen,
+    faScroll
 );
 
 export const Appbar = () => {
@@ -54,7 +56,11 @@ export const Appbar = () => {
                     </li>
                     <li>
                         <FontAwesomeIcon icon="folder-open" className="icon" />
-                        My documents
+                        All documents
+                    </li>
+                    <li>
+                        <FontAwesomeIcon icon="scroll" className="icon" />
+                        Drafts
                     </li>
                     <li>
                         <FontAwesomeIcon
