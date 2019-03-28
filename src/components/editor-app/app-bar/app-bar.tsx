@@ -1,10 +1,12 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
+    faBan,
     faCogs,
     faFileAlt,
     faFolderOpen,
     faPen,
     faPenFancy,
+    faSave,
     faScroll,
     faShareAltSquare,
     faTrashAlt,
@@ -12,7 +14,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Button } from '@material-ui/core';
-import React, { useContext } from 'react';
+import classnames from 'classnames';
+import React, { useContext, useEffect, useState } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import './app-bar.scss';
 
@@ -25,11 +28,31 @@ library.add(
     faCogs,
     faPen,
     faScroll,
-    faFileAlt
+    faFileAlt,
+    faSave,
+    faBan
 );
+
+const docNameRef = React.createRef<HTMLInputElement>();
 
 export const Appbar = () => {
     const { docRepo } = useContext(EditorContext);
+    const [editMode, setEditMode] = useState<boolean>(false);
+
+    const handleChangeDocName = () => {
+        setEditMode(true);
+
+        setTimeout(() => {
+            if (docNameRef.current) {
+                docNameRef.current.select();
+                docNameRef.current.focus();
+            }
+        }, 10);
+    };
+
+    const handleCancelChangeDocName = () => {
+        setEditMode(false);
+    };
 
     return (
         <div className="app-bar">
@@ -58,11 +81,42 @@ export const Appbar = () => {
                     <li className="active">
                         <FontAwesomeIcon icon="file-alt" className="icon" />
                         <label className="menu-label">
-                            {docRepo.currentDoc.docName}
+                            {editMode ? (
+                                <input
+                                    ref={docNameRef}
+                                    type="text"
+                                    value={docRepo.currentDoc.docName}
+                                />
+                            ) : (
+                                <span>{docRepo.currentDoc.docName}</span>
+                            )}
                         </label>
-                        <span className="cmd">
-                            <FontAwesomeIcon icon="pen" className="icon" />
-                        </span>
+                        {editMode ? (
+                            <>
+                                <span
+                                    className="cmd"
+                                    onClick={handleChangeDocName}
+                                >
+                                    <FontAwesomeIcon
+                                        icon="save"
+                                        className="icon"
+                                    />
+                                </span>
+                                <span
+                                    className="cmd"
+                                    onClick={handleCancelChangeDocName}
+                                >
+                                    <FontAwesomeIcon
+                                        icon="ban"
+                                        className="icon"
+                                    />
+                                </span>
+                            </>
+                        ) : (
+                            <span className="cmd" onClick={handleChangeDocName}>
+                                <FontAwesomeIcon icon="pen" className="icon" />
+                            </span>
+                        )}
                     </li>
                     <li>
                         <FontAwesomeIcon icon="folder-open" className="icon" />

@@ -48,7 +48,7 @@
             margin: 0;
 
             li {
-                padding: 20px 50px;
+                padding: 20px 0 20px 50px;
                 margin: 0;
                 list-style: none;
                 cursor: pointer;
@@ -72,6 +72,17 @@
                 &.active {
                     .menu-label {
                         font-weight: bold;
+
+                        input[type='text'] {
+                            border: none;
+                            font-size: 16px;
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                        .hide {
+                            display: none;
+                        }
                     }
 
                     background: $white;
