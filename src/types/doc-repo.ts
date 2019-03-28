@@ -31,7 +31,6 @@ export class DocRepo {
     public static parseFromJson(jsonString: string): DocRepo {
         const plainDocRepo = JSON.parse(jsonString) as DocRepo;
         const newDocs: { [id: string]: Doc } = {};
-        const newPublishedDocs: { [id: string]: Doc } = {};
 
         Object.entries(plainDocRepo.docs).forEach(([id, doc]) => {
             newDocs[id] = new Doc(
@@ -42,23 +41,14 @@ export class DocRepo {
             );
         });
 
-        Object.entries(plainDocRepo.publishedDocs).forEach(([id, doc]) => {
-            newPublishedDocs[id] = new Doc(
-                doc.id,
-                doc.docName,
-                doc.content,
-                doc.lastModified
-            );
-        });
-
-        return new DocRepo(newDocs, newPublishedDocs);
+        return new DocRepo(newDocs, plainDocRepo.publishedDocIds);
     }
 
     public static parseFromResponse(docRepoResponse: any): DocRepo {
         const newDocs: { [id: string]: Doc } = {};
         const newPublishedDocs: { [id: string]: Doc } = {};
 
-        docRepoResponse.docs.forEach((doc: any) => {
+        docRepoResponse.docs.map((doc: any) => {
             newDocs[doc.id] = new Doc(
                 doc.id,
                 doc.docName,
@@ -67,35 +57,22 @@ export class DocRepo {
             );
         });
 
-        docRepoResponse.publishedDocs.forEach((doc: any) => {
-            newPublishedDocs[doc.id] = new Doc(
-                doc.id,
-                doc.docName,
-                doc.content,
-                doc.lastModified
-            );
-        });
-
-        return new DocRepo(newDocs, newPublishedDocs);
+        return new DocRepo(newDocs, docRepoResponse.publishedDocIds);
     }
 
     public docs: { [id: string]: Doc };
-    public publishedDocs: { [id: string]: Doc };
+    public publishedDocIds: string[];
     public currentDocId: string;
 
-    constructor(
-        docs: { [id: string]: Doc },
-        publishedDocs: { [id: string]: Doc }
-    ) {
+    constructor(docs: { [id: string]: Doc }, publishedDocs: string[]) {
         this.docs = docs;
-        this.publishedDocs = publishedDocs;
+        this.publishedDocIds = publishedDocs;
         this.currentDocId = this.sortedDocs[0].id;
     }
 
     public clone(): DocRepo {
         const plainDocRepo = { ...this } as DocRepo;
         const newDocs: { [id: string]: Doc } = {};
-        const newPublishedDocs: { [id: string]: Doc } = {};
 
         Object.entries(plainDocRepo.docs).forEach(([id, doc]) => {
             newDocs[id] = new Doc(
@@ -106,16 +83,7 @@ export class DocRepo {
             );
         });
 
-        Object.entries(plainDocRepo.publishedDocs).forEach(([id, doc]) => {
-            newPublishedDocs[id] = new Doc(
-                doc.id,
-                doc.docName,
-                doc.content,
-                doc.lastModified
-            );
-        });
-
-        return new DocRepo(newDocs, newPublishedDocs);
+        return new DocRepo(newDocs, plainDocRepo.publishedDocIds);
     }
 
     public newDoc = (defaultDoc: IDefaultDoc): Doc => {
@@ -150,17 +118,6 @@ export class DocRepo {
 
     public updateDoc = (doc: Doc) => {
         updateDocInRepo(doc, this);
-    };
-
-    public hasCurrentDocUpdatedSincePublished = () => {
-        if (!this.publishedDocs[this.currentDoc.id]) {
-            return true;
-        }
-        const { content, docName } = this.publishedDocs[this.currentDoc.id];
-        return (
-            this.currentDoc.content !== content ||
-            this.currentDoc.docName !== docName
-        );
     };
 
     private getUniqueDocName = (defaultPrefix: string) => {

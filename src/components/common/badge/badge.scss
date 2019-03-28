@@ -1,0 +1,12 @@
+@import '../../../styles/colors.scss';
+
+.badge {
+    display: table-cell;
+    height: 20px;
+    width: 20px;
+    background: $lite-gray;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    font-size: 10px;
+}

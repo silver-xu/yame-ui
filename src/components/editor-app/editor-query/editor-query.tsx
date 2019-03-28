@@ -26,12 +26,7 @@ const EDITOR_QUERY = gql`
                 content
                 lastModified
             }
-            publishedDocs {
-                id
-                docName
-                content
-                lastModified
-            }
+            publishedDocIds
         }
         defaultDoc {
             namePrefix

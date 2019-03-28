@@ -18,6 +18,9 @@ import classnames from 'classnames';
 import React, { useContext, useEffect, useState } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import './app-bar.scss';
+import { Badge } from '../../common/badge';
+import { DialogContext } from '../../../context-providers/dialog-provider';
+import { BarItem } from './bar-item';
 
 library.add(
     faUserSecret,
@@ -36,21 +39,37 @@ library.add(
 const docNameRef = React.createRef<HTMLInputElement>();
 
 export const Appbar = () => {
-    const { docRepo } = useContext(EditorContext);
+    const { docRepo, updateCurrentDocName, newDoc } = useContext(EditorContext);
+    const { openNotificationBar } = useContext(DialogContext);
     const [editMode, setEditMode] = useState<boolean>(false);
+    const [docName, setDocName] = useState<string>(docRepo.currentDoc.docName);
+
+    const handleComposeNewDoc = () => {
+        newDoc();
+        setDocName(docRepo.currentDoc.docName);
+    };
 
     const handleChangeDocName = () => {
         setEditMode(true);
 
         setTimeout(() => {
             if (docNameRef.current) {
-                docNameRef.current.select();
                 docNameRef.current.focus();
             }
         }, 10);
     };
 
     const handleCancelChangeDocName = () => {
+        setEditMode(false);
+    };
+
+    const handleDocNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDocName(e.currentTarget.value);
+    };
+
+    const handleSaveDocName = () => {
+        updateCurrentDocName(docName);
+        openNotificationBar(`Document name ${docName} has been saved.`);
         setEditMode(false);
     };
 
@@ -67,7 +86,11 @@ export const Appbar = () => {
             </div>
 
             <div className="compose">
-                <Button variant="contained" color="primary">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleComposeNewDoc}
+                >
                     <FontAwesomeIcon
                         icon="pen-fancy"
                         className="icon primary"
@@ -80,22 +103,27 @@ export const Appbar = () => {
                 <ul>
                     <li className="active">
                         <FontAwesomeIcon icon="file-alt" className="icon" />
-                        <label className="menu-label">
+                        <label
+                            className="menu-label"
+                            onDoubleClick={handleChangeDocName}
+                        >
                             {editMode ? (
                                 <input
                                     ref={docNameRef}
                                     type="text"
-                                    value={docRepo.currentDoc.docName}
+                                    value={docName}
+                                    onChange={handleDocNameChange}
+                                    maxLength={20}
                                 />
                             ) : (
                                 <span>{docRepo.currentDoc.docName}</span>
                             )}
                         </label>
-                        {editMode ? (
+                        {editMode && (
                             <>
                                 <span
                                     className="cmd"
-                                    onClick={handleChangeDocName}
+                                    onClick={handleSaveDocName}
                                 >
                                     <FontAwesomeIcon
                                         icon="save"
@@ -112,39 +140,28 @@ export const Appbar = () => {
                                     />
                                 </span>
                             </>
-                        ) : (
-                            <span className="cmd" onClick={handleChangeDocName}>
-                                <FontAwesomeIcon icon="pen" className="icon" />
-                            </span>
                         )}
                     </li>
-                    <li>
-                        <FontAwesomeIcon icon="folder-open" className="icon" />
-                        <label className="menu-label">All documents</label>
-                        <span className="count">
-                            {docRepo.enumerableDocs.length > 0 &&
-                                `(${docRepo.enumerableDocs.length})`}
-                        </span>
-                    </li>
-                    <li>
-                        <FontAwesomeIcon icon="scroll" className="icon" />
-                        <label className="menu-label">Drafts</label>
-                    </li>
-                    <li>
-                        <FontAwesomeIcon
-                            icon="share-alt-square"
-                            className="icon"
-                        />
-                        <label className="menu-label">Published</label>
-                    </li>
-                    <li>
-                        <FontAwesomeIcon icon="trash-alt" className="icon" />
-                        <label className="menu-label">Trash</label>
-                    </li>
-                    <li>
-                        <FontAwesomeIcon icon="cogs" className="icon" />
-                        <label className="menu-label">Settings</label>
-                    </li>
+                    <BarItem
+                        caption="All documents"
+                        icon="folder-open"
+                        badgeCount={docRepo.enumerableDocs.length}
+                    />
+                    <BarItem
+                        caption="Drafts"
+                        icon="scroll"
+                        badgeCount={
+                            docRepo.enumerableDocs.length -
+                            docRepo.publishedDocIds.length
+                        }
+                    />
+                    <BarItem
+                        caption="Published"
+                        icon="share-alt-square"
+                        badgeCount={docRepo.publishedDocIds.length}
+                    />
+                    <BarItem caption="Trash" icon="trash-alt" />
+                    <BarItem caption="Settings" icon="cogs" />
                 </ul>
             </div>
         </div>
