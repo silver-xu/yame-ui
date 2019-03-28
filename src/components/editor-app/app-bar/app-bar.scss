@@ -50,18 +50,40 @@
             li {
                 padding: 20px 50px;
                 margin: 0;
-                color: $dark-gray;
                 list-style: none;
                 cursor: pointer;
 
+                .menu-label {
+                    color: $dark-gray;
+                    cursor: pointer;
+                    width: 120px;
+                    margin-right: 20px;
+                    display: inline-block;
+                }
+
+                .cmd {
+                    display: none;
+                }
+
+                .count {
+                    color: $medium-gray;
+                }
+
                 &.active {
+                    .menu-label {
+                        font-weight: bold;
+                    }
+
                     background: $white;
-                    font-weight: bold;
                 }
 
                 &:hover {
-                    color: $lite-blue;
-
+                    .menu-label {
+                        color: $lite-blue;
+                    }
+                    .cmd {
+                        display: inline-block;
+                    }
                     .icon {
                         color: $lite-blue;
                     }

@@ -60,12 +60,12 @@
 
             button {
                 background: transparent;
-                color: $medium-lite-gray;
+                color: $medium-dark-gray;
                 border: 1px solid $lite-gray;
                 -webkit-appearance: none;
-                font-size: 12px;
+                font-size: 16px;
                 cursor: pointer;
-                margin: 0 0 0 5px;
+                margin: 0 0 0 8px;
 
                 &:focus {
                     outline: 0;

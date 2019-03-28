@@ -1,3 +1,5 @@
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faAdobe } from '@fortawesome/free-brands-svg-icons';
 import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
 import React, { useContext, useEffect, useState } from 'react';
@@ -5,14 +7,10 @@ import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { MenuContext } from '../../../context-providers/menu-provider';
 import { Appbar } from '../app-bar';
-import { FileMenu, OptionsMenu, ShareMenu, UserProfileMenu } from '../menus';
 import Preview from '../preview';
-import { SideBar } from '../side-bar';
 import { StatusBar } from '../status-bar';
-import { Menu, Toolbar } from '../toolbar';
-
 import './editor.scss';
-
+library.add(faAdobe);
 export interface IEditorDefaultProps {
     splitScreen: boolean;
     hideToolbars: boolean;
@@ -165,7 +163,39 @@ export const Editor = React.memo((props: IEditorProps) => {
                                 'code',
                                 'link',
                                 'image',
-                                'table'
+                                'table',
+                                '|',
+                                {
+                                    name: 'preview',
+                                    action: () => {},
+                                    className: 'fa fa-compass',
+                                    title: 'Preview in browser'
+                                },
+                                '|',
+                                {
+                                    name: 'publish',
+                                    action: () => {},
+                                    className: 'fa fa-share-alt',
+                                    title: 'Publish to cloud'
+                                },
+                                {
+                                    name: 'publish settings',
+                                    action: () => {},
+                                    className: 'fa fa-cog',
+                                    title: 'Publish settings'
+                                },
+                                {
+                                    name: 'word',
+                                    action: () => {},
+                                    className: 'fa fa-file-word-o',
+                                    title: 'Download as MS Word'
+                                },
+                                {
+                                    name: 'pdf',
+                                    action: () => {},
+                                    className: 'fa fa-file-pdf-o',
+                                    title: 'Download as Adobe PDF'
+                                }
                             ]
                         }}
                     />
