@@ -69,7 +69,7 @@ export const Appbar = () => {
 
     const handleSaveDocName = () => {
         updateCurrentDocName(docName);
-        openNotificationBar(`Document name ${docName} has been saved.`);
+        openNotificationBar(`Document name has been updated to ${docName}`);
         setEditMode(false);
     };
 
