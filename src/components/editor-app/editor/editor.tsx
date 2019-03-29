@@ -5,11 +5,11 @@ import 'easymde/dist/easymde.min.css';
 import React, { useContext, useEffect, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 import { EditorContext } from '../../../context-providers/editor-provider';
-import { MenuContext } from '../../../context-providers/menu-provider';
 import { Appbar } from '../app-bar';
 import Preview from '../preview';
 import { StatusBar } from '../status-bar';
 import './editor.scss';
+
 library.add(faAdobe);
 export interface IEditorDefaultProps {
     splitScreen: boolean;
@@ -87,13 +87,10 @@ export const Editor = React.memo((props: IEditorProps) => {
         statistics
     } = useContext(EditorContext);
 
-    const { activeMenu, setActiveMenu } = useContext(MenuContext);
-
     return (
         <div
             className={classnames({
                 'editor-container': true,
-                'side-bar-open': activeMenu,
                 'no-toolbar': hideToolbars,
                 'editor-only': !splitScreen
             })}

@@ -10,7 +10,6 @@ import { ApolloProvider, Query } from 'react-apollo';
 import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import { DialogProvider } from '../../../context-providers/dialog-provider';
 import { EditorProvider } from '../../../context-providers/editor-provider';
-import { MenuProvider } from '../../../context-providers/menu-provider';
 import { DocRepo, IUser } from '../../../types';
 import { Loading } from '../../loading';
 import Editor from '../editor';
@@ -109,12 +108,10 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
                                     defaultDoc={data.defaultDoc}
                                 >
                                     <DialogProvider>
-                                        <MenuProvider>
-                                            <Editor
-                                                splitScreen={true}
-                                                hideToolbars={false}
-                                            />
-                                        </MenuProvider>
+                                        <Editor
+                                            splitScreen={true}
+                                            hideToolbars={false}
+                                        />
                                     </DialogProvider>
                                 </EditorProvider>
                             </div>

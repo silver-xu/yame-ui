@@ -19,6 +19,7 @@ import { EditorContext } from '../../../context-providers/editor-provider';
 import './app-bar.scss';
 import { BarItem } from './bar-item';
 import { CurrentDocumentItem } from './document-item';
+import { NavContext } from '../../../context-providers/nav-provider';
 
 library.add(
     faUserSecret,
@@ -44,7 +45,7 @@ export enum MenuItem {
 
 export const Appbar = () => {
     const { docRepo, newDoc } = useContext(EditorContext);
-    const [activeMenu, setActiveMenu] = useState<MenuItem>(MenuItem.Doc);
+    const { activeMenu, setActiveMenu } = useContext(NavContext);
 
     const handleComposeNewDoc = () => {
         newDoc();
