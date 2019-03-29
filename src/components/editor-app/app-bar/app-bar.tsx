@@ -14,13 +14,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Button } from '@material-ui/core';
-import classnames from 'classnames';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import './app-bar.scss';
-import { Badge } from '../../common/badge';
-import { DialogContext } from '../../../context-providers/dialog-provider';
 import { BarItem } from './bar-item';
+import { CurrentDocumentItem } from './document-item';
 
 library.add(
     faUserSecret,
@@ -36,41 +34,20 @@ library.add(
     faBan
 );
 
-const docNameRef = React.createRef<HTMLInputElement>();
+export enum MenuItem {
+    Doc,
+    AllDoc,
+    Drafts,
+    Published,
+    Trash
+}
 
 export const Appbar = () => {
-    const { docRepo, updateCurrentDocName, newDoc } = useContext(EditorContext);
-    const { openNotificationBar } = useContext(DialogContext);
-    const [editMode, setEditMode] = useState<boolean>(false);
-    const [docName, setDocName] = useState<string>(docRepo.currentDoc.docName);
+    const { docRepo, newDoc } = useContext(EditorContext);
+    const [activeMenu, setActiveMenu] = useState<MenuItem>(MenuItem.Doc);
 
     const handleComposeNewDoc = () => {
         newDoc();
-        setDocName(docRepo.currentDoc.docName);
-    };
-
-    const handleChangeDocName = () => {
-        setEditMode(true);
-
-        setTimeout(() => {
-            if (docNameRef.current) {
-                docNameRef.current.focus();
-            }
-        }, 10);
-    };
-
-    const handleCancelChangeDocName = () => {
-        setEditMode(false);
-    };
-
-    const handleDocNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDocName(e.currentTarget.value);
-    };
-
-    const handleSaveDocName = () => {
-        updateCurrentDocName(docName);
-        openNotificationBar(`Document name has been updated to ${docName}`);
-        setEditMode(false);
     };
 
     return (
@@ -101,51 +78,16 @@ export const Appbar = () => {
 
             <div className="app-menu">
                 <ul>
-                    <li className="active">
-                        <FontAwesomeIcon icon="file-alt" className="icon" />
-                        <label
-                            className="menu-label"
-                            onDoubleClick={handleChangeDocName}
-                        >
-                            {editMode ? (
-                                <input
-                                    ref={docNameRef}
-                                    type="text"
-                                    value={docName}
-                                    onChange={handleDocNameChange}
-                                    maxLength={20}
-                                />
-                            ) : (
-                                <span>{docRepo.currentDoc.docName}</span>
-                            )}
-                        </label>
-                        {editMode && (
-                            <>
-                                <span
-                                    className="cmd"
-                                    onClick={handleSaveDocName}
-                                >
-                                    <FontAwesomeIcon
-                                        icon="save"
-                                        className="icon"
-                                    />
-                                </span>
-                                <span
-                                    className="cmd"
-                                    onClick={handleCancelChangeDocName}
-                                >
-                                    <FontAwesomeIcon
-                                        icon="ban"
-                                        className="icon"
-                                    />
-                                </span>
-                            </>
-                        )}
-                    </li>
+                    <CurrentDocumentItem
+                        isActive={activeMenu === MenuItem.Doc}
+                        onClick={() => setActiveMenu(MenuItem.Doc)}
+                    />
                     <BarItem
                         caption="All documents"
                         icon="folder-open"
                         badgeCount={docRepo.enumerableDocs.length}
+                        isActive={activeMenu === MenuItem.AllDoc}
+                        onClick={() => setActiveMenu(MenuItem.AllDoc)}
                     />
                     <BarItem
                         caption="Drafts"
@@ -154,14 +96,22 @@ export const Appbar = () => {
                             docRepo.enumerableDocs.length -
                             docRepo.publishedDocIds.length
                         }
+                        isActive={activeMenu === MenuItem.Drafts}
+                        onClick={() => setActiveMenu(MenuItem.Drafts)}
                     />
                     <BarItem
                         caption="Published"
                         icon="share-alt-square"
                         badgeCount={docRepo.publishedDocIds.length}
+                        isActive={activeMenu === MenuItem.Published}
+                        onClick={() => setActiveMenu(MenuItem.Published)}
                     />
-                    <BarItem caption="Trash" icon="trash-alt" />
-                    <BarItem caption="Settings" icon="cogs" />
+                    <BarItem
+                        caption="Trash"
+                        icon="trash-alt"
+                        isActive={activeMenu === MenuItem.Trash}
+                        onClick={() => setActiveMenu(MenuItem.Trash)}
+                    />
                 </ul>
             </div>
         </div>

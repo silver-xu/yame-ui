@@ -52,14 +52,15 @@
                 margin: 0;
                 list-style: none;
                 cursor: pointer;
-
+                display: flex;
+                align-items: center;
                 .menu-label {
                     color: $dark-gray;
                     cursor: pointer;
                     width: 120px;
                     margin-right: 20px;
+                    font-size: 15px;
                     display: inline-block;
-
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
@@ -67,8 +68,24 @@
                 }
 
                 .cmd {
+                    width: 25px;
+                    height: 25px;
+                    align-content: center;
+                    align-items: center;
+                    justify-content: center;
+
+                    display: flex;
+
                     svg {
-                        color: $lite-blue;
+                        color: $medium-gray;
+                    }
+
+                    &:hover {
+                        svg {
+                            color: $lite-blue;
+                        }
+                        background: $lite-gray;
+                        border-radius: 50%;
                     }
                 }
 
@@ -78,11 +95,9 @@
 
                 &.active {
                     .menu-label {
-                        font-weight: bold;
-
                         input[type='text'] {
                             border: none;
-                            font-size: 16px;
+                            font-size: 15px;
                             width: 120px;
                             padding: 0;
 
@@ -102,9 +117,7 @@
                     .menu-label {
                         color: $lite-blue;
                     }
-                    .cmd {
-                        display: inline-block;
-                    }
+
                     .icon {
                         color: $lite-blue;
                     }
