@@ -1,14 +1,15 @@
 import React, { useContext } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import './file-manager-pane.scss';
+import { Tile } from './tiles';
 
 export const FileManagerPane = () => {
     const { docRepo } = useContext(EditorContext);
 
     return (
-        <ul>
+        <ul className="tiles">
             {docRepo.sortedDocs.map(doc => (
-                <li>{doc.docName}</li>
+                <Tile doc={doc} />
             ))}
         </ul>
     );

@@ -1,1 +1,25 @@
 @import '../../../styles/colors.scss';
+
+.tiles {
+    display: flex;
+    margin: 0;
+    padding: 15px;
+
+    .tile-wrapper {
+        list-style: none;
+        margin: 0 15px 15px 0;
+
+        .tile {
+            width: 200px;
+            height: 270px;
+            border: 1px solid $lite-gray;
+        }
+
+        h4 {
+            text-align: center;
+            font-weight: 300;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+    }
+}
