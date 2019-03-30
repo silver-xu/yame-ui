@@ -16,10 +16,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Button } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
+import { NavContext } from '../../../context-providers/nav-provider';
 import './app-bar.scss';
 import { BarItem } from './bar-item';
 import { CurrentDocumentItem } from './document-item';
-import { NavContext } from '../../../context-providers/nav-provider';
 
 library.add(
     faUserSecret,

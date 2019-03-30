@@ -10,9 +10,10 @@ import { ApolloProvider, Query } from 'react-apollo';
 import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks';
 import { DialogProvider } from '../../../context-providers/dialog-provider';
 import { EditorProvider } from '../../../context-providers/editor-provider';
+import { NavProvider } from '../../../context-providers/nav-provider';
 import { DocRepo, IUser } from '../../../types';
 import { Loading } from '../../loading';
-import Editor from '../editor';
+import { Editor } from '../editor';
 
 const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
@@ -108,10 +109,9 @@ export const EditorQuery = React.memo((props: IEditorQueryProps) => {
                                     defaultDoc={data.defaultDoc}
                                 >
                                     <DialogProvider>
-                                        <Editor
-                                            splitScreen={true}
-                                            hideToolbars={false}
-                                        />
+                                        <NavProvider>
+                                            <Editor />
+                                        </NavProvider>
                                     </DialogProvider>
                                 </EditorProvider>
                             </div>

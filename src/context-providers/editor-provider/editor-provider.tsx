@@ -20,6 +20,14 @@ export interface IEditorProviderProps {
     children?: React.ReactNode;
 }
 
+export enum EditorMode {
+    Editing,
+    AllDoc,
+    Drafts,
+    Published,
+    Trash
+}
+
 export interface IEditorContextValue {
     docRepo: DocRepo;
     isSaving: boolean;
@@ -28,7 +36,8 @@ export interface IEditorContextValue {
     publishResult?: IPublishResult;
     renderedContent?: string;
     statistics?: IDocStatistics;
-    setPublishResult: (publishResult: IPublishResult | undefined) => void;
+    editorMode?: EditorMode;
+    setPublishResult: (publishResult?: IPublishResult) => void;
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
     openDoc: (id: string) => void;
@@ -36,6 +45,7 @@ export interface IEditorContextValue {
     updateCurrentDocName: (newDocName: string) => void;
     publishCurrentDoc: () => Promise<IPublishResult>;
     updateCurrentPermalink: (permalink: string) => Promise<boolean>;
+    setEditorMode: (editorMode?: EditorMode) => void;
 }
 
 export interface IEditorProviderUIState {
@@ -62,7 +72,8 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     updateCurrentDocName: (_: string) => {},
     publishCurrentDoc: () =>
         Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' }),
-    updateCurrentPermalink: (_: string) => Promise.resolve(true)
+    updateCurrentPermalink: (_: string) => Promise.resolve(true),
+    setEditorMode: (_?: EditorMode) => {}
 });
 
 const UPDATE_DOC_REPO = gql`
@@ -131,6 +142,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     );
 
     const [docStatistics, setStatistics] = useState<IDocStatistics | undefined>(
+        undefined
+    );
+
+    const [editorMode, setEditorMode] = useState<EditorMode | undefined>(
         undefined
     );
 
@@ -331,6 +346,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 docAccess,
                 publishResult,
                 renderedContent,
+                editorMode,
                 setPublishResult,
                 updateCurrentDoc,
                 newDoc,
@@ -339,7 +355,8 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 updateCurrentDocName,
                 publishCurrentDoc,
                 updateCurrentPermalink,
-                statistics: docStatistics
+                statistics: docStatistics,
+                setEditorMode
             }}
         >
             {children}
