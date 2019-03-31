@@ -10,7 +10,11 @@ export const Tile = (props: ITileProps) => {
     const [markup, setMarkup] = useState<string | undefined>(undefined);
 
     const renderContent = async () => {
-        setMarkup(await doc.renderContent());
+        const rawMarkup = await doc.renderContent();
+        const aTagRemoved = rawMarkup
+            .replace(/<a[^<]*>/gi, '')
+            .replace('</a>', '');
+        setMarkup(aTagRemoved);
     };
 
     useEffect(() => {
