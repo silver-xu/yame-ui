@@ -21,7 +21,7 @@ export const Tile = (props: ITileProps) => {
         <li className="tile-wrapper">
             <div className="tile">
                 <div
-                    className="tile-content markdown-body"
+                    className="tile-content thumbnails"
                     dangerouslySetInnerHTML={{ __html: markup }}
                 />
             </div>
