@@ -1,18 +1,67 @@
 @import '../../../styles/colors.scss';
+@import '../../../styles//thumbnail.scss';
+
+.toolbar {
+    border-bottom: 1px solid $lite-gray;
+    padding: 12px;
+    position: relative;
+
+    svg {
+        color: $medium-gray;
+    }
+
+    .search-bar {
+        border: none;
+        font-size: 14px;
+        margin-left: 15px;
+        width: 60%;
+        &:focus {
+            outline: none;
+        }
+    }
+
+    .extra-tools {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+
+        li {
+            list-style: none;
+
+            svg {
+                margin: 0 10px 0 0;
+            }
+        }
+    }
+}
 
 .tiles {
     display: flex;
+    flex-wrap: wrap;
     margin: 0;
     padding: 15px;
 
     .tile-wrapper {
         list-style: none;
-        margin: 0 15px 15px 0;
+        margin: 0 15px 25px 0;
 
         .tile {
+            padding: 10px;
             width: 200px;
             height: 270px;
             border: 1px solid $lite-gray;
+            overflow: hidden;
+            box-sizing: border-box;
+
+            .tile-content {
+                height: 250px;
+                width: 180px;
+                overflow: hidden;
+            }
         }
 
         h4 {

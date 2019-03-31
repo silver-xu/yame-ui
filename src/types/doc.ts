@@ -1,6 +1,7 @@
 import { IDoc } from '.';
 
 import { getMatches } from '../utils/regex';
+import { getFirstNLines } from '../utils/string';
 import { getShortFriendlyDateDifference } from '../utils/time';
 
 // tslint:disable-next-line: no-var-requires
@@ -74,6 +75,14 @@ export class Doc implements IDoc {
 
         // it will never be undefined
         return Promise.resolve(this.renderedContentCached as string);
+    };
+
+    // using cached rendered content to boost performance of rendering
+    public renderBriefContent = async (): Promise<string> => {
+        const message = await convertWorker.postMessage(
+            getFirstNLines(this.content, 50)
+        );
+        return message;
     };
 
     public getFriendlyLastModifiedTimespan = (): string => {
