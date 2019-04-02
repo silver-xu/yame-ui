@@ -287,7 +287,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     };
 
     const removeDoc = (id: string) => {
-        docRepo.removeDoc(id, defaultDoc);
+        docRepo.removeDoc(id);
         setUIState({
             ...uiState,
             editorKey: uuidv4()

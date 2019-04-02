@@ -122,13 +122,8 @@ export class DocRepo {
         this.currentDocId = undefined;
     };
 
-    public removeDoc = (id: string, defaultDoc: IDefaultDoc) => {
+    public removeDoc = (id: string) => {
         removeDocFromRepo(this.docs[id], this);
-
-        if (this.sortedDocs.length === 0) {
-            this.newDoc(defaultDoc);
-        }
-        this.currentDocId = this.sortedDocs[0].id;
     };
 
     public updateDocName = (doc: Doc, newDocName: string) => {

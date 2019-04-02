@@ -3,21 +3,16 @@ import {
     faFolderOpen,
     faSearch,
     faShareAlt,
-    faTimes,
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, {
-    ReactEventHandler,
-    useContext,
-    useEffect,
-    useState
-} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { NavContext } from '../../../context-providers/nav-provider';
 import { sortDocsByDateDesc } from '../../../services/repo-service';
 import { Doc } from '../../../types';
-import { containsTokens } from '../../../utils/string';
+import { containsAllTokens } from '../../../utils/string';
 import { MenuItem } from '../app-bar';
 import './file-manager-pane.scss';
 import { Tile } from './tiles';
@@ -25,9 +20,10 @@ import { Tile } from './tiles';
 library.add(faSearch, faTrashAlt, faFolderOpen, faShareAlt);
 
 export const FileManagerPane = React.memo(() => {
-    const { docRepo } = useContext(EditorContext);
+    const { docRepo, editorKey } = useContext(EditorContext);
     const { activeMenu, setActiveMenu } = useContext(NavContext);
-
+    const { setRemoveFileAlertOpen } = useContext(DialogContext);
+    const [keywordValue, setKeywordValue] = useState<string>('');
     const [activeDocId, setActiveDocId] = useState<string | undefined>(
         undefined
     );
@@ -35,8 +31,8 @@ export const FileManagerPane = React.memo(() => {
     const [docs, setDocs] = useState<Doc[]>([]);
 
     useEffect(() => {
-        filterDocs('');
-    }, []);
+        filterDocs(keywordValue);
+    }, [activeMenu, editorKey, docRepo.enumerableDocs.map(doc => doc.docName)]);
 
     const handleTileAction = (id: string) => {
         docRepo.openDoc(id);
@@ -50,62 +46,81 @@ export const FileManagerPane = React.memo(() => {
     const handleSearchKeywordChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        filterDocs(e.currentTarget.value);
+        const { value } = e.currentTarget;
+        setKeywordValue(value);
+        filterDocs(value);
+    };
+
+    const handleClearKeywords = () => {
+        setKeywordValue('');
+    };
+
+    const handleOpenDoc = () => {
+        if (activeDocId) {
+            docRepo.openDoc(activeDocId);
+            setActiveMenu(MenuItem.Doc);
+        }
+    };
+
+    const handleRemoveDoc = () => {
+        if (activeDocId) {
+            setRemoveFileAlertOpen(true, docRepo.docs[activeDocId]);
+        }
     };
 
     const filterDocs = (keyword: string) => {
         const keywords = keyword.split(' ');
+        let filteredDocs: Doc[];
         switch (activeMenu) {
             case MenuItem.AllDoc:
-                setDocs(
-                    sortDocsByDateDesc(docRepo.availableDocs).filter(doc =>
-                        containsTokens(doc.docName, keywords)
-                    )
+                filteredDocs = sortDocsByDateDesc(docRepo.availableDocs).filter(
+                    doc => containsAllTokens(doc.docName, keywords)
                 );
+                break;
             case MenuItem.Drafts:
-                setDocs(
-                    sortDocsByDateDesc(docRepo.draftDocs).filter(doc =>
-                        containsTokens(doc.docName, keywords)
-                    )
+                filteredDocs = sortDocsByDateDesc(docRepo.draftDocs).filter(
+                    doc => containsAllTokens(doc.docName, keywords)
                 );
+
+                break;
             case MenuItem.Published:
-                setDocs(
-                    sortDocsByDateDesc(docRepo.publishedDocs).filter(doc =>
-                        containsTokens(doc.docName, keywords)
-                    )
+                filteredDocs = sortDocsByDateDesc(docRepo.publishedDocs).filter(
+                    doc => containsAllTokens(doc.docName, keywords)
                 );
+
+                break;
             case MenuItem.Trash:
-                setDocs(
-                    sortDocsByDateDesc(docRepo.removedDocs).filter(doc =>
-                        containsTokens(doc.docName, keywords)
-                    )
+                filteredDocs = sortDocsByDateDesc(docRepo.removedDocs).filter(
+                    doc => containsAllTokens(doc.docName, keywords)
                 );
+
+                break;
             default:
-                setDocs(
-                    sortDocsByDateDesc(docRepo.availableDocs).filter(doc =>
-                        containsTokens(doc.docName, keywords)
-                    )
+                filteredDocs = sortDocsByDateDesc(docRepo.availableDocs).filter(
+                    doc => containsAllTokens(doc.docName, keywords)
                 );
         }
+        setDocs(filteredDocs);
     };
 
     return (
         <>
-            <div className="toolbar">
+            <div className="toolbar" key={editorKey}>
                 <FontAwesomeIcon icon="search" />
                 <input
                     type="text"
                     className="search-bar"
+                    value={keywordValue}
                     onChange={handleSearchKeywordChange}
                 />
                 <ul className="extra-tools">
-                    <li className="separate">
+                    <li className="separate" onClick={handleClearKeywords}>
                         <FontAwesomeIcon icon="times" />
                     </li>
-                    <li>
+                    <li onClick={handleOpenDoc}>
                         <FontAwesomeIcon icon="folder-open" />
                     </li>
-                    <li>
+                    <li onClick={handleRemoveDoc}>
                         <FontAwesomeIcon icon="trash-alt" />
                     </li>
                     <li>

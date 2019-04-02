@@ -5,12 +5,13 @@ export const getFirstNLines = (str: string, n: number): string => {
         .join('\r\n');
 };
 
-export const containsTokens = (str: string, tokens: string[]): boolean => {
+export const containsAllTokens = (str: string, tokens: string[]): boolean => {
+    let contains = true;
     tokens.forEach(token => {
-        if (str.indexOf(token) === -1) {
-            return false;
+        if (str.toLowerCase().indexOf(token.toLowerCase()) === -1) {
+            contains = false;
         }
     });
 
-    return true;
+    return contains;
 };

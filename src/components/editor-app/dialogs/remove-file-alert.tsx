@@ -20,6 +20,7 @@ export const RemoveFileAlert = () => {
     const {
         isRemoveFileAlertOpen,
         setRemoveFileAlertOpen,
+        openNotificationBar,
         docToRemove
     } = useContext(DialogContext);
 
@@ -33,6 +34,7 @@ export const RemoveFileAlert = () => {
         if (docToRemove) {
             removeDoc(docToRemove.id);
             setRemoveFileAlertOpen(false);
+            openNotificationBar(`${docToRemove.docName} has been removed.`);
         }
     };
 

@@ -31,13 +31,19 @@
 
         li {
             list-style: none;
-
+            cursor: pointer;
             &.separate {
                 margin-right: 20px;
             }
 
             svg {
-                margin: 0 10px 0 0;
+                margin: 0 15px 0 0;
+            }
+
+            &:hover {
+                svg {
+                    color: $lite-blue;
+                }
             }
         }
     }
