@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 .thumbnails {
     font-size: 4px !important;
     padding: 0 !important;
@@ -9,6 +11,7 @@
     h5,
     h6 {
         margin: 4px 0 2px 0 !important;
+        color: $dark-gray;
     }
 
     h1 {
@@ -39,6 +42,7 @@
     ul,
     li,
     ol {
+        color: $medium-gray;
         margin: 4px 0 !important;
         padding: 0 2px !important;
     }
