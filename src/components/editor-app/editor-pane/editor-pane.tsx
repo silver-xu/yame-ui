@@ -31,6 +31,19 @@ let mdeInstance: any;
 let previewInFocus: boolean;
 
 export const EditorPane = React.memo((props: IEditorPaneProps) => {
+    const {
+        docRepo,
+        isSaving,
+        editorKey,
+        updateCurrentDoc,
+        renderedContent,
+        statistics
+    } = useContext(EditorContext);
+
+    if (!docRepo.currentDoc) {
+        return null;
+    }
+
     useEffect(() => {
         previewInFocus = false;
     }, []);
@@ -78,15 +91,6 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
     const handleToolbarToggle = () => {
         setHideToolbars(!hideToolbars);
     };
-
-    const {
-        docRepo,
-        isSaving,
-        editorKey,
-        updateCurrentDoc,
-        renderedContent,
-        statistics
-    } = useContext(EditorContext);
 
     return (
         <div

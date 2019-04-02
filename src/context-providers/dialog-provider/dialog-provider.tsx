@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-    FileManager,
     NotificationBar,
     RegisterUser,
     RemoveFileAlert
@@ -107,7 +106,6 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
                 setRegisterUserOpen: handleSetRegisterUserOpen
             }}
         >
-            <FileManager />
             <RegisterUser />
             <RemoveFileAlert />
             <NotificationBar

@@ -14,7 +14,7 @@
         border: none;
         font-size: 14px;
         margin-left: 15px;
-        width: 60%;
+        width: calc(100% - 80px);
         &:focus {
             outline: none;
         }
@@ -32,6 +32,10 @@
         li {
             list-style: none;
 
+            &.separate {
+                margin-right: 20px;
+            }
+
             svg {
                 margin: 0 10px 0 0;
             }
@@ -48,8 +52,11 @@
     .tile-wrapper {
         list-style: none;
         margin: 0 15px 25px 0;
+        cursor: pointer;
+        user-select: none;
 
         .tile {
+            background: $white;
             padding: 10px;
             width: 200px;
             height: 270px;
@@ -64,11 +71,28 @@
             }
         }
 
-        h4 {
+        .tile-name-wrapper {
             text-align: center;
-            font-weight: 300;
-            margin: 15px 0;
-            font-size: 14px;
+            h4 {
+                text-align: center;
+                font-weight: 400;
+                margin: 10px auto;
+                padding: 5px 15px;
+                border-radius: 3px;
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        &.active {
+            .tile {
+                border: 1px solid $lite-blue;
+            }
+
+            h4 {
+                background: $lite-blue;
+                color: $white;
+            }
         }
     }
 }

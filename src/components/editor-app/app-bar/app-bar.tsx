@@ -86,24 +86,21 @@ export const Appbar = () => {
                     <BarItem
                         caption="All documents"
                         icon="folder-open"
-                        badgeCount={docRepo.enumerableDocs.length}
+                        badgeCount={docRepo.availableDocs.length}
                         isActive={activeMenu === MenuItem.AllDoc}
                         onClick={() => setActiveMenu(MenuItem.AllDoc)}
                     />
                     <BarItem
                         caption="Drafts"
                         icon="scroll"
-                        badgeCount={
-                            docRepo.enumerableDocs.length -
-                            docRepo.publishedDocIds.length
-                        }
+                        badgeCount={docRepo.draftDocs.length}
                         isActive={activeMenu === MenuItem.Drafts}
                         onClick={() => setActiveMenu(MenuItem.Drafts)}
                     />
                     <BarItem
                         caption="Published"
                         icon="share-alt-square"
-                        badgeCount={docRepo.publishedDocIds.length}
+                        badgeCount={docRepo.publishedDocs.length}
                         isActive={activeMenu === MenuItem.Published}
                         onClick={() => setActiveMenu(MenuItem.Published)}
                     />

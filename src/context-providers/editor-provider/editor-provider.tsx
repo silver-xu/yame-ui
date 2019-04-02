@@ -43,7 +43,7 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     removeDoc: (id: string) => void;
     updateCurrentDocName: (newDocName: string) => void;
-    publishCurrentDoc: () => Promise<IPublishResult>;
+    publishCurrentDoc: () => Promise<IPublishResult | undefined>;
     updateCurrentPermalink: (permalink: string) => Promise<boolean>;
     setEditorMode: (editorMode?: EditorMode) => void;
 }
@@ -159,14 +159,14 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const { loading: _, error: __, data: publishResultData } = useQuery(
         PUBLISH_RESULT,
         {
-            variables: { id: docRepo.currentDoc.id }
+            variables: { id: docRepo.currentDocId }
         }
     );
 
     const { loading: ___, error: ____, data: docAccessData } = useQuery(
         DOC_ACCESS,
         {
-            variables: { id: docRepo.currentDoc.id }
+            variables: { id: docRepo.currentDocId }
         }
     );
 
@@ -175,7 +175,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             setPublishResult(publishResultData.publishResult);
         }
     }, [
-        docRepo.currentDoc.id,
+        docRepo.currentDocId,
         publishResultData && publishResultData.publishResult
             ? publishResultData.publishResult.permalink
             : undefined
@@ -186,7 +186,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             setDocAccess(docAccessData.docAccess);
         }
     }, [
-        docRepo.currentDoc.id,
+        docRepo.currentDocId,
         docAccessData && docAccessData.docAccess
             ? docAccessData.docAccess.id
             : undefined
@@ -194,12 +194,14 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
 
     useEffect(() => {
         getRenderedContent();
-    }, [docRepo.currentDoc.content]);
+    }, [docRepo.currentDoc && docRepo.currentDoc.content]);
 
     const getRenderedContent = async () => {
-        const content = await docRepo.currentDoc.renderContent();
-        setRenderedContent(content);
-        setStatistics(getDocStatistics(content));
+        if (docRepo.currentDoc) {
+            const content = await docRepo.currentDoc.renderContent();
+            setRenderedContent(content);
+            setStatistics(getDocStatistics(content));
+        }
     };
 
     const publishDocMutation = useMutation(PUBLISH_DOC);
@@ -243,15 +245,17 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     const debouncedSaveDocRepo = () => debounce(saveDocRepo, 1500)();
 
     const updateCurrentDoc = (value: string) => {
-        docRepo.currentDoc.content = value;
-        docRepo.updateDoc(docRepo.currentDoc);
+        if (docRepo.currentDoc) {
+            docRepo.currentDoc.content = value;
+            docRepo.updateDoc(docRepo.currentDoc);
 
-        setDocState({
-            ...docState,
-            docRepo
-        });
+            setDocState({
+                ...docState,
+                docRepo
+            });
 
-        debouncedSaveDocRepo();
+            debouncedSaveDocRepo();
+        }
     };
 
     const newDoc = () => {
@@ -298,32 +302,38 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     };
 
     const updateCurrentDocName = (newDocName: string) => {
-        docRepo.updateDocName(docRepo.currentDoc, newDocName);
-        setUIState({
-            ...uiState,
-            editorKey: uuidv4()
-        });
+        if (docRepo.currentDoc) {
+            docRepo.updateDocName(docRepo.currentDoc, newDocName);
+            setUIState({
+                ...uiState,
+                editorKey: uuidv4()
+            });
 
-        setDocState({
-            ...docState,
-            docRepo
-        });
+            setDocState({
+                ...docState,
+                docRepo
+            });
 
-        debouncedSaveDocRepo();
+            debouncedSaveDocRepo();
+        }
     };
 
-    const publishCurrentDoc = async (): Promise<IPublishResult> => {
-        const { id, docName, content, lastModified } = docRepo.currentDoc;
-        return (await publishDocMutation({
-            variables: {
-                docMutation: {
-                    id,
-                    docName,
-                    content,
-                    lastModified
+    const publishCurrentDoc = async (): Promise<IPublishResult | undefined> => {
+        if (docRepo.currentDoc) {
+            const { id, docName, content, lastModified } = docRepo.currentDoc;
+            return (await publishDocMutation({
+                variables: {
+                    docMutation: {
+                        id,
+                        docName,
+                        content,
+                        lastModified
+                    }
                 }
-            }
-        })).data.publishDoc;
+            })).data.publishDoc;
+        } else {
+            return Promise.resolve(undefined);
+        }
     };
 
     const updateCurrentPermalink = async (

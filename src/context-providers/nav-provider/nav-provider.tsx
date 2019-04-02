@@ -21,7 +21,7 @@ export const NavProvider = React.memo((props: INavProviderProps) => {
         undefined
     );
 
-    const { setEditorMode } = useContext(EditorContext);
+    const { docRepo, setEditorMode } = useContext(EditorContext);
 
     const handleSetActiveMenu = (menuItem?: MenuItem) => {
         setActiveMenu(menuItem);

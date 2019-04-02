@@ -24,8 +24,24 @@ export class DocRepo {
         });
     }
 
-    get currentDoc(): Doc {
-        return this.docs[this.currentDocId];
+    get availableDocs(): Doc[] {
+        return this.enumerableDocs.filter(doc => !doc.isRemoved);
+    }
+
+    get publishedDocs(): Doc[] {
+        return this.availableDocs.filter(doc => doc.isPublished);
+    }
+
+    get draftDocs(): Doc[] {
+        return this.availableDocs.filter(doc => !doc.isPublished);
+    }
+
+    get removedDocs(): Doc[] {
+        return this.availableDocs.filter(doc => doc.isRemoved);
+    }
+
+    get currentDoc(): Doc | undefined {
+        return this.currentDocId ? this.docs[this.currentDocId] : undefined;
     }
 
     public static parseFromJson(jsonString: string): DocRepo {
@@ -62,7 +78,7 @@ export class DocRepo {
 
     public docs: { [id: string]: Doc };
     public publishedDocIds: string[];
-    public currentDocId: string;
+    public currentDocId?: string;
 
     constructor(docs: { [id: string]: Doc }, publishedDocs: string[]) {
         this.docs = docs;
@@ -100,6 +116,10 @@ export class DocRepo {
 
     public openDoc = (id: string) => {
         openDocInRepo(this.docs[id], this);
+    };
+
+    public closeCurentDoc = () => {
+        this.currentDocId = undefined;
     };
 
     public removeDoc = (id: string, defaultDoc: IDefaultDoc) => {

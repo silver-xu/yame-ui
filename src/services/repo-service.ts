@@ -63,3 +63,12 @@ export const deriveDocRepoMutation = (
         deletedDocIds
     };
 };
+
+export const sortDocsByDateDesc = (docs: Doc[]): Doc[] => {
+    return docs.sort((a: Doc, b: Doc) => {
+        return (
+            new Date(b.lastModified).getTime() -
+            new Date(a.lastModified).getTime()
+        );
+    });
+};

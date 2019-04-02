@@ -32,6 +32,8 @@ export class Doc implements IDoc {
     public docName: string;
     public content: string;
     public lastModified: Date;
+    public isPublished: boolean;
+    public isRemoved: boolean;
 
     private renderedContentCached?: string;
     private contentTreeCached?: IContentNode;
@@ -49,6 +51,8 @@ export class Doc implements IDoc {
         this.content = content;
         this.unchangedContent = content;
         this.lastModified = new Date(lastModified);
+        this.isPublished = false;
+        this.isRemoved = false;
     }
 
     public equals = (comparisonDoc: Doc): boolean => {

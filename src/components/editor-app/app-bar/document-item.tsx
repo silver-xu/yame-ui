@@ -18,13 +18,14 @@ export interface ICurrentDocumentItemProps {
 export const CurrentDocumentItem = React.memo(
     (props: ICurrentDocumentItemProps) => {
         const { docRepo, updateCurrentDocName } = useContext(EditorContext);
+
         const { openNotificationBar } = useContext(DialogContext);
         const [editMode, setEditMode] = useState<boolean>(false);
         const [docName, setDocName] = useState<string | undefined>(undefined);
 
         useEffect(() => {
-            setDocName(docRepo.currentDoc.docName);
-        }, [docRepo.currentDoc.docName]);
+            setDocName(docRepo.currentDoc && docRepo.currentDoc.docName);
+        }, [docRepo.currentDoc && docRepo.currentDoc.docName]);
 
         const handleChangeDocName = () => {
             setEditMode(true);
@@ -56,7 +57,7 @@ export const CurrentDocumentItem = React.memo(
             }
         };
 
-        return (
+        return docRepo.currentDoc ? (
             <li
                 className={classnames({ active: props.isActive })}
                 onClick={props.onClick}
@@ -92,6 +93,6 @@ export const CurrentDocumentItem = React.memo(
                     </>
                 )}
             </li>
-        );
+        ) : null;
     }
 );

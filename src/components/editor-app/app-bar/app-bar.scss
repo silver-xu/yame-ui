@@ -54,6 +54,8 @@
                 cursor: pointer;
                 display: flex;
                 align-items: center;
+                box-sizing: border-box;
+
                 .menu-label {
                     color: $dark-gray;
                     cursor: pointer;
@@ -109,7 +111,7 @@
                             display: none;
                         }
                     }
-
+                    border-left: 3px solid $lite-blue;
                     background: $white;
                 }
 
