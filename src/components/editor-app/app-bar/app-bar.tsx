@@ -18,6 +18,7 @@ import React, { useContext, useState } from 'react';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { NavContext } from '../../../context-providers/nav-provider';
 import './app-bar.scss';
+import { AuthItem } from './auth-item';
 import { BarItem } from './bar-item';
 import { CurrentDocumentItem } from './document-item';
 
@@ -52,16 +53,7 @@ export const Appbar = React.memo(() => {
 
     return (
         <div className="app-bar">
-            <div className="avatar">
-                <Avatar>
-                    <FontAwesomeIcon icon={['fas', 'user-secret']} />
-                </Avatar>
-                <div className="details">
-                    <h2>Anonymous</h2>
-                    <h3>Click to signin with Facebook</h3>
-                </div>
-            </div>
-
+            <AuthItem />
             <div className="compose">
                 <Button
                     variant="contained"
