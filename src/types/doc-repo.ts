@@ -83,7 +83,6 @@ export class DocRepo {
     constructor(docs: { [id: string]: Doc }, publishedDocs: string[]) {
         this.docs = docs;
         this.publishedDocIds = publishedDocs;
-        this.currentDocId = this.sortedDocs[0].id;
     }
 
     public clone(): DocRepo {
