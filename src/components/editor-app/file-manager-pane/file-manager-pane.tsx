@@ -32,11 +32,11 @@ export const FileManagerPane = React.memo(() => {
 
     useEffect(() => {
         filterDocs(keywordValue);
-    }, [activeMenu, editorKey, docRepo.enumerableDocs.map(doc => doc.docName)]);
+    }, [activeMenu, docRepo.enumerableDocs.map(doc => doc.docName)]);
 
     const handleTileAction = (id: string) => {
         docRepo.openDoc(id);
-        setActiveMenu(MenuItem.Doc);
+        setActiveMenu(MenuItem.CurrentDoc);
     };
 
     const handleTileSelected = (id: string) => {
@@ -58,7 +58,7 @@ export const FileManagerPane = React.memo(() => {
     const handleOpenDoc = () => {
         if (activeDocId) {
             docRepo.openDoc(activeDocId);
-            setActiveMenu(MenuItem.Doc);
+            setActiveMenu(MenuItem.CurrentDoc);
         }
     };
 
@@ -72,7 +72,7 @@ export const FileManagerPane = React.memo(() => {
         const keywords = keyword.split(' ');
         let filteredDocs: Doc[];
         switch (activeMenu) {
-            case MenuItem.AllDoc:
+            case MenuItem.AvailableDocs:
                 filteredDocs = sortDocsByDateDesc(docRepo.availableDocs).filter(
                     doc => containsAllTokens(doc.docName, keywords)
                 );

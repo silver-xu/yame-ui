@@ -101,10 +101,6 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
             })}
         >
             <div className="editor-wrapper">
-                {/* <Toolbar
-                    lostFocus={toolbarOutOfFocus}
-                    onMenuToggle={setActiveMenu}
-                /> */}
                 <div className="left-pane">
                     <SimpleMDE
                         key={editorKey}

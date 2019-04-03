@@ -16,7 +16,7 @@ export const Editor = () => {
         <>
             <Appbar />
             <div className="main-container">
-                {editorMode === EditorMode.Editing ? (
+                {editorMode === EditorMode.CurrentDoc ? (
                     <EditorPane splitScreen={true} hideToolbars={false} />
                 ) : (
                     <FileManagerPane />

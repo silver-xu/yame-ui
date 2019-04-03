@@ -1,14 +1,14 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faFileAlt, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faFileAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-import React, { useContext, useEffect, useState } from 'react';
-import { DialogContext } from '../../../context-providers/dialog-provider';
+import React, { useContext } from 'react';
+
 import { EditorContext } from '../../../context-providers/editor-provider';
+import { NavContext } from '../../../context-providers/nav-provider';
+import { MenuItem } from './app-bar';
 
-library.add(faFileAlt, faPen);
-
-const docNameRef = React.createRef<HTMLInputElement>();
+library.add(faFileAlt, faTimes);
 
 export interface ICurrentDocumentItemProps {
     isActive: boolean;
@@ -17,44 +17,13 @@ export interface ICurrentDocumentItemProps {
 
 export const CurrentDocumentItem = React.memo(
     (props: ICurrentDocumentItemProps) => {
-        const { docRepo, updateCurrentDocName } = useContext(EditorContext);
+        const { docRepo, closeCurrentDoc } = useContext(EditorContext);
+        const { setActiveMenu } = useContext(NavContext);
 
-        const { openNotificationBar } = useContext(DialogContext);
-        const [editMode, setEditMode] = useState<boolean>(false);
-        const [docName, setDocName] = useState<string | undefined>(undefined);
-
-        useEffect(() => {
-            setDocName(docRepo.currentDoc && docRepo.currentDoc.docName);
-        }, [docRepo.currentDoc && docRepo.currentDoc.docName]);
-
-        const handleChangeDocName = () => {
-            setEditMode(true);
-
-            setTimeout(() => {
-                if (docNameRef.current) {
-                    docNameRef.current.focus();
-                }
-            }, 10);
-        };
-
-        const handleCancelChangeDocName = () => {
-            setEditMode(false);
-        };
-
-        const handleDocNameChange = (
-            e: React.ChangeEvent<HTMLInputElement>
-        ) => {
-            setDocName(e.currentTarget.value);
-        };
-
-        const handleSaveDocName = () => {
-            if (docName) {
-                updateCurrentDocName(docName);
-                openNotificationBar(
-                    `Document name has been updated to ${docName}`
-                );
-                setEditMode(false);
-            }
+        const handleClose = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            closeCurrentDoc();
+            setActiveMenu(MenuItem.AvailableDocs);
         };
 
         return docRepo.currentDoc ? (
@@ -63,35 +32,13 @@ export const CurrentDocumentItem = React.memo(
                 onClick={props.onClick}
             >
                 <FontAwesomeIcon icon="file-alt" className="icon" />
-                <label
-                    className="menu-label"
-                    onDoubleClick={handleChangeDocName}
-                >
-                    {editMode ? (
-                        <input
-                            ref={docNameRef}
-                            type="text"
-                            value={docName}
-                            onChange={handleDocNameChange}
-                            maxLength={20}
-                        />
-                    ) : (
-                        <span>{docRepo.currentDoc.docName}</span>
-                    )}
+                <label className="menu-label">
+                    <span>{docRepo.currentDoc.docName}</span>
                 </label>
-                {editMode && (
-                    <>
-                        <span className="cmd" onClick={handleSaveDocName}>
-                            <FontAwesomeIcon icon="save" />
-                        </span>
-                        <span
-                            className="cmd"
-                            onClick={handleCancelChangeDocName}
-                        >
-                            <FontAwesomeIcon icon="ban" />
-                        </span>
-                    </>
-                )}
+
+                <span className="cmd" onClick={handleClose}>
+                    <FontAwesomeIcon icon="times" />
+                </span>
             </li>
         ) : null;
     }

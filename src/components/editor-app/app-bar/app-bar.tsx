@@ -36,17 +36,16 @@ library.add(
 );
 
 export enum MenuItem {
-    Doc,
-    AllDoc,
+    CurrentDoc,
+    AvailableDocs,
     Drafts,
     Published,
     Trash
 }
 
-export const Appbar = () => {
+export const Appbar = React.memo(() => {
     const { docRepo, newDoc } = useContext(EditorContext);
     const { activeMenu, setActiveMenu } = useContext(NavContext);
-
     const handleComposeNewDoc = () => {
         newDoc();
     };
@@ -80,15 +79,15 @@ export const Appbar = () => {
             <div className="app-menu">
                 <ul>
                     <CurrentDocumentItem
-                        isActive={activeMenu === MenuItem.Doc}
-                        onClick={() => setActiveMenu(MenuItem.Doc)}
+                        isActive={activeMenu === MenuItem.CurrentDoc}
+                        onClick={() => setActiveMenu(MenuItem.CurrentDoc)}
                     />
                     <BarItem
                         caption="All documents"
                         icon="folder-open"
                         badgeCount={docRepo.availableDocs.length}
-                        isActive={activeMenu === MenuItem.AllDoc}
-                        onClick={() => setActiveMenu(MenuItem.AllDoc)}
+                        isActive={activeMenu === MenuItem.AvailableDocs}
+                        onClick={() => setActiveMenu(MenuItem.AvailableDocs)}
                     />
                     <BarItem
                         caption="Drafts"
@@ -114,4 +113,4 @@ export const Appbar = () => {
             </div>
         </div>
     );
-};
+});

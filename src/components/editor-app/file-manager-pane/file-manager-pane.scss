@@ -88,6 +88,13 @@
                 display: inline-block;
                 font-size: 14px;
             }
+
+            input[type='text'] {
+                text-align: center;
+                margin: 10px auto;
+                padding: 5px;
+                width: 120px;
+            }
         }
 
         &.active {

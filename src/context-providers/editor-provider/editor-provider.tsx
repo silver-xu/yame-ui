@@ -21,8 +21,8 @@ export interface IEditorProviderProps {
 }
 
 export enum EditorMode {
-    Editing,
-    AllDoc,
+    CurrentDoc,
+    AvailableDocs,
     Drafts,
     Published,
     Trash
@@ -41,8 +41,9 @@ export interface IEditorContextValue {
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
     openDoc: (id: string) => void;
+    closeCurrentDoc: () => void;
     removeDoc: (id: string) => void;
-    updateCurrentDocName: (newDocName: string) => void;
+    updateDocName: (id: string, newDocName: string) => void;
     publishCurrentDoc: () => Promise<IPublishResult | undefined>;
     updateCurrentPermalink: (permalink: string) => Promise<boolean>;
     setEditorMode: (editorMode?: EditorMode) => void;
@@ -68,8 +69,9 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     updateCurrentDoc: () => {},
     newDoc: () => {},
     openDoc: (_: string) => {},
+    closeCurrentDoc: () => {},
     removeDoc: (_: string) => {},
-    updateCurrentDocName: (_: string) => {},
+    updateDocName: (_: string, __: string) => {},
     publishCurrentDoc: () =>
         Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' }),
     updateCurrentPermalink: (_: string) => Promise.resolve(true),
@@ -284,6 +286,24 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             ...docState,
             docRepo
         });
+
+        saveDocRepo();
+    };
+
+    const closeCurrentDoc = () => {
+        docRepo.currentDocId = undefined;
+
+        setUIState({
+            ...uiState,
+            editorKey: uuidv4()
+        });
+
+        setDocState({
+            ...docState,
+            docRepo
+        });
+
+        saveDocRepo();
     };
 
     const removeDoc = (id: string) => {
@@ -301,21 +321,19 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo();
     };
 
-    const updateCurrentDocName = (newDocName: string) => {
-        if (docRepo.currentDoc) {
-            docRepo.updateDocName(docRepo.currentDoc, newDocName);
-            setUIState({
-                ...uiState,
-                editorKey: uuidv4()
-            });
+    const updateDocName = (id: string, newDocName: string) => {
+        docRepo.updateDocName(docRepo.docs[id], newDocName);
+        setUIState({
+            ...uiState,
+            editorKey: uuidv4()
+        });
 
-            setDocState({
-                ...docState,
-                docRepo
-            });
+        setDocState({
+            ...docState,
+            docRepo
+        });
 
-            debouncedSaveDocRepo();
-        }
+        saveDocRepo();
     };
 
     const publishCurrentDoc = async (): Promise<IPublishResult | undefined> => {
@@ -361,8 +379,9 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 updateCurrentDoc,
                 newDoc,
                 openDoc,
+                closeCurrentDoc,
                 removeDoc,
-                updateCurrentDocName,
+                updateDocName,
                 publishCurrentDoc,
                 updateCurrentPermalink,
                 statistics: docStatistics,

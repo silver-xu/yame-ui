@@ -12,25 +12,25 @@ export interface INavProviderProps {
 }
 
 export const NavContext = React.createContext<INavContextValue>({
-    activeMenu: MenuItem.Doc,
+    activeMenu: MenuItem.CurrentDoc,
     setActiveMenu: () => {}
 });
 
 export const NavProvider = React.memo((props: INavProviderProps) => {
     const [activeMenu, setActiveMenu] = useState<MenuItem | undefined>(
-        undefined
+        MenuItem.AvailableDocs
     );
 
-    const { docRepo, setEditorMode } = useContext(EditorContext);
+    const { setEditorMode } = useContext(EditorContext);
 
     const handleSetActiveMenu = (menuItem?: MenuItem) => {
         setActiveMenu(menuItem);
         switch (menuItem) {
-            case MenuItem.AllDoc:
-                setEditorMode(EditorMode.AllDoc);
+            case MenuItem.AvailableDocs:
+                setEditorMode(EditorMode.AvailableDocs);
                 break;
-            case MenuItem.Doc:
-                setEditorMode(EditorMode.Editing);
+            case MenuItem.CurrentDoc:
+                setEditorMode(EditorMode.CurrentDoc);
                 break;
             case MenuItem.Drafts:
                 setEditorMode(EditorMode.Drafts);
