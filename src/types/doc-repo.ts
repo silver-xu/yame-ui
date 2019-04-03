@@ -128,7 +128,9 @@ export class DocRepo {
 
     public updateDocName = (doc: Doc, newDocName: string) => {
         doc.docName = newDocName;
-        this.updateDoc(doc);
+
+        // short circuit updating the modified date
+        this.docs[doc.id] = doc;
     };
 
     public updateDoc = (doc: Doc) => {

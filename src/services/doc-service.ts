@@ -1,4 +1,4 @@
-import { Doc, IDocStatistics } from '../types';
+import { IDocStatistics } from '../types';
 
 export const getDocStatistics = (content: string): IDocStatistics => {
     const rawContent = content.replace(/(<([^>]+)>)/gi, '');
