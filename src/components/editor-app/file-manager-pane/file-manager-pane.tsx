@@ -81,19 +81,16 @@ export const FileManagerPane = React.memo(() => {
                 filteredDocs = sortDocsByDateDesc(docRepo.draftDocs).filter(
                     doc => containsAllTokens(doc.docName, keywords)
                 );
-
                 break;
             case MenuItem.Published:
                 filteredDocs = sortDocsByDateDesc(docRepo.publishedDocs).filter(
                     doc => containsAllTokens(doc.docName, keywords)
                 );
-
                 break;
             case MenuItem.Trash:
                 filteredDocs = sortDocsByDateDesc(docRepo.removedDocs).filter(
                     doc => containsAllTokens(doc.docName, keywords)
                 );
-
                 break;
             default:
                 filteredDocs = sortDocsByDateDesc(docRepo.availableDocs).filter(

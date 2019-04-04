@@ -5,6 +5,7 @@ export interface IFacebookUser {
     name?: string;
     email?: string;
     accessToken: string;
+    avatarUrl?: string;
 }
 
 export interface IFaceBookLoginState {
@@ -39,19 +40,29 @@ const getUserInfo = (
         '/me',
         { locale: props.language, fields: props.fields.join(',') },
         (response: any) => {
-            const currentUser: IFacebookUser = { ...response, accessToken };
-            setState({
-                ...state,
-                isLoggedIn: true,
-                facebookUser: currentUser,
-                loaded: true
-            });
+            getWindow().FB.api(
+                `/${response.id}/picture?redirect=false`,
+                {},
+                (pictureResponse: any) => {
+                    const currentUser: IFacebookUser = {
+                        ...response,
+                        accessToken,
+                        avatarUrl: pictureResponse.url
+                    };
+                    setState({
+                        ...state,
+                        isLoggedIn: true,
+                        facebookUser: currentUser,
+                        loaded: true
+                    });
 
-            const { onLoginSuccess } = props;
+                    const { onLoginSuccess } = props;
 
-            if (onLoginSuccess) {
-                onLoginSuccess(currentUser);
-            }
+                    if (onLoginSuccess) {
+                        onLoginSuccess(currentUser);
+                    }
+                }
+            );
         }
     );
 };
