@@ -13,6 +13,13 @@ export interface IUser {
     isValid: boolean;
     userName?: string;
     userType: UserType;
+    avatar?: IAvatar;
+}
+
+export interface IAvatar {
+    url: string;
+    width: number;
+    height: number;
 }
 
 export enum UserType {

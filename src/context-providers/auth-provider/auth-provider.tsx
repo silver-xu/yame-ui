@@ -60,7 +60,8 @@ export const AuthProvider = React.memo((props: IAuthProviderProps) => {
                 id: loggedInFBUser.id,
                 isValid: true,
                 userName: loggedInFBUser.name,
-                userType: UserType.Facebook
+                userType: UserType.Facebook,
+                avatar: loggedInFBUser.avatar
             };
             setCurrentUser(user);
             handleLoginSuccess(user, onLoginSuccess);

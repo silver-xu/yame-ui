@@ -25,6 +25,8 @@ const EDITOR_QUERY = gql`
                 docName
                 content
                 lastModified
+                published
+                removed
             }
             publishedDocIds
         }

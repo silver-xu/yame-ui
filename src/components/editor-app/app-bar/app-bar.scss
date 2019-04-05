@@ -34,6 +34,16 @@
                 padding: 0;
             }
         }
+
+        .avatar-img {
+            border: 2px solid $transparent;
+        }
+
+        &:hover {
+            .avatar-img {
+                border: 2px solid $lite-blue;
+            }
+        }
     }
 
     .compose {

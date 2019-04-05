@@ -22,7 +22,9 @@ library.add(faSearch, faTrashAlt, faFolderOpen, faShareAlt);
 export const FileManagerPane = React.memo(() => {
     const { docRepo, editorKey } = useContext(EditorContext);
     const { activeMenu, setActiveMenu } = useContext(NavContext);
-    const { setRemoveFileAlertOpen } = useContext(DialogContext);
+    const { setRemoveFileAlertOpen, setPublishDialogOpen } = useContext(
+        DialogContext
+    );
     const [keywordValue, setKeywordValue] = useState<string>('');
     const [activeDocId, setActiveDocId] = useState<string | undefined>(
         undefined
@@ -66,6 +68,10 @@ export const FileManagerPane = React.memo(() => {
         if (activeDocId) {
             setRemoveFileAlertOpen(true, docRepo.docs[activeDocId]);
         }
+    };
+
+    const handleShareClick = () => {
+        setPublishDialogOpen(true);
     };
 
     const filterDocs = (keyword: string) => {
@@ -120,7 +126,7 @@ export const FileManagerPane = React.memo(() => {
                     <li onClick={handleRemoveDoc}>
                         <FontAwesomeIcon icon="trash-alt" />
                     </li>
-                    <li>
+                    <li onClick={handleShareClick}>
                         <FontAwesomeIcon icon="share-alt" />
                     </li>
                 </ul>

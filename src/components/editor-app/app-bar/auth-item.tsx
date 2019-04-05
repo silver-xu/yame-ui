@@ -13,7 +13,7 @@ export const AuthItem = React.memo(() => {
 
     return currentUser && currentUser.userType !== UserType.Facebook ? (
         <div className="avatar" onClick={login}>
-            <Avatar>
+            <Avatar className="avatar-img">
                 <FontAwesomeIcon icon={['fas', 'user-secret']} />
             </Avatar>
             <div className="details">
@@ -23,8 +23,14 @@ export const AuthItem = React.memo(() => {
         </div>
     ) : (
         <div className="avatar" onClick={logout}>
-            <Avatar>
-                <FontAwesomeIcon icon={['fab', 'facebook']} />
+            <Avatar className="avatar-img">
+                <img
+                    src={
+                        currentUser &&
+                        currentUser.avatar &&
+                        currentUser.avatar.url
+                    }
+                />
             </Avatar>
             <div className="details">
                 <h2>{currentUser && currentUser.userName}</h2>

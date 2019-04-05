@@ -18,9 +18,10 @@ export const DialogTitle = withStyles(theme => ({
     },
     closeButton: {
         position: 'absolute',
-        right: theme.spacing.unit,
-        top: theme.spacing.unit,
-        color: theme.palette.grey[500]
+        right: theme.spacing.unit * 2,
+        top: theme.spacing.unit * 2,
+        color: theme.palette.grey[500],
+        cursor: 'pointer'
     }
 }))(
     (props: {
@@ -33,13 +34,13 @@ export const DialogTitle = withStyles(theme => ({
             <MuiDialogTitle className={classes.root}>
                 {children}
                 {onClose ? (
-                    <IconButton
+                    <div
                         aria-label="Close"
                         className={classes.closeButton}
                         onClick={onClose}
                     >
                         <FontAwesomeIcon icon={['fas', 'times']} />
-                    </IconButton>
+                    </div>
                 ) : null}
             </MuiDialogTitle>
         );

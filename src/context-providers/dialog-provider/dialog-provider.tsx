@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     NotificationBar,
-    RegisterUser,
+    PublishDialog,
     RemoveFileAlert
 } from '../../components/editor-app/dialogs';
 import { Doc } from '../../types';
@@ -13,8 +13,8 @@ export interface IDialogContextValue {
     closeNotificationBar: () => void;
     isFileManagerOpen: boolean;
     isRemoveFileAlertOpen: boolean;
-    isRegisterUserOpen: boolean;
-    setRegisterUserOpen: (open: boolean) => void;
+    isPublishDialogOpen: boolean;
+    setPublishDialogOpen: (open: boolean) => void;
     docToRemove?: Doc;
 }
 
@@ -27,10 +27,10 @@ export const DialogContext = React.createContext<IDialogContextValue>({
     isFileManagerOpen: false,
     setRemoveFileAlertOpen: () => {},
     isRemoveFileAlertOpen: false,
+    isPublishDialogOpen: false,
     openNotificationBar: () => {},
     closeNotificationBar: () => {},
-    isRegisterUserOpen: false,
-    setRegisterUserOpen: () => {},
+    setPublishDialogOpen: () => {},
     docToRemove: new Doc('foo', 'bar', 'foobar', new Date())
 });
 
@@ -46,7 +46,9 @@ export interface INotificationBarState {
 
 export const DialogProvider = React.memo((props: IDialogProviderProps) => {
     const [isFileManagerOpen, setFileManagerOpen] = useState<boolean>(false);
-    const [isRegisterUserOpen, setRegisterUserOpen] = useState<boolean>(false);
+    const [isPublishDialogOpen, setPublishDialogOpen] = useState<boolean>(
+        false
+    );
     const [removeFileAlertState, setRemoveFileAlertState] = useState<
         IRemoveFileAlertState
     >({
@@ -87,8 +89,8 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
         });
     };
 
-    const handleSetRegisterUserOpen = (open: boolean) => {
-        setRegisterUserOpen(open);
+    const handleSetPublishDialogOpen = (open: boolean) => {
+        setPublishDialogOpen(open);
     };
 
     return (
@@ -102,11 +104,11 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
                 openNotificationBar: handleOpenNotificationBar,
                 closeNotificationBar: handleCloseNotificationBar,
                 docToRemove: removeFileAlertState.doc,
-                isRegisterUserOpen,
-                setRegisterUserOpen: handleSetRegisterUserOpen
+                isPublishDialogOpen,
+                setPublishDialogOpen: handleSetPublishDialogOpen
             }}
         >
-            <RegisterUser />
+            <PublishDialog />
             <RemoveFileAlert />
             <NotificationBar
                 message={notificationBarState.message}

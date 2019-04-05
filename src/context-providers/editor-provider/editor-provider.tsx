@@ -9,8 +9,7 @@ import {
     DocRepo,
     IDefaultDoc,
     IDocAccess,
-    IDocStatistics,
-    IPublishResult
+    IDocStatistics
 } from '../../types';
 import { debounce } from '../../utils/deboune';
 
@@ -33,19 +32,15 @@ export interface IEditorContextValue {
     isSaving: boolean;
     editorKey: string;
     docAccess?: IDocAccess;
-    publishResult?: IPublishResult;
     renderedContent?: string;
     statistics?: IDocStatistics;
     editorMode?: EditorMode;
-    setPublishResult: (publishResult?: IPublishResult) => void;
     updateCurrentDoc: (value: string) => void;
     newDoc: () => void;
     openDoc: (id: string) => void;
     closeCurrentDoc: () => void;
     removeDoc: (id: string) => void;
     updateDocName: (id: string, newDocName: string) => void;
-    publishCurrentDoc: () => Promise<IPublishResult | undefined>;
-    updateCurrentPermalink: (permalink: string) => Promise<boolean>;
     setEditorMode: (editorMode?: EditorMode) => void;
 }
 
@@ -65,60 +60,18 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     ]),
     isSaving: false,
     editorKey: '',
-    setPublishResult: () => {},
     updateCurrentDoc: () => {},
     newDoc: () => {},
     openDoc: (_: string) => {},
     closeCurrentDoc: () => {},
     removeDoc: (_: string) => {},
     updateDocName: (_: string, __: string) => {},
-    publishCurrentDoc: () =>
-        Promise.resolve({ normalizedUsername: 'foo', permalink: 'bar' }),
-    updateCurrentPermalink: (_: string) => Promise.resolve(true),
     setEditorMode: (_?: EditorMode) => {}
 });
 
 const UPDATE_DOC_REPO = gql`
     mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
         updateDocRepo(docRepoMutation: $docRepoMutation)
-    }
-`;
-
-const UPDATE_PERMALINK = gql`
-    mutation UpdatePermalink($id: String, $permalink: String) {
-        updatePermalink(id: $id, permalink: $permalink)
-    }
-`;
-
-const PUBLISH_DOC = gql`
-    mutation publishDoc($docMutation: DocMutation) {
-        publishDoc(docMutation: $docMutation) {
-            normalizedUsername
-            permalink
-        }
-    }
-`;
-
-const DOC_ACCESS = gql`
-    query DocAccess($id: String) {
-        docAccess(id: $id) {
-            id
-            userId
-            permalink
-            generatePDF
-            generateWord
-            secret
-            protectionMode
-        }
-    }
-`;
-
-const PUBLISH_RESULT = gql`
-    query PublishResult($id: String) {
-        publishResult(id: $id) {
-            normalizedUsername
-            permalink
-        }
     }
 `;
 
@@ -135,9 +88,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         unchangedDocRepo: initialDocRepo.clone()
     });
 
-    const [docAccess, setDocAccess] = useState<IDocAccess | undefined>(
-        undefined
-    );
+    const [docAccess] = useState<IDocAccess | undefined>(undefined);
 
     const [renderedContent, setRenderedContent] = useState<string | undefined>(
         undefined
@@ -151,48 +102,8 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         undefined
     );
 
-    const [publishResult, setPublishResult] = useState<
-        IPublishResult | undefined
-    >(undefined);
-
     const { isSaving, editorKey } = uiState;
     const { docRepo, unchangedDocRepo } = docState;
-
-    const { loading: _, error: __, data: publishResultData } = useQuery(
-        PUBLISH_RESULT,
-        {
-            variables: { id: docRepo.currentDocId }
-        }
-    );
-
-    const { loading: ___, error: ____, data: docAccessData } = useQuery(
-        DOC_ACCESS,
-        {
-            variables: { id: docRepo.currentDocId }
-        }
-    );
-
-    useEffect(() => {
-        if (!publishResult && publishResultData) {
-            setPublishResult(publishResultData.publishResult);
-        }
-    }, [
-        docRepo.currentDocId,
-        publishResultData && publishResultData.publishResult
-            ? publishResultData.publishResult.permalink
-            : undefined
-    ]);
-
-    useEffect(() => {
-        if (!docAccess && docAccessData) {
-            setDocAccess(docAccessData.docAccess);
-        }
-    }, [
-        docRepo.currentDocId,
-        docAccessData && docAccessData.docAccess
-            ? docAccessData.docAccess.id
-            : undefined
-    ]);
 
     useEffect(() => {
         getRenderedContent();
@@ -206,8 +117,6 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         }
     };
 
-    const publishDocMutation = useMutation(PUBLISH_DOC);
-    const updatePermalinkMutation = useMutation(UPDATE_PERMALINK);
     const updateDocRepoMutation = useMutation(UPDATE_DOC_REPO);
 
     const saveDocRepo = () => {
@@ -336,35 +245,6 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo();
     };
 
-    const publishCurrentDoc = async (): Promise<IPublishResult | undefined> => {
-        if (docRepo.currentDoc) {
-            const { id, docName, content, lastModified } = docRepo.currentDoc;
-            return (await publishDocMutation({
-                variables: {
-                    docMutation: {
-                        id,
-                        docName,
-                        content,
-                        lastModified
-                    }
-                }
-            })).data.publishDoc;
-        } else {
-            return Promise.resolve(undefined);
-        }
-    };
-
-    const updateCurrentPermalink = async (
-        permalink: string
-    ): Promise<boolean> => {
-        return (await updatePermalinkMutation({
-            variables: {
-                id: docRepo.currentDocId,
-                permalink
-            }
-        })).data.updatePermalink;
-    };
-
     return (
         <EditorContext.Provider
             value={{
@@ -372,18 +252,14 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 isSaving,
                 editorKey,
                 docAccess,
-                publishResult,
                 renderedContent,
                 editorMode,
-                setPublishResult,
                 updateCurrentDoc,
                 newDoc,
                 openDoc,
                 closeCurrentDoc,
                 removeDoc,
                 updateDocName,
-                publishCurrentDoc,
-                updateCurrentPermalink,
                 statistics: docStatistics,
                 setEditorMode
             }}

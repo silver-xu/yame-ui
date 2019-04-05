@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 
+export interface IAvatar {
+    url: string;
+    width: number;
+    height: number;
+}
+
 export interface IFacebookUser {
     id?: string;
     name?: string;
     email?: string;
     accessToken: string;
-    avatarUrl?: string;
+    avatar?: IAvatar;
 }
 
 export interface IFaceBookLoginState {
@@ -47,8 +53,9 @@ const getUserInfo = (
                     const currentUser: IFacebookUser = {
                         ...response,
                         accessToken,
-                        avatarUrl: pictureResponse.url
+                        avatar: pictureResponse.data
                     };
+
                     setState({
                         ...state,
                         isLoggedIn: true,

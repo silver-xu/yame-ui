@@ -27,7 +27,7 @@ import {
 } from '@material-ui/core';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { DialogContent } from './common/dialog-content';
-import './register-user.scss';
+import './publish-dialog.scss';
 
 library.add(faCheck);
 
@@ -47,10 +47,10 @@ const styles = (theme: Theme) =>
         }
     });
 
-export interface IRegisterUser extends WithStyles<typeof styles> {}
+export interface IPublishDialog extends WithStyles<typeof styles> {}
 
-const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
-    const [username, setUsername] = useState<string>('');
+const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
+    const [url, setUrl] = useState<string>('http://localhost:3000/silver-xu/');
     const [errors, setErrors] = useState<IError[]>([
         {
             hasError: false,
@@ -62,7 +62,7 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
         }
     ]);
 
-    const { isRegisterUserOpen, setRegisterUserOpen } = useContext(
+    const { isPublishDialogOpen, setPublishDialogOpen } = useContext(
         DialogContext
     );
 
@@ -71,7 +71,7 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
     const [isProgressing, setIsProgressing] = useState<boolean>(false);
 
     const handleClose = () => {
-        setRegisterUserOpen(false);
+        setPublishDialogOpen(false);
     };
 
     const handleNext = () => {
@@ -88,24 +88,24 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
         setActiveStep(activeStep - 1);
     };
 
-    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsername(e.currentTarget.value);
+    const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (url.startsWith('http://localhost:3000/silver-xu/')) {
+            setUrl(e.currentTarget.value);
+        }
     };
 
     const steps = [
         {
-            label: 'Select a unique username',
+            label: 'Set the URL the document is publishing to.',
             jsx: (
                 <>
                     <FormControl error={errors[0].hasError}>
-                        <InputLabel htmlFor="component-error">
-                            Username
-                        </InputLabel>
+                        <InputLabel htmlFor="component-error">URL</InputLabel>
                         <Input
                             id="component-error"
                             aria-describedby="component-error-text"
-                            value={username}
-                            onChange={handleUsernameChange}
+                            value={url}
+                            onChange={handleURLChange}
                         />
                         <FormHelperText id="component-error-text">
                             {errors[0].errorMessage}
@@ -114,12 +114,12 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
                 </>
             ),
             validate: (): boolean => {
-                if (username === '') {
+                if (url === '') {
                     setErrors([
                         {
                             hasError: true,
                             errorMessage:
-                                'In the world of yame.io, username is requireed'
+                                'In the world of yame.io, username is required'
                         },
                         errors[1]
                     ]);
@@ -162,12 +162,12 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
         <Dialog
             aria-labelledby="customized-dialog-title"
             onClose={handleClose}
-            open={isRegisterUserOpen}
+            open={isPublishDialogOpen}
             fullWidth={true}
             maxWidth="md"
         >
             <DialogTitle onClose={handleClose}>
-                A few little things before you start...
+                A few little things before you publish...
             </DialogTitle>
             <DialogContent>
                 <Stepper activeStep={activeStep} orientation="vertical">
@@ -210,4 +210,4 @@ const UnstyledRegisterUser = React.memo((props: IRegisterUser) => {
     );
 });
 
-export const RegisterUser = withStyles(styles)(UnstyledRegisterUser);
+export const PublishDialog = withStyles(styles)(UnstyledPublishhDialog);
