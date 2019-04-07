@@ -296,7 +296,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
             supressBack: false
         },
         {
-            label: 'All set, Document published.',
+            label: 'All set, document published.',
             jsx: (
                 <>
                     <FormControl error={errors[0].hasError} fullWidth={true}>
