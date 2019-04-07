@@ -71,7 +71,9 @@ export const FileManagerPane = React.memo(() => {
     };
 
     const handleShareClick = () => {
-        setPublishDialogOpen(true);
+        if (activeDocId) {
+            setPublishDialogOpen(true, docRepo.docs[activeDocId]);
+        }
     };
 
     const filterDocs = (keyword: string) => {

@@ -14,7 +14,7 @@ export interface IDialogContextValue {
     isFileManagerOpen: boolean;
     isRemoveFileAlertOpen: boolean;
     isPublishDialogOpen: boolean;
-    setPublishDialogOpen: (open: boolean) => void;
+    setPublishDialogOpen: (open: boolean, doc?: Doc) => void;
     docToRemove?: Doc;
 }
 
@@ -44,11 +44,19 @@ export interface INotificationBarState {
     isNotificationBarOpen: boolean;
 }
 
+export interface IPublishDialogState {
+    doc?: Doc;
+    open: boolean;
+}
+
 export const DialogProvider = React.memo((props: IDialogProviderProps) => {
     const [isFileManagerOpen, setFileManagerOpen] = useState<boolean>(false);
-    const [isPublishDialogOpen, setPublishDialogOpen] = useState<boolean>(
-        false
-    );
+    const [publishDialogState, setPublishDialogState] = useState<
+        IPublishDialogState
+    >({
+        open: false
+    });
+
     const [removeFileAlertState, setRemoveFileAlertState] = useState<
         IRemoveFileAlertState
     >({
@@ -89,8 +97,11 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
         });
     };
 
-    const handleSetPublishDialogOpen = (open: boolean) => {
-        setPublishDialogOpen(open);
+    const handleSetPublishDialogOpen = (open: boolean, doc?: Doc) => {
+        setPublishDialogState({
+            open,
+            doc
+        });
     };
 
     return (
@@ -104,11 +115,13 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
                 openNotificationBar: handleOpenNotificationBar,
                 closeNotificationBar: handleCloseNotificationBar,
                 docToRemove: removeFileAlertState.doc,
-                isPublishDialogOpen,
+                isPublishDialogOpen: publishDialogState.open,
                 setPublishDialogOpen: handleSetPublishDialogOpen
             }}
         >
-            <PublishDialog />
+            {publishDialogState.doc && (
+                <PublishDialog doc={publishDialogState.doc} />
+            )}
             <RemoveFileAlert />
             <NotificationBar
                 message={notificationBarState.message}

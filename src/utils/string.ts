@@ -15,3 +15,10 @@ export const containsAllTokens = (str: string, tokens: string[]): boolean => {
 
     return contains;
 };
+
+export const normalizeToUrl = (str: string) => {
+    return str
+        .split(' ')
+        .join('-')
+        .toLowerCase();
+};

@@ -1,22 +1,19 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-
-import React, { useContext, useState } from 'react';
-import { DialogTitle } from './common/dialog-title';
-
 import {
     Button,
+    Checkbox,
     CircularProgress,
     createStyles,
     Dialog,
     DialogActions,
     FormControl,
     FormControlLabel,
+    FormGroup,
     FormHelperText,
     Input,
     InputLabel,
     Radio,
-    RadioGroup,
     Step,
     StepContent,
     StepLabel,
@@ -25,8 +22,13 @@ import {
     withStyles,
     WithStyles
 } from '@material-ui/core';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../../../context-providers/auth-provider';
 import { DialogContext } from '../../../context-providers/dialog-provider';
+import { Doc } from '../../../types';
+import { normalizeToUrl } from '../../../utils/string';
 import { DialogContent } from './common/dialog-content';
+import { DialogTitle } from './common/dialog-title';
 import './publish-dialog.scss';
 
 library.add(faCheck);
@@ -36,7 +38,7 @@ interface IError {
     errorMessage?: string;
 }
 
-const styles = (theme: Theme) =>
+const styles = (_: Theme) =>
     createStyles({
         container: {
             display: 'flex',
@@ -44,13 +46,38 @@ const styles = (theme: Theme) =>
         },
         progress: {
             marginLeft: 20
+        },
+        stepperContent: {
+            paddingTop: 5
         }
     });
 
-export interface IPublishDialog extends WithStyles<typeof styles> {}
+export interface IPublishDialogProps extends WithStyles<typeof styles> {
+    doc: Doc;
+}
 
-const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
-    const [url, setUrl] = useState<string>('http://localhost:3000/silver-xu/');
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
+
+const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
+    const { doc } = props;
+    const { currentUser } = useContext(AuthContext);
+
+    if (!doc || !doc.docName || !currentUser || !currentUser.userName) {
+        return null;
+    }
+
+    const { isPublishDialogOpen, setPublishDialogOpen } = useContext(
+        DialogContext
+    );
+
+    const baseUrl = `${REACT_APP_BASE_URL}/${normalizeToUrl(
+        currentUser.userName
+    )}/`;
+
+    const [url, setUrl] = useState<string>(
+        `${baseUrl}${doc && normalizeToUrl(doc.docName)}`
+    );
+
     const [errors, setErrors] = useState<IError[]>([
         {
             hasError: false,
@@ -62,16 +89,20 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
         }
     ]);
 
-    const { isPublishDialogOpen, setPublishDialogOpen } = useContext(
-        DialogContext
-    );
-
     const [activeStep, setActiveStep] = useState<number>(0);
 
     const [isProgressing, setIsProgressing] = useState<boolean>(false);
 
+    const [showProtectDocument, setShowProtectDocument] = useState<boolean>(
+        false
+    );
+
+    useEffect(() => {
+        setActiveStep(0);
+    }, [doc && doc.id]);
+
     const handleClose = () => {
-        setPublishDialogOpen(false);
+        setPublishDialogOpen(false, undefined);
     };
 
     const handleNext = () => {
@@ -89,23 +120,29 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
     };
 
     const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (url.startsWith('http://localhost:3000/silver-xu/')) {
-            setUrl(e.currentTarget.value);
+        const nextUrl = e.currentTarget.value;
+        if (nextUrl.startsWith(baseUrl)) {
+            setUrl(nextUrl);
         }
+    };
+
+    const handleToggleProtectDocument = () => {
+        setShowProtectDocument(!showProtectDocument);
     };
 
     const steps = [
         {
-            label: 'Set the URL the document is publishing to.',
+            label: 'Are you happy with the publish',
             jsx: (
                 <>
-                    <FormControl error={errors[0].hasError}>
+                    <FormControl error={errors[0].hasError} fullWidth={true}>
                         <InputLabel htmlFor="component-error">URL</InputLabel>
                         <Input
                             id="component-error"
                             aria-describedby="component-error-text"
                             value={url}
                             onChange={handleURLChange}
+                            fullWidth={true}
                         />
                         <FormHelperText id="component-error-text">
                             {errors[0].errorMessage}
@@ -114,12 +151,12 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
                 </>
             ),
             validate: (): boolean => {
-                if (url === '') {
+                if (url === baseUrl) {
                     setErrors([
                         {
                             hasError: true,
                             errorMessage:
-                                'In the world of yame.io, username is required'
+                                'A token is required after the last back slash'
                         },
                         errors[1]
                     ]);
@@ -128,33 +165,106 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
                 }
 
                 return true;
-            }
+            },
+            nextText: 'Next',
+            supressBack: true
         },
         {
-            label: 'Move document to your cloud account?',
+            label: 'More options. ',
             jsx: (
                 <>
-                    <FormControl>
-                        <RadioGroup
-                            aria-label="Gender"
-                            name="gender1"
-                            value="yes"
-                        >
-                            <FormControlLabel
-                                value="yes"
-                                control={<Radio />}
-                                label="Yep, my local documents will be removed after merge"
-                            />
-                            <FormControlLabel
-                                value="no"
-                                control={<Radio />}
-                                label="Mehh, I have second thoughts"
-                            />
-                        </RadioGroup>
-                    </FormControl>
+                    <FormGroup row={true}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value="generatePDF"
+                                    color="primary"
+                                    checked={true}
+                                />
+                            }
+                            label="Generate Adobe PDF"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value="generateWord"
+                                    color="primary"
+                                    checked={true}
+                                />
+                            }
+                            label="Generate MS Word"
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    value="protectDocument"
+                                    color="primary"
+                                    onChange={handleToggleProtectDocument}
+                                />
+                            }
+                            label="Protect document with a Secret Phrase"
+                        />
+                        {showProtectDocument && (
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="component-error">
+                                    Secret Phrase
+                                </InputLabel>
+                                <Input
+                                    id="component-error"
+                                    aria-describedby="component-error-text"
+                                    fullWidth={true}
+                                />
+                                <FormHelperText id="component-error-text" />
+                                <FormControlLabel
+                                    control={
+                                        <Radio
+                                            value="protectWhole"
+                                            color="primary"
+                                            checked={true}
+                                        />
+                                    }
+                                    label="Protect whole document"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Radio
+                                            value="protectSections"
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Protect sections of document"
+                                />
+                            </FormControl>
+                        )}
+                    </FormGroup>
                 </>
             ),
-            validate: (): boolean => true
+            validate: (): boolean => true,
+            nextText: 'Publish',
+            supressBack: false
+        },
+        {
+            label: 'All set, Document published.',
+            jsx: (
+                <FormControl error={errors[0].hasError} fullWidth={true}>
+                    <InputLabel htmlFor="component-error">URL</InputLabel>
+                    <Input
+                        id="component-error"
+                        aria-describedby="component-error-text"
+                        value={url}
+                        onChange={handleURLChange}
+                        fullWidth={true}
+                    />
+                    <FormHelperText id="component-error-text">
+                        {errors[0].errorMessage}
+                    </FormHelperText>
+                </FormControl>
+            ),
+            validate: (): boolean => true,
+            nextText: 'Complete',
+            supressBack: true
         }
     ];
 
@@ -177,19 +287,23 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
                                 {step.label}
                                 {idx === activeStep && isProgressing && (
                                     <CircularProgress
-                                        color="secondary"
+                                        color="primary"
                                         className={props.classes.progress}
                                         size={20}
                                     />
                                 )}
                             </StepLabel>
-                            <StepContent>{step.jsx}</StepContent>
+                            <StepContent
+                                className={props.classes.stepperContent}
+                            >
+                                {step.jsx}
+                            </StepContent>
                         </Step>
                     ))}
                 </Stepper>
             </DialogContent>
             <DialogActions>
-                {activeStep !== 0 && (
+                {activeStep !== 0 && !steps[activeStep].supressBack && (
                     <Button
                         variant="contained"
                         color="default"
@@ -203,7 +317,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialog) => {
                     color="primary"
                     onClick={handleNext}
                 >
-                    {activeStep < steps.length - 1 ? 'Next' : 'Complete'}
+                    {steps[activeStep].nextText}
                 </Button>
             </DialogActions>
         </Dialog>
