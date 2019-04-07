@@ -132,7 +132,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
 
     const steps = [
         {
-            label: 'Are you happy with the publish',
+            label: 'Are you happy with the publish? ',
             jsx: (
                 <>
                     <FormControl error={errors[0].hasError} fullWidth={true}>
@@ -202,6 +202,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                     value="protectDocument"
                                     color="primary"
                                     onChange={handleToggleProtectDocument}
+                                    checked={doc.protectDoc}
                                 />
                             }
                             label="Protect document with a Secret Phrase"
@@ -215,14 +216,16 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                     id="component-error"
                                     aria-describedby="component-error-text"
                                     fullWidth={true}
+                                    value={doc.secretPhrase}
                                 />
                                 <FormHelperText id="component-error-text" />
+
                                 <FormControlLabel
                                     control={
                                         <Radio
                                             value="protectWhole"
                                             color="primary"
-                                            checked={true}
+                                            checked={doc.protectWholdDoc}
                                         />
                                     }
                                     label="Protect whole document"
@@ -232,6 +235,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                         <Radio
                                             value="protectSections"
                                             color="primary"
+                                            checked={!doc.protectWholdDoc}
                                         />
                                     }
                                     label="Protect sections of document"
@@ -249,7 +253,9 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
             label: 'All set, Document published.',
             jsx: (
                 <FormControl error={errors[0].hasError} fullWidth={true}>
-                    <InputLabel htmlFor="component-error">URL</InputLabel>
+                    <InputLabel htmlFor="component-error">
+                        Copy and Paste the below URL to share
+                    </InputLabel>
                     <Input
                         id="component-error"
                         aria-describedby="component-error-text"

@@ -27,26 +27,16 @@ const EDITOR_QUERY = gql`
                 lastModified
                 published
                 removed
+                generatePDF
+                generateWord
+                protectDoc
+                secretPhrase
+                protectWholdDoc
             }
-            publishedDocIds
         }
         defaultDoc {
             namePrefix
             defaultContent
-        }
-    }
-`;
-
-const DOC_ACCESS_QUERY = gql`
-    query DocAccess($docId: String) {
-        docAccess(docId: $docId) {
-            id
-            userId
-            permalink
-            generatePDF
-            generateWord
-            secret
-            protectionMode
         }
     }
 `;
