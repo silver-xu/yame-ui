@@ -29,7 +29,7 @@ export class Doc implements IDoc {
             docName,
             content,
             lastModified,
-            isRemoved,
+            removed,
             generatePdf,
             generateWord,
             secretPhrase,
@@ -40,7 +40,7 @@ export class Doc implements IDoc {
             docName,
             content,
             lastModified,
-            isRemoved,
+            removed,
             generatePdf,
             generateWord,
             secretPhrase,
@@ -52,13 +52,13 @@ export class Doc implements IDoc {
     public docName: string;
     public content: string;
     public lastModified: Date;
-    public isPublished: boolean;
-    public isRemoved: boolean;
+    public published: boolean;
+    public removed: boolean;
     public generatePdf: boolean;
     public generateWord: boolean;
     public protectDoc: boolean;
     public secretPhrase?: string;
-    public protectWholdDoc?: boolean;
+    public protectWholeDoc?: boolean;
 
     private renderedContentCached?: string;
     private contentTreeCached?: IContentNode;
@@ -70,7 +70,7 @@ export class Doc implements IDoc {
         docName: string,
         content: string,
         lastModified: Date,
-        isRemoved: boolean,
+        removed: boolean,
         generatePdf: boolean,
         generateWord: boolean,
         protectDoc: boolean,
@@ -82,14 +82,14 @@ export class Doc implements IDoc {
         this.content = content;
         this.unchangedContent = content;
         this.lastModified = new Date(lastModified);
-        this.isPublished = false;
-        this.isRemoved = isRemoved;
+        this.published = false;
+        this.removed = removed;
 
         this.generatePdf = generatePdf;
         this.generateWord = generateWord;
         this.protectDoc = protectDoc;
         this.secretPhrase = secretPhrase;
-        this.protectWholdDoc = protectWholdDoc;
+        this.protectWholeDoc = protectWholdDoc;
     }
 
     public equals = (comparisonDoc: Doc): boolean => {

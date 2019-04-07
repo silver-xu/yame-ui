@@ -27,11 +27,11 @@ const EDITOR_QUERY = gql`
                 lastModified
                 published
                 removed
-                generatePDF
+                generatePdf
                 generateWord
                 protectDoc
                 secretPhrase
-                protectWholdDoc
+                protectWholeDoc
             }
         }
         defaultDoc {

@@ -25,19 +25,19 @@ export class DocRepo {
     }
 
     get availableDocs(): Doc[] {
-        return this.enumerableDocs.filter(doc => !doc.isRemoved);
+        return this.enumerableDocs.filter(doc => !doc.removed);
     }
 
     get publishedDocs(): Doc[] {
-        return this.availableDocs.filter(doc => doc.isPublished);
+        return this.availableDocs.filter(doc => doc.published);
     }
 
     get draftDocs(): Doc[] {
-        return this.availableDocs.filter(doc => !doc.isPublished);
+        return this.availableDocs.filter(doc => !doc.published);
     }
 
     get removedDocs(): Doc[] {
-        return this.availableDocs.filter(doc => doc.isRemoved);
+        return this.availableDocs.filter(doc => doc.removed);
     }
 
     get currentDoc(): Doc | undefined {
@@ -54,12 +54,12 @@ export class DocRepo {
                 doc.docName,
                 doc.content,
                 doc.lastModified,
-                doc.isRemoved,
+                doc.removed,
                 doc.generatePdf,
                 doc.generateWord,
                 doc.protectDoc,
                 doc.secretPhrase,
-                doc.protectWholdDoc
+                doc.protectWholeDoc
             );
         });
 
@@ -76,7 +76,7 @@ export class DocRepo {
                 doc.docName,
                 doc.content,
                 doc.lastModified,
-                doc.isRemoved,
+                doc.removed,
                 doc.generatePdf,
                 doc.generateWord,
                 doc.protectDoc,
@@ -107,12 +107,12 @@ export class DocRepo {
                 doc.docName,
                 doc.content,
                 doc.lastModified,
-                doc.isRemoved,
+                doc.removed,
                 doc.generatePdf,
                 doc.generateWord,
                 doc.protectDoc,
                 doc.secretPhrase,
-                doc.protectWholdDoc
+                doc.protectWholeDoc
             );
         });
 

@@ -59,6 +59,7 @@ export interface IPublishDialogProps extends WithStyles<typeof styles> {
 }
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
+const urlInputRef = React.createRef<HTMLInputElement>();
 
 const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
     const { doc } = props;
@@ -72,7 +73,9 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
         DialogContext
     );
 
-    const { isPermalinkDuplicate } = useContext(EditorContext);
+    const { isPermalinkDuplicate, updateDoc, publishDoc } = useContext(
+        EditorContext
+    );
 
     const baseUrl = `${REACT_APP_BASE_URL}/${normalizeToUrl(
         currentUser.userName
@@ -101,6 +104,8 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
         false
     );
 
+    const [copied, setCopied] = useState<boolean>(false);
+
     useEffect(() => {
         setActiveStep(0);
     }, [doc && doc.id]);
@@ -111,9 +116,16 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
 
     const handleNext = async () => {
         setIsProgressing(true);
+
         if (await steps[activeStep].validate()) {
+            await steps[activeStep].do();
             setIsProgressing(false);
-            setActiveStep(activeStep + 1);
+
+            if (activeStep < steps.length - 1) {
+                setActiveStep(activeStep + 1);
+            } else {
+                setPublishDialogOpen(false);
+            }
         } else {
             setIsProgressing(false);
         }
@@ -124,7 +136,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
     };
 
     const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const nextUrl = e.currentTarget.value;
+        const nextUrl = e.currentTarget.value.replace(/[^\w\s\/:-]/gi, '');
         if (nextUrl.startsWith(baseUrl)) {
             setUrl(nextUrl);
         }
@@ -132,6 +144,15 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
 
     const handleToggleProtectDocument = () => {
         setShowProtectDocument(!showProtectDocument);
+    };
+
+    const handleCopy = () => {
+        const ref = urlInputRef.current;
+        if (ref) {
+            ref.select();
+            document.execCommand('copy');
+            setCopied(true);
+        }
     };
 
     const steps = [
@@ -186,6 +207,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                     return !permalinkDuplicate;
                 }
             },
+            do: async () => {},
             nextText: 'Next',
             supressBack: true
         },
@@ -245,7 +267,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                         <Radio
                                             value="protectWhole"
                                             color="primary"
-                                            checked={doc.protectWholdDoc}
+                                            checked={doc.protectWholeDoc}
                                         />
                                     }
                                     label="Protect whole document"
@@ -255,7 +277,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                         <Radio
                                             value="protectSections"
                                             color="primary"
-                                            checked={!doc.protectWholdDoc}
+                                            checked={!doc.protectWholeDoc}
                                         />
                                     }
                                     label="Protect sections of document"
@@ -265,32 +287,41 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                     </FormGroup>
                 </>
             ),
-            validate: (): boolean => true,
+            validate: async (): Promise<boolean> => Promise.resolve(true),
+            do: async () => {
+                updateDoc(doc);
+                publishDoc(doc);
+            },
             nextText: 'Publish',
             supressBack: false
         },
         {
             label: 'All set, Document published.',
             jsx: (
-                <FormControl error={errors[0].hasError} fullWidth={true}>
-                    <InputLabel htmlFor="component-error">
-                        Copy and Paste the below URL to share
-                    </InputLabel>
-                    <Input
-                        id="component-error"
-                        aria-describedby="component-error-text"
-                        value={url}
-                        onChange={handleURLChange}
-                        fullWidth={true}
-                    />
-                    <FormHelperText id="component-error-text">
-                        {errors[0].errorMessage}
-                    </FormHelperText>
-                </FormControl>
+                <>
+                    <FormControl error={errors[0].hasError} fullWidth={true}>
+                        <InputLabel htmlFor="component-error">
+                            Copy and Paste the below URL to share
+                        </InputLabel>
+                        <Input
+                            id="component-error"
+                            aria-describedby="component-error-text"
+                            value={url}
+                            fullWidth={true}
+                            inputRef={urlInputRef}
+                            readOnly={true}
+                        />
+                        <FormHelperText id="component-error-text">
+                            {errors[0].errorMessage}
+                        </FormHelperText>
+                    </FormControl>
+                    {copied && <span>The url has been copied</span>}
+                </>
             ),
             validate: (): boolean => true,
             nextText: 'Complete',
-            supressBack: true
+            supressBack: true,
+            do: async () => {}
         }
     ];
 
@@ -336,6 +367,15 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                         onClick={handleBack}
                     >
                         Back
+                    </Button>
+                )}
+                {activeStep === steps.length - 1 && (
+                    <Button
+                        variant="contained"
+                        color="default"
+                        onClick={handleCopy}
+                    >
+                        Copy URL
                     </Button>
                 )}
                 <Button

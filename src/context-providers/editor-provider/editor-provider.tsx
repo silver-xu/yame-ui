@@ -40,12 +40,14 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     closeCurrentDoc: () => void;
     removeDoc: (id: string) => void;
+    updateDoc: (doc: Doc) => void;
     updateDocName: (id: string, newDocName: string) => void;
     setEditorMode: (editorMode?: EditorMode) => void;
     isPermalinkDuplicate: (
         docId: string,
         permalink: string
     ) => Promise<boolean>;
+    publishDoc: (doc: Doc) => void;
 }
 
 export interface IEditorProviderUIState {
@@ -81,9 +83,11 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     openDoc: (_: string) => {},
     closeCurrentDoc: () => {},
     removeDoc: (_: string) => {},
+    updateDoc: (doc: Doc) => {},
     updateDocName: (_: string, __: string) => {},
     setEditorMode: (_?: EditorMode) => {},
-    isPermalinkDuplicate: () => Promise.resolve(true)
+    isPermalinkDuplicate: () => Promise.resolve(true),
+    publishDoc: (_: Doc) => {}
 });
 
 const UPDATE_DOC_REPO = gql`
@@ -95,6 +99,12 @@ const UPDATE_DOC_REPO = gql`
 const IS_PERMALINK_DUPLICATE = gql`
     mutation isPermalinkDuplicate($docId: String, $permalink: String) {
         isPermalinkDuplicate(docId: $docId, permalink: $permalink)
+    }
+`;
+
+const PUBLISH_DOC = gql`
+    mutation publishDoc($doc: DocMutation) {
+        publishDoc(doc: $doc)
     }
 `;
 
@@ -142,6 +152,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
 
     const updateDocRepoMutation = useMutation(UPDATE_DOC_REPO);
     const isPermalinkDuplicateMutation = useMutation(IS_PERMALINK_DUPLICATE);
+    const publishDocMutation = useMutation(PUBLISH_DOC);
 
     const saveDocRepo = () => {
         setUIState({
@@ -269,6 +280,21 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo();
     };
 
+    const updateDoc = (doc: Doc) => {
+        docRepo.docs[doc.id] = doc;
+        setUIState({
+            ...uiState,
+            editorKey: uuidv4()
+        });
+
+        setDocState({
+            ...docState,
+            docRepo
+        });
+
+        saveDocRepo();
+    };
+
     const isPermalinkDuplicate = async (
         docId: string,
         permalink: string
@@ -278,6 +304,26 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         });
 
         return response.data.isPermalinkDuplicate as boolean;
+    };
+
+    const publishDoc = async (doc: Doc) => {
+        await publishDocMutation({
+            variables: {
+                doc: {
+                    id: doc.id,
+                    docName: doc.docName,
+                    content: doc.content,
+                    lastModified: doc.lastModified,
+                    published: doc.published,
+                    removed: doc.removed,
+                    generatePdf: doc.generatePdf,
+                    generateWord: doc.generateWord,
+                    protectDoc: doc.protectDoc,
+                    secretPhrase: doc.secretPhrase,
+                    protectWholeDoc: doc.protectWholeDoc
+                }
+            }
+        });
     };
 
     return (
@@ -295,9 +341,11 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 closeCurrentDoc,
                 removeDoc,
                 updateDocName,
+                updateDoc,
                 statistics: docStatistics,
                 setEditorMode,
-                isPermalinkDuplicate
+                isPermalinkDuplicate,
+                publishDoc
             }}
         >
             {children}
