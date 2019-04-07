@@ -23,8 +23,10 @@ import {
     WithStyles
 } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
+
 import { AuthContext } from '../../../context-providers/auth-provider';
 import { DialogContext } from '../../../context-providers/dialog-provider';
+import { EditorContext } from '../../../context-providers/editor-provider';
 import { Doc } from '../../../types';
 import { normalizeToUrl } from '../../../utils/string';
 import { DialogContent } from './common/dialog-content';
@@ -70,6 +72,8 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
         DialogContext
     );
 
+    const { isPermalinkDuplicate } = useContext(EditorContext);
+
     const baseUrl = `${REACT_APP_BASE_URL}/${normalizeToUrl(
         currentUser.userName
     )}/`;
@@ -105,9 +109,9 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
         setPublishDialogOpen(false, undefined);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         setIsProgressing(true);
-        if (steps[activeStep].validate()) {
+        if (await steps[activeStep].validate()) {
             setIsProgressing(false);
             setActiveStep(activeStep + 1);
         } else {
@@ -132,7 +136,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
 
     const steps = [
         {
-            label: 'Are you happy with the publish? ',
+            label: 'Are you happy with the below url? ',
             jsx: (
                 <>
                     <FormControl error={errors[0].hasError} fullWidth={true}>
@@ -150,27 +154,43 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                     </FormControl>
                 </>
             ),
-            validate: (): boolean => {
+            validate: async (): Promise<boolean> => {
                 if (url === baseUrl) {
                     setErrors([
                         {
                             hasError: true,
                             errorMessage:
-                                'A token is required after the last back slash'
+                                'A document name is required after the last back slash'
                         },
                         errors[1]
                     ]);
 
-                    return false;
-                }
+                    return Promise.resolve(false);
+                } else {
+                    const permalink = url.replace(baseUrl, '');
+                    const permalinkDuplicate = await isPermalinkDuplicate(
+                        doc.id,
+                        permalink
+                    );
 
-                return true;
+                    if (permalinkDuplicate) {
+                        setErrors([
+                            {
+                                hasError: true,
+                                errorMessage: 'Document name is not unique'
+                            },
+                            errors[1]
+                        ]);
+                    }
+
+                    return !permalinkDuplicate;
+                }
             },
             nextText: 'Next',
             supressBack: true
         },
         {
-            label: 'More options. ',
+            label: 'Advanced options, skip if you wish. ',
             jsx: (
                 <>
                     <FormGroup row={true}>
@@ -283,7 +303,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
             maxWidth="md"
         >
             <DialogTitle onClose={handleClose}>
-                A few little things before you publish...
+                A few little things about your publish...
             </DialogTitle>
             <DialogContent>
                 <Stepper activeStep={activeStep} orientation="vertical">

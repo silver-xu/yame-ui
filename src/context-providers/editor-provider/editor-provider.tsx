@@ -42,6 +42,10 @@ export interface IEditorContextValue {
     removeDoc: (id: string) => void;
     updateDocName: (id: string, newDocName: string) => void;
     setEditorMode: (editorMode?: EditorMode) => void;
+    isPermalinkDuplicate: (
+        docId: string,
+        permalink: string
+    ) => Promise<boolean>;
 }
 
 export interface IEditorProviderUIState {
@@ -78,12 +82,19 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     closeCurrentDoc: () => {},
     removeDoc: (_: string) => {},
     updateDocName: (_: string, __: string) => {},
-    setEditorMode: (_?: EditorMode) => {}
+    setEditorMode: (_?: EditorMode) => {},
+    isPermalinkDuplicate: () => Promise.resolve(true)
 });
 
 const UPDATE_DOC_REPO = gql`
     mutation UpdateDocRepo($docRepoMutation: DocRepoMutation) {
         updateDocRepo(docRepoMutation: $docRepoMutation)
+    }
+`;
+
+const IS_PERMALINK_DUPLICATE = gql`
+    mutation isPermalinkDuplicate($docId: String, $permalink: String) {
+        isPermalinkDuplicate(docId: $docId, permalink: $permalink)
     }
 `;
 
@@ -130,6 +141,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
     };
 
     const updateDocRepoMutation = useMutation(UPDATE_DOC_REPO);
+    const isPermalinkDuplicateMutation = useMutation(IS_PERMALINK_DUPLICATE);
 
     const saveDocRepo = () => {
         setUIState({
@@ -257,6 +269,17 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo();
     };
 
+    const isPermalinkDuplicate = async (
+        docId: string,
+        permalink: string
+    ): Promise<boolean> => {
+        const response = await isPermalinkDuplicateMutation({
+            variables: { docId, permalink }
+        });
+
+        return response.data.isPermalinkDuplicate as boolean;
+    };
+
     return (
         <EditorContext.Provider
             value={{
@@ -273,7 +296,8 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 removeDoc,
                 updateDocName,
                 statistics: docStatistics,
-                setEditorMode
+                setEditorMode,
+                isPermalinkDuplicate
             }}
         >
             {children}
