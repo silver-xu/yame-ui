@@ -24,8 +24,28 @@ export interface IContentNode {
 
 export class Doc implements IDoc {
     public static parseFromResponse(docResponse: any): Doc {
-        const { id, docName, content, lastModified } = docResponse;
-        return new Doc(id, docName, content, lastModified);
+        const {
+            id,
+            docName,
+            content,
+            lastModified,
+            isRemoved,
+            generatePdf,
+            generateWord,
+            secretPhrase,
+            protectWholeDoc
+        } = docResponse;
+        return new Doc(
+            id,
+            docName,
+            content,
+            lastModified,
+            isRemoved,
+            generatePdf,
+            generateWord,
+            secretPhrase,
+            protectWholeDoc
+        );
     }
 
     public id: string;
@@ -34,6 +54,11 @@ export class Doc implements IDoc {
     public lastModified: Date;
     public isPublished: boolean;
     public isRemoved: boolean;
+    public generatePdf: boolean;
+    public generateWord: boolean;
+    public protectDoc: boolean;
+    public secretPhrase?: string;
+    public protectWholdDoc?: boolean;
 
     private renderedContentCached?: string;
     private contentTreeCached?: IContentNode;
@@ -44,7 +69,13 @@ export class Doc implements IDoc {
         id: string,
         docName: string,
         content: string,
-        lastModified: Date
+        lastModified: Date,
+        isRemoved: boolean,
+        generatePdf: boolean,
+        generateWord: boolean,
+        protectDoc: boolean,
+        secretPhrase?: string,
+        protectWholdDoc?: boolean
     ) {
         this.id = id;
         this.docName = docName;
@@ -52,7 +83,13 @@ export class Doc implements IDoc {
         this.unchangedContent = content;
         this.lastModified = new Date(lastModified);
         this.isPublished = false;
-        this.isRemoved = false;
+        this.isRemoved = isRemoved;
+
+        this.generatePdf = generatePdf;
+        this.generateWord = generateWord;
+        this.protectDoc = protectDoc;
+        this.secretPhrase = secretPhrase;
+        this.protectWholdDoc = protectWholdDoc;
     }
 
     public equals = (comparisonDoc: Doc): boolean => {

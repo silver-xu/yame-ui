@@ -16,7 +16,7 @@ export interface IViewContextValue {
 }
 
 export const ViewContext = React.createContext<IViewContextValue>({
-    doc: new Doc('foo', 'bar', 'foobar', new Date()),
+    doc: new Doc('foo', 'bar', 'foobar', new Date(), false, true, true, false),
     activeNode: undefined,
     setActiveNode: (node?: IContentNode) => {},
     surpressScrollTracking: false,

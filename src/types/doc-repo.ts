@@ -53,7 +53,13 @@ export class DocRepo {
                 doc.id,
                 doc.docName,
                 doc.content,
-                doc.lastModified
+                doc.lastModified,
+                doc.isRemoved,
+                doc.generatePdf,
+                doc.generateWord,
+                doc.protectDoc,
+                doc.secretPhrase,
+                doc.protectWholdDoc
             );
         });
 
@@ -69,7 +75,13 @@ export class DocRepo {
                 doc.id,
                 doc.docName,
                 doc.content,
-                doc.lastModified
+                doc.lastModified,
+                doc.isRemoved,
+                doc.generatePdf,
+                doc.generateWord,
+                doc.protectDoc,
+                doc.secretPhrase,
+                doc.protectWholdDoc
             );
         });
 
@@ -94,7 +106,13 @@ export class DocRepo {
                 doc.id,
                 doc.docName,
                 doc.content,
-                doc.lastModified
+                doc.lastModified,
+                doc.isRemoved,
+                doc.generatePdf,
+                doc.generateWord,
+                doc.protectDoc,
+                doc.secretPhrase,
+                doc.protectWholdDoc
             );
         });
 
@@ -106,7 +124,11 @@ export class DocRepo {
             uuidv4(),
             this.getUniqueDocName(defaultDoc.namePrefix),
             defaultDoc.defaultContent,
-            new Date()
+            new Date(),
+            false,
+            true,
+            true,
+            false
         );
 
         addDocToRepo(newDoc, this);

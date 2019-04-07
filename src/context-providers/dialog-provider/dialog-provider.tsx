@@ -31,7 +31,16 @@ export const DialogContext = React.createContext<IDialogContextValue>({
     openNotificationBar: () => {},
     closeNotificationBar: () => {},
     setPublishDialogOpen: () => {},
-    docToRemove: new Doc('foo', 'bar', 'foobar', new Date())
+    docToRemove: new Doc(
+        'foo',
+        'bar',
+        'foobar',
+        new Date(),
+        false,
+        true,
+        true,
+        false
+    )
 });
 
 export interface IRemoveFileAlertState {
@@ -61,7 +70,16 @@ export const DialogProvider = React.memo((props: IDialogProviderProps) => {
         IRemoveFileAlertState
     >({
         isRemoveFileAlertOpen: false,
-        doc: new Doc('foo', 'bar', 'foobar', new Date())
+        doc: new Doc(
+            'foo',
+            'bar',
+            'foobar',
+            new Date(),
+            false,
+            true,
+            true,
+            false
+        )
     });
 
     const [notificationBarState, setNotificationBarState] = useState<
