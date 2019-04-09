@@ -1,5 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { faSafari } from '@fortawesome/free-brands-svg-icons';
 import {
+    faFilePdf,
+    faFileWord,
     faFolderOpen,
     faSearch,
     faShareAlt,
@@ -17,7 +20,16 @@ import { MenuItem } from '../app-bar';
 import './file-manager-pane.scss';
 import { Tile } from './tiles';
 
-library.add(faSearch, faTrashAlt, faFolderOpen, faShareAlt);
+library.add(
+    faSearch,
+    faTrashAlt,
+    faFolderOpen,
+    faShareAlt,
+    faSafari,
+    faFilePdf,
+    faFileWord
+);
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
 export const FileManagerPane = React.memo(() => {
     const { docRepo, editorKey } = useContext(EditorContext);
@@ -34,7 +46,17 @@ export const FileManagerPane = React.memo(() => {
 
     useEffect(() => {
         filterDocs(keywordValue);
+        selectFirstDoc();
     }, [activeMenu, docRepo.enumerableDocs.map(doc => doc.docName)]);
+
+    const selectFirstDoc = () => {
+        if (
+            (!activeDocId || !docs.find(doc => doc.id === activeDocId)) &&
+            docs.length > 0
+        ) {
+            setActiveDocId(docs[0].id);
+        }
+    };
 
     const handleTileAction = (id: string) => {
         docRepo.openDoc(id);
@@ -73,6 +95,12 @@ export const FileManagerPane = React.memo(() => {
     const handleShareClick = () => {
         if (activeDocId) {
             setPublishDialogOpen(true, docRepo.docs[activeDocId]);
+        }
+    };
+
+    const handlePreviewClick = () => {
+        if (activeDocId) {
+            window.open(`${REACT_APP_BASE_URL}/preview/${activeDocId}`);
         }
     };
 
@@ -127,6 +155,15 @@ export const FileManagerPane = React.memo(() => {
                     </li>
                     <li onClick={handleRemoveDoc}>
                         <FontAwesomeIcon icon="trash-alt" />
+                    </li>
+                    <li onClick={handlePreviewClick}>
+                        <FontAwesomeIcon icon={['fab', 'safari']} />
+                    </li>
+                    <li>
+                        <FontAwesomeIcon icon="file-pdf" />
+                    </li>
+                    <li>
+                        <FontAwesomeIcon icon="file-word" />
                     </li>
                     <li onClick={handleShareClick}>
                         <FontAwesomeIcon icon="share-alt" />

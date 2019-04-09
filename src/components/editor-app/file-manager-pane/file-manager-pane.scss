@@ -69,7 +69,7 @@
             border: 1px solid $lite-gray;
             overflow: hidden;
             box-sizing: border-box;
-
+            position: relative;
             .tile-content {
                 height: 250px;
                 width: 180px;
@@ -100,6 +100,16 @@
         &.active {
             .tile {
                 border: 1px solid $lite-blue;
+
+                .selection-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: $lite-blue;
+                    opacity: 0.05;
+                }
             }
 
             h4 {

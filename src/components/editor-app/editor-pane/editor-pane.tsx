@@ -4,12 +4,15 @@ import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
 import React, { useContext, useEffect, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
+import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import Preview from '../preview';
 import { StatusBar } from '../status-bar';
 import './editor-pane.scss';
 
 library.add(faAdobe);
+
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
 export interface IEditorPaneDefaultProps {
     splitScreen: boolean;
@@ -39,6 +42,8 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
         renderedContent,
         statistics
     } = useContext(EditorContext);
+
+    const { setPublishDialogOpen } = useContext(DialogContext);
 
     if (!docRepo.currentDoc) {
         return null;
@@ -164,22 +169,27 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
                                 '|',
                                 {
                                     name: 'preview',
-                                    action: () => {},
+                                    action: () => {
+                                        window.open(
+                                            `${REACT_APP_BASE_URL}/preview/${
+                                                docRepo.currentDocId
+                                            }`
+                                        );
+                                    },
                                     className: 'fa fa-compass',
                                     title: 'Preview in browser'
                                 },
                                 '|',
                                 {
                                     name: 'publish',
-                                    action: () => {},
+                                    action: () => {
+                                        setPublishDialogOpen(
+                                            true,
+                                            docRepo.currentDoc
+                                        );
+                                    },
                                     className: 'fa fa-share-alt',
                                     title: 'Publish to cloud'
-                                },
-                                {
-                                    name: 'publish settings',
-                                    action: () => {},
-                                    className: 'fa fa-cog',
-                                    title: 'Publish settings'
                                 },
                                 {
                                     name: 'word',

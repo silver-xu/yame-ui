@@ -47,6 +47,7 @@ export const Nav = () => {
                     onClick={(e: React.MouseEvent<HTMLElement>) =>
                         handleLinkClick(e, node)
                     }
+                    key={node.id}
                 >
                     <a
                         href={`#${node.id}`}

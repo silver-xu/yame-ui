@@ -14,7 +14,7 @@ const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
 const DOC_QUERY = gql`
     query DocByPermalink($username: String!, $permalink: String!) {
-        docByPermalink(username: $username, permalink: $permalink) {
+        publishedDoc(username: $username, permalink: $permalink) {
             id
             docName
             content
@@ -60,10 +60,10 @@ export const ViewerQuery = React.memo((props: IViewQueryProps) => {
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    return !loading && !error && data.docByPermalink ? (
+                    return !loading && !error && data.publishedDoc ? (
                         <div className="App">
                             <ViewProvider
-                                doc={Doc.parseFromResponse(data.docByPermalink)}
+                                doc={Doc.parseFromResponse(data.publishedDoc)}
                             >
                                 <Viewer />
                             </ViewProvider>

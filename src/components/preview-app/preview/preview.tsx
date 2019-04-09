@@ -17,10 +17,7 @@ export const Preview = () => {
         <div className="preview">
             <div className="header">
                 <h1>yame.io</h1>
-                <h2>
-                    This is a preview of [{doc.docName}], copy & paste the url
-                    would not work without your account.
-                </h2>
+                <h2>{doc.docName}</h2>
             </div>
             <Nav />
             <ScrollPane />

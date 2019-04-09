@@ -40,6 +40,7 @@ export interface IEditorContextValue {
     openDoc: (id: string) => void;
     closeCurrentDoc: () => void;
     removeDoc: (id: string) => void;
+    changeDoc: (doc: Doc) => void;
     updateDoc: (doc: Doc) => void;
     updateDocName: (id: string, newDocName: string) => void;
     setEditorMode: (editorMode?: EditorMode) => void;
@@ -47,7 +48,7 @@ export interface IEditorContextValue {
         docId: string,
         permalink: string
     ) => Promise<boolean>;
-    publishDoc: (doc: Doc) => void;
+    publishDoc: (doc: Doc, permalink: string) => void;
 }
 
 export interface IEditorProviderUIState {
@@ -83,11 +84,12 @@ export const EditorContext = React.createContext<IEditorContextValue>({
     openDoc: (_: string) => {},
     closeCurrentDoc: () => {},
     removeDoc: (_: string) => {},
-    updateDoc: (doc: Doc) => {},
+    changeDoc: (_: Doc) => {},
+    updateDoc: (_: Doc) => {},
     updateDocName: (_: string, __: string) => {},
     setEditorMode: (_?: EditorMode) => {},
     isPermalinkDuplicate: () => Promise.resolve(true),
-    publishDoc: (_: Doc) => {}
+    publishDoc: (_: Doc, __: string) => {}
 });
 
 const UPDATE_DOC_REPO = gql`
@@ -103,8 +105,8 @@ const IS_PERMALINK_DUPLICATE = gql`
 `;
 
 const PUBLISH_DOC = gql`
-    mutation publishDoc($doc: DocMutation) {
-        publishDoc(doc: $doc)
+    mutation publishDoc($doc: DocMutation, $permalink: String) {
+        publishDoc(doc: $doc, permalink: $permalink)
     }
 `;
 
@@ -280,7 +282,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         saveDocRepo();
     };
 
-    const updateDoc = (doc: Doc) => {
+    const changeDoc = (doc: Doc) => {
         docRepo.docs[doc.id] = doc;
         setUIState({
             ...uiState,
@@ -291,7 +293,10 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
             ...docState,
             docRepo
         });
+    };
 
+    const updateDoc = (doc: Doc) => {
+        changeDoc(doc);
         saveDocRepo();
     };
 
@@ -306,7 +311,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
         return response.data.isPermalinkDuplicate as boolean;
     };
 
-    const publishDoc = async (doc: Doc) => {
+    const publishDoc = async (doc: Doc, permalink: string) => {
         await publishDocMutation({
             variables: {
                 doc: {
@@ -321,7 +326,8 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                     protectDoc: doc.protectDoc,
                     secretPhrase: doc.secretPhrase,
                     protectWholeDoc: doc.protectWholeDoc
-                }
+                },
+                permalink
             }
         });
     };
@@ -342,6 +348,7 @@ export const EditorProvider = React.memo((props: IEditorProviderProps) => {
                 removeDoc,
                 updateDocName,
                 updateDoc,
+                changeDoc,
                 statistics: docStatistics,
                 setEditorMode,
                 isPermalinkDuplicate,

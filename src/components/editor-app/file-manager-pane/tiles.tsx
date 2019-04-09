@@ -80,6 +80,7 @@ export const Tile = React.memo((props: ITileProps) => {
                     className="tile-content thumbnails"
                     dangerouslySetInnerHTML={{ __html: markup }}
                 />
+                <div className="selection-overlay" />
             </div>
             <div className="tile-name-wrapper">
                 {!updateTitleMode ? (

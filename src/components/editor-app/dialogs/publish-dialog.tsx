@@ -14,6 +14,7 @@ import {
     Input,
     InputLabel,
     Radio,
+    RadioGroup,
     Step,
     StepContent,
     StepLabel,
@@ -34,6 +35,8 @@ import { DialogTitle } from './common/dialog-title';
 import './publish-dialog.scss';
 
 library.add(faCheck);
+
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
 
 interface IError {
     hasError: boolean;
@@ -58,7 +61,6 @@ export interface IPublishDialogProps extends WithStyles<typeof styles> {
     doc: Doc;
 }
 
-const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
 const urlInputRef = React.createRef<HTMLInputElement>();
 
 const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
@@ -73,9 +75,12 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
         DialogContext
     );
 
-    const { isPermalinkDuplicate, updateDoc, publishDoc } = useContext(
-        EditorContext
-    );
+    const {
+        isPermalinkDuplicate,
+        updateDoc,
+        publishDoc,
+        changeDoc
+    } = useContext(EditorContext);
 
     const baseUrl = `${REACT_APP_BASE_URL}/${normalizeToUrl(
         currentUser.userName
@@ -143,6 +148,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
     };
 
     const handleToggleProtectDocument = () => {
+        doc.protectDoc = !doc.protectDoc;
         setShowProtectDocument(!showProtectDocument);
     };
 
@@ -153,6 +159,32 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
             document.execCommand('copy');
             setCopied(true);
         }
+    };
+
+    const handleGeneratePdfchange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        doc.generatePdf = e.currentTarget.checked;
+        changeDoc(doc);
+    };
+
+    const handleGenerateWordChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        doc.generateWord = e.currentTarget.checked;
+        changeDoc(doc);
+    };
+
+    const handleSecretPhraseChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        doc.secretPhrase = e.currentTarget.value;
+        changeDoc(doc);
+    };
+
+    const handleProtectWholeDocChange = (e: React.ChangeEvent<{}>) => {
+        doc.protectWholeDoc = JSON.parse((e.target as any).value);
+        changeDoc(doc);
     };
 
     const steps = [
@@ -221,7 +253,8 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                 <Checkbox
                                     value="generatePDF"
                                     color="primary"
-                                    checked={true}
+                                    checked={doc.generatePdf}
+                                    onChange={handleGeneratePdfchange}
                                 />
                             }
                             label="Generate Adobe PDF"
@@ -231,7 +264,8 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                 <Checkbox
                                     value="generateWord"
                                     color="primary"
-                                    checked={true}
+                                    checked={doc.generateWord}
+                                    onChange={handleGenerateWordChange}
                                 />
                             }
                             label="Generate MS Word"
@@ -249,8 +283,11 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                             }
                             label="Protect document with a Secret Phrase"
                         />
-                        {showProtectDocument && (
-                            <FormControl fullWidth={true}>
+                        {doc.protectDoc && (
+                            <FormControl
+                                fullWidth={true}
+                                error={errors[1].hasError}
+                            >
                                 <InputLabel htmlFor="component-error">
                                     Secret Phrase
                                 </InputLabel>
@@ -258,39 +295,64 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
                                     id="component-error"
                                     aria-describedby="component-error-text"
                                     fullWidth={true}
-                                    value={doc.secretPhrase}
+                                    value={doc.secretPhrase || ''}
+                                    onChange={handleSecretPhraseChange}
                                 />
-                                <FormHelperText id="component-error-text" />
+                                <FormHelperText id="component-error-text">
+                                    {errors[1].errorMessage}
+                                </FormHelperText>
 
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            value="protectWhole"
-                                            color="primary"
-                                            checked={doc.protectWholeDoc}
+                                <FormControl>
+                                    <RadioGroup
+                                        name="protectWholeDoc"
+                                        onChange={handleProtectWholeDocChange}
+                                        value={(!!doc.protectWholeDoc).toString()}
+                                    >
+                                        <FormControlLabel
+                                            value="true"
+                                            control={<Radio color="primary" />}
+                                            label="Protect Whole Document"
+                                            labelPlacement="end"
                                         />
-                                    }
-                                    label="Protect whole document"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            value="protectSections"
-                                            color="primary"
-                                            checked={!doc.protectWholeDoc}
+                                        <FormControlLabel
+                                            value="false"
+                                            control={<Radio color="primary" />}
+                                            label="Protect Sections"
+                                            labelPlacement="end"
                                         />
-                                    }
-                                    label="Protect sections of document"
-                                />
+                                    </RadioGroup>
+                                    <FormHelperText>
+                                        labelPlacement start
+                                    </FormHelperText>
+                                </FormControl>
                             </FormControl>
                         )}
                     </FormGroup>
                 </>
             ),
-            validate: async (): Promise<boolean> => Promise.resolve(true),
+            validate: async (): Promise<boolean> => {
+                if (doc.protectDoc) {
+                    if (
+                        !doc.secretPhrase ||
+                        doc.secretPhrase.trim().length === 0
+                    ) {
+                        setErrors([
+                            errors[0],
+                            {
+                                hasError: true,
+                                errorMessage: 'Secret Phrase is required'
+                            }
+                        ]);
+
+                        return Promise.resolve(false);
+                    }
+                }
+
+                return Promise.resolve(true);
+            },
             do: async () => {
                 updateDoc(doc);
-                publishDoc(doc);
+                publishDoc(doc, url.replace(baseUrl, ''));
             },
             nextText: 'Publish',
             supressBack: false
