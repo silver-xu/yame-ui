@@ -9,7 +9,7 @@ import {
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../context-providers/auth-provider';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
