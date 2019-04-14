@@ -9,7 +9,8 @@ import {
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { AuthContext } from '../../../context-providers/auth-provider';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import { NavContext } from '../../../context-providers/nav-provider';
@@ -29,10 +30,13 @@ library.add(
     faFilePdf,
     faFileWord
 );
+
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 
 export const FileManagerPane = React.memo(() => {
     const { docRepo, editorKey } = useContext(EditorContext);
+    const { currentUser } = useContext(AuthContext);
     const { activeMenu, setActiveMenu } = useContext(NavContext);
     const { setRemoveFileAlertOpen, setPublishDialogOpen } = useContext(
         DialogContext
@@ -43,6 +47,10 @@ export const FileManagerPane = React.memo(() => {
     );
 
     const [docs, setDocs] = useState<Doc[]>([]);
+
+    if (!currentUser) {
+        return null;
+    }
 
     useEffect(() => {
         filterDocs(keywordValue);
@@ -104,6 +112,21 @@ export const FileManagerPane = React.memo(() => {
         }
     };
 
+    const handlePdfClick = () => {
+        if (activeDocId) {
+            window.open(
+                `${API_BASE_URL}/convert/pdf/${currentUser.id}/${activeDocId}`
+            );
+        }
+    };
+    const handleWordClick = () => {
+        if (activeDocId) {
+            window.open(
+                `${API_BASE_URL}/convert/word/${currentUser.id}/${activeDocId}`
+            );
+        }
+    };
+
     const filterDocs = (keyword: string) => {
         const keywords = keyword.split(' ');
         let filteredDocs: Doc[];
@@ -159,14 +182,14 @@ export const FileManagerPane = React.memo(() => {
                     <li onClick={handlePreviewClick}>
                         <FontAwesomeIcon icon={['fab', 'safari']} />
                     </li>
-                    <li>
-                        <FontAwesomeIcon icon="file-pdf" />
-                    </li>
-                    <li>
-                        <FontAwesomeIcon icon="file-word" />
-                    </li>
                     <li onClick={handleShareClick}>
                         <FontAwesomeIcon icon="share-alt" />
+                    </li>
+                    <li onClick={handlePdfClick}>
+                        <FontAwesomeIcon icon="file-pdf" />
+                    </li>
+                    <li onClick={handleWordClick}>
+                        <FontAwesomeIcon icon="file-word" />
                     </li>
                 </ul>
             </div>

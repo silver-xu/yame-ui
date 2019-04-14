@@ -4,12 +4,12 @@ import classnames from 'classnames';
 import 'easymde/dist/easymde.min.css';
 import React, { useContext, useEffect, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
+import { AuthContext } from '../../../context-providers/auth-provider';
 import { DialogContext } from '../../../context-providers/dialog-provider';
 import { EditorContext } from '../../../context-providers/editor-provider';
 import Preview from '../preview';
 import { StatusBar } from '../status-bar';
 import './editor-pane.scss';
-import { AuthContext } from '../../../context-providers/auth-provider';
 
 library.add(faAdobe);
 
