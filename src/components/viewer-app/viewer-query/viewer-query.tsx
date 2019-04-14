@@ -13,12 +13,22 @@ import { Viewer } from '../viewer';
 const API_URL = process.env.REACT_APP_EXP_API_URL || '';
 
 const DOC_QUERY = gql`
-    query DocByPermalink($username: String!, $permalink: String!) {
+    query PublishedDoc($username: String!, $permalink: String!) {
         publishedDoc(username: $username, permalink: $permalink) {
-            id
-            docName
-            content
-            lastModified
+            userId
+            doc {
+                id
+                docName
+                content
+                lastModified
+                published
+                removed
+                generatePdf
+                generateWord
+                protectDoc
+                secretPhrase
+                protectWholeDoc
+            }
         }
     }
 `;
@@ -63,7 +73,10 @@ export const ViewerQuery = React.memo((props: IViewQueryProps) => {
                     return !loading && !error && data.publishedDoc ? (
                         <div className="App">
                             <ViewProvider
-                                doc={Doc.parseFromResponse(data.publishedDoc)}
+                                doc={Doc.parseFromResponse(
+                                    data.publishedDoc.doc
+                                )}
+                                userId={data.publishedDoc.userId}
                             >
                                 <Viewer />
                             </ViewProvider>

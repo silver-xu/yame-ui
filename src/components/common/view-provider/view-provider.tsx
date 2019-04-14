@@ -5,9 +5,11 @@ import { IContentNode } from '../../../types/doc';
 export interface IViewProviderProps {
     children?: ReactNode;
     doc: Doc;
+    userId: string;
 }
 
 export interface IViewContextValue {
+    userId: string;
     doc: Doc;
     activeNode?: IContentNode;
     setActiveNode: (node?: IContentNode) => void;
@@ -16,6 +18,7 @@ export interface IViewContextValue {
 }
 
 export const ViewContext = React.createContext<IViewContextValue>({
+    userId: 'foo',
     doc: new Doc('foo', 'bar', 'foobar', new Date(), false, true, true, false),
     activeNode: undefined,
     setActiveNode: (node?: IContentNode) => {},
@@ -24,7 +27,7 @@ export const ViewContext = React.createContext<IViewContextValue>({
 });
 
 export const ViewProvider = React.memo((props: IViewProviderProps) => {
-    const { children, doc } = props;
+    const { children, userId, doc } = props;
 
     const [activeNode, setActiveNode] = useState<IContentNode | undefined>(
         undefined
@@ -37,6 +40,7 @@ export const ViewProvider = React.memo((props: IViewProviderProps) => {
     return (
         <ViewContext.Provider
             value={{
+                userId,
                 doc,
                 activeNode,
                 setActiveNode,

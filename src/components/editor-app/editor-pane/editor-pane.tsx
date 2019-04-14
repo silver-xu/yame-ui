@@ -9,10 +9,12 @@ import { EditorContext } from '../../../context-providers/editor-provider';
 import Preview from '../preview';
 import { StatusBar } from '../status-bar';
 import './editor-pane.scss';
+import { AuthContext } from '../../../context-providers/auth-provider';
 
 library.add(faAdobe);
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 
 export interface IEditorPaneDefaultProps {
     splitScreen: boolean;
@@ -43,9 +45,11 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
         statistics
     } = useContext(EditorContext);
 
+    const { currentUser } = useContext(AuthContext);
+
     const { setPublishDialogOpen } = useContext(DialogContext);
 
-    if (!docRepo.currentDoc) {
+    if (!docRepo.currentDoc || !currentUser) {
         return null;
     }
 
@@ -192,16 +196,28 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
                                     title: 'Publish to cloud'
                                 },
                                 {
-                                    name: 'word',
-                                    action: () => {},
-                                    className: 'fa fa-file-word-o',
-                                    title: 'Download as MS Word'
-                                },
-                                {
                                     name: 'pdf',
-                                    action: () => {},
+                                    action: () => {
+                                        window.open(
+                                            `${API_BASE_URL}/convert/pdf/${
+                                                currentUser.id
+                                            }/${docRepo.currentDocId}`
+                                        );
+                                    },
                                     className: 'fa fa-file-pdf-o',
                                     title: 'Download as Adobe PDF'
+                                },
+                                {
+                                    name: 'word',
+                                    action: () => {
+                                        window.open(
+                                            `${API_BASE_URL}/convert/word/${
+                                                currentUser.id
+                                            }/${docRepo.currentDocId}`
+                                        );
+                                    },
+                                    className: 'fa fa-file-word-o',
+                                    title: 'Download as MS Word'
                                 }
                             ]
                         }}

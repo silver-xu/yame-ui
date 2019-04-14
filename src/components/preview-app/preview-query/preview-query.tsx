@@ -73,9 +73,12 @@ export const PreviewQuery = React.memo((props: IPreviewQueryProps) => {
                 fetchPolicy="network-only"
             >
                 {({ loading, error, data }) => {
-                    return !loading && !error && data.doc ? (
+                    return !loading && !error && data.doc && currentUser.id ? (
                         <div className="App">
-                            <ViewProvider doc={Doc.parseFromResponse(data.doc)}>
+                            <ViewProvider
+                                userId={currentUser.id}
+                                doc={Doc.parseFromResponse(data.doc)}
+                            >
                                 <Preview />
                             </ViewProvider>
                         </div>

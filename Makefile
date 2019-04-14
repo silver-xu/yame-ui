@@ -5,6 +5,7 @@ export STAGE
 export REACT_APP_FB_APP_ID
 export REACT_APP_EXP_API_URL
 export REACT_APP_BASE_URL
+export REACT_APP_API_BASE_URL
 
 node_modules:
 	npm install

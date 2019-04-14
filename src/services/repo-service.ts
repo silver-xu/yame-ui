@@ -34,7 +34,14 @@ export const deriveDocRepoMutation = (
                 id: doc.id,
                 docName: doc.docName,
                 content: doc.content,
-                lastModified: doc.lastModified
+                lastModified: doc.lastModified,
+                published: doc.published,
+                removed: doc.removed,
+                generatePdf: doc.generatePdf,
+                generateWord: doc.generateWord,
+                protectDoc: doc.protectDoc,
+                secretPhrase: doc.secretPhrase,
+                protectWholeDoc: doc.protectWholeDoc
             };
         });
 
@@ -49,7 +56,14 @@ export const deriveDocRepoMutation = (
                 id: doc.id,
                 docName: doc.docName,
                 content: doc.content,
-                lastModified: doc.lastModified
+                lastModified: doc.lastModified,
+                published: doc.published,
+                removed: doc.removed,
+                generatePdf: doc.generatePdf,
+                generateWord: doc.generateWord,
+                protectDoc: doc.protectDoc,
+                secretPhrase: doc.secretPhrase,
+                protectWholeDoc: doc.protectWholeDoc
             };
         });
 

@@ -6,18 +6,50 @@ import { ViewContext } from '../../common/view-provider/view-provider';
 
 import './viewer.scss';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+
 export interface INodeDom {
     node: IContentNode;
     dom: Element;
 }
 
 export const Viewer = () => {
-    const { doc } = useContext(ViewContext);
+    const { userId, doc } = useContext(ViewContext);
     return (
         <div className="viewer">
             <div className="header">
                 <h1>Yame.io</h1>
                 <h2>{doc.docName}</h2>
+
+                <ul className="toolbar">
+                    {(doc.generatePdf || doc.generateWord) && (
+                        <li>Download as</li>
+                    )}
+                    {doc.generatePdf && (
+                        <li>
+                            <a
+                                href={`${API_BASE_URL}/download/pdf/${userId}/${
+                                    doc.id
+                                }`}
+                                target="_blank"
+                            >
+                                PDF
+                            </a>
+                        </li>
+                    )}
+                    {doc.generateWord && (
+                        <li>
+                            <a
+                                href={`${API_BASE_URL}/download/word/${userId}/${
+                                    doc.id
+                                }`}
+                                target="_blank"
+                            >
+                                Word
+                            </a>
+                        </li>
+                    )}
+                </ul>
             </div>
             <Nav />
             <ScrollPane />

@@ -138,7 +138,7 @@ export const FileManagerPane = React.memo(() => {
 
     return (
         <>
-            <div className="toolbar" key={editorKey}>
+            <div className="filemanager-toolbar" key={editorKey}>
                 <FontAwesomeIcon icon="search" />
                 <input
                     type="text"
