@@ -141,7 +141,7 @@ const UnstyledPublishhDialog = React.memo((props: IPublishDialogProps) => {
     };
 
     const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const nextUrl = e.currentTarget.value.replace(/[^\w\s\/:-]/gi, '');
+        const nextUrl = e.currentTarget.value.replace(/[^\w\s\/\.:-]/gi, '');
         if (nextUrl.startsWith(baseUrl)) {
             setUrl(nextUrl);
         }
