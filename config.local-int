@@ -1,4 +1,4 @@
 REACT_APP_FB_APP_ID ?= 330164834292470
-REACT_APP_API_BASE_URL ?= https://api.dev.yame.io/
-REACT_APP_EXP_API_URL ?= ${REACT_APP_API_BASE_URL}graphql
+REACT_APP_API_BASE_URL ?= https://api.dev.yame.io
+REACT_APP_EXP_API_URL ?= ${REACT_APP_API_BASE_URL}/graphql
 REACT_APP_BASE_URL ?= https://dev.yame.io
