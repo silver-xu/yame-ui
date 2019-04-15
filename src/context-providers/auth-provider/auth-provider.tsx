@@ -20,7 +20,7 @@ const getAnonymousUser = () => {
         authToken: anonymousOrNewAuthToken,
         id: anonymousOrNewAuthToken,
         isValid: true,
-        userName: 'Anonymous',
+        userName: anonymousOrNewAuthToken,
         userType: UserType.Anonymous
     };
 };
