@@ -3,10 +3,9 @@
 
 .CodeMirror {
     border: none;
-    height: calc(100% - 45px);
+    height: 100%;
     width: 100%;
     padding: 0;
-    margin-top: 45px;
 
     pre {
         padding: 5px 4px;
@@ -83,7 +82,7 @@
 
         .splitter {
             position: absolute;
-            top: 0;
+            top: 45px;
             left: calc(50% - 3px);
             bottom: 25px;
             width: 6px;
@@ -96,7 +95,7 @@
             width: calc(50% - 3px);
             bottom: 25px;
             position: absolute;
-            top: 0;
+            top: 45px;
             z-index: 100;
         }
 
