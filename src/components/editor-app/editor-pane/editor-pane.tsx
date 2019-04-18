@@ -15,6 +15,7 @@ library.add(faAdobe);
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const BLOB_BASE_URL = process.env.REACT_APP_BLOB_BASE_URL || '';
 
 export interface IEditorPaneDefaultProps {
     splitScreen: boolean;
@@ -199,7 +200,7 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
                                     name: 'pdf',
                                     action: () => {
                                         window.open(
-                                            `${API_BASE_URL}/convert/pdf/${
+                                            `${BLOB_BASE_URL}/convert/pdf/${
                                                 currentUser.id
                                             }/${docRepo.currentDocId}`
                                         );
@@ -211,7 +212,7 @@ export const EditorPane = React.memo((props: IEditorPaneProps) => {
                                     name: 'word',
                                     action: () => {
                                         window.open(
-                                            `${API_BASE_URL}/convert/word/${
+                                            `${BLOB_BASE_URL}/convert/word/${
                                                 currentUser.id
                                             }/${docRepo.currentDocId}`
                                         );

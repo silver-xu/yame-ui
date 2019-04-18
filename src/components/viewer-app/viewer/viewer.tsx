@@ -7,6 +7,7 @@ import { ViewContext } from '../../common/view-provider/view-provider';
 import './viewer.scss';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const BLOB_BASE_URL = process.env.REACT_APP_BLOB_BASE_URL || '';
 
 export interface INodeDom {
     node: IContentNode;
@@ -28,7 +29,7 @@ export const Viewer = () => {
                     {doc.generatePdf && (
                         <li>
                             <a
-                                href={`${API_BASE_URL}/download/pdf/${userId}/${
+                                href={`${BLOB_BASE_URL}/download/pdf/${userId}/${
                                     doc.id
                                 }`}
                                 target="_blank"
@@ -40,7 +41,7 @@ export const Viewer = () => {
                     {doc.generateWord && (
                         <li>
                             <a
-                                href={`${API_BASE_URL}/download/word/${userId}/${
+                                href={`${BLOB_BASE_URL}/download/word/${userId}/${
                                     doc.id
                                 }`}
                                 target="_blank"

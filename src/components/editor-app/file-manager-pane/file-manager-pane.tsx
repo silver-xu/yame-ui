@@ -32,7 +32,7 @@ library.add(
 );
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || '';
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const BLOB_BASE_URL = process.env.REACT_APP_BLOB_BASE_URL || '';
 
 export const FileManagerPane = React.memo(() => {
     const { docRepo, editorKey } = useContext(EditorContext);
@@ -115,14 +115,14 @@ export const FileManagerPane = React.memo(() => {
     const handlePdfClick = () => {
         if (activeDocId) {
             window.open(
-                `${API_BASE_URL}/convert/pdf/${currentUser.id}/${activeDocId}`
+                `${BLOB_BASE_URL}/convert/pdf/${currentUser.id}/${activeDocId}`
             );
         }
     };
     const handleWordClick = () => {
         if (activeDocId) {
             window.open(
-                `${API_BASE_URL}/convert/word/${currentUser.id}/${activeDocId}`
+                `${BLOB_BASE_URL}/convert/word/${currentUser.id}/${activeDocId}`
             );
         }
     };
