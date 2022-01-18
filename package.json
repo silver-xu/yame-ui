@@ -40,7 +40,7 @@
         "primer-markdown": "^4.0.0",
         "promise-worker": "^2.0.1",
         "react": "^16.8.0",
-        "react-apollo": "^2.4.1",
+        "react-apollo": "^2.5.0",
         "react-apollo-hooks": "^0.4.3",
         "react-dom": "^16.8.0",
         "react-router-dom": "^4.3.1",
